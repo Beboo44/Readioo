@@ -1,0 +1,18 @@
+﻿@using Readioo.ViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+@model LoginVM
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+    @if(Model!=null){
+        <h3>Email Address: @Model.Email</h3>
+        <h3>Password:@Model.Pass</h3>
+        <h3>Remember:@Model.RememberMe</h3>
+    }
+    <h3>wooow</h3>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\Interfaces\" />
+    <Folder Include="Services\Classes\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Readioo.Data\Readioo.Data.csproj" />
+  </ItemGroup>
+
+</Project>

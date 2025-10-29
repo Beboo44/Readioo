@@ -1,0 +1,174 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+                /*/////////////////////Navigation bar////////////////////////*/
+.nav {
+    display: flex;
+    /* text-align: center; */
+    background-color: white;
+    justify-content: space-evenly;
+    margin-bottom: 30px;
+    position: fixed;
+    width: 100%;
+    height: 50px;
+    top: 0px;
+    left: 0px;
+    align-items: center;
+    box-shadow: 0px 0px 10px gray;
+}
+
+    .nav #logo {
+        height: 35px;
+        position: relative;
+        top: 5px;
+    }
+
+    .nav a {
+        text-decoration: none;
+        color: black;
+        padding: 15px 20px;
+    }
+
+    .nav .bar:hover {
+        background-color: black;
+        color: white;
+    }
+
+    .nav .search {
+        padding: 15px;
+        height: 20px;
+        border-radius: 3px;
+        border: 1px solid black;
+    }
+
+    .nav .empty {
+        padding-right: 100px;
+    }
+
+.profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+
+
+                /*/////////////////////Login////////////////////////*/
+
+
+
+.login html {
+    height: 500px;
+}
+
+.login body {
+    text-align: center;
+    width: 300px;
+    /* justify-content: center; */
+    margin-left: 650px;
+}
+
+.inputs {
+    position: relative;
+    text-align: left;
+    font-size: 20px;
+}
+
+.text_input {
+    width: 250px;
+    padding: 10px 15px;
+    border: 2px solid gray;
+    background-color: rgb(231, 236, 241);
+    border-radius: 20px;
+    outline: none;
+    font-size: 16px;
+    margin-bottom: 5px;
+    /* transition: all 0.3s ease; */
+}
+
+.label {
+    color: rgb(43, 39, 39);
+    font-size: 15px;
+}
+
+.logo {
+    width: 250px;
+    position: relative;
+    top: 20px;
+    border-radius: 25px;
+    border:2px solid black;
+}
+
+.submission {
+    width: 290px;
+    padding: 10px 15px;
+    border: 2px solid black;
+    border-radius: 20px;
+    background-color: black;
+    color: white;
+    font-size: 15px;
+    margin-top: 30px;
+}
+
+    .submission:hover {
+        background-color: gray;
+        color: black;
+        cursor: pointer;
+    }
+
+.sign_in {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.button {
+    text-decoration: underline;
+    padding: 5px 10px;
+    border: 2px solid black;
+    background-color: rgb(196, 186, 186);
+    color: black;
+    font-size: 17px;
+}
+
+    .button:hover {
+        background-color: rgb(140, 122, 122);
+        color: white;
+    }
+
+.check {
+    display: flex;
+    justify-content: left;
+    font-size: 17px;
+}
+
+.spacing {
+    display: flex;
+    justify-content: center;
+    width: 300px;
+    border: 2px solid black;
+    margin-top: 50px;
+}
+
+
+
