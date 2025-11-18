@@ -1,0 +1,150 @@
+/* ===================================================================
+   Book Page Styles - book.css
+   =================================================================== */
+
+#book-page {
+  max-width: 1000px;
+  margin-top: 60px;
+}
+
+.book-header {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.book-cover img {
+  width: 200px;
+  height: 300px;
+  border-radius: 8px;
+  object-fit: cover;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+.book-info {
+  flex: 1;
+}
+
+.book-title {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.book-author {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+
+.book-meta {
+  margin-bottom: 16px;
+}
+
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rating .stars svg {
+  width: 18px;
+  height: 18px;
+}
+
+.rating-text {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.book-details {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 15px;
+}
+
+.actions select {
+  width: 200px;
+  padding: 6px 10px;
+}
+
+.user-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.user-rating .stars svg {
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+.user-rating .stars svg:hover {
+  transform: scale(1.1);
+}
+
+.book-description {
+  background: var(--card);
+  padding: 18px;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  margin-bottom: 30px;
+}
+
+.book-description h2 {
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.book-reviews {
+  background: var(--card);
+  padding: 18px;
+  border-radius: var(--radius);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.book-reviews h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.review-item {
+  border-bottom: 1px solid #eee;
+  padding: 12px 0;
+}
+.review-item:last-child {
+  border-bottom: none;
+}
+.review-item .review-user {
+  font-weight: 600;
+}
+.review-item .review-rating svg {
+  width: 14px;
+  height: 14px;
+}
+.review-item p {
+  font-size: 14px;
+  color: var(--text);
+  margin-top: 4px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .book-header {
+    flex-direction: column;
+    align-items: center;
+  }
+  .book-cover img {
+    width: 160px;
+    height: 240px;
+  }
+  .book-info {
+    text-align: center;
+  }
+}

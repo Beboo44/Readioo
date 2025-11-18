@@ -1,0 +1,151 @@
+/* ============================
+   Profile Page Styles
+   ============================ */
+.profile-page {
+  margin-top: 60px;
+  max-width: 1000px;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  background: #f5f8f8;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.profile-pic img {
+  width: 130px;
+  height: 130px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #0b8f8c;
+}
+
+.profile-info h2 {
+  font-weight: 700;
+  color: #0b8f8c;
+  margin-bottom: 6px;
+}
+
+.profile-info .bio {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 10px;
+  max-width: 500px;
+}
+
+.edit-profile {
+  font-size: 13px;
+  border-radius: 5px;
+}
+
+/* ===== Stats ===== */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.stat-box {
+  background: var(--card);
+  text-align: center;
+  padding: 20px 10px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+.stat-box h4 {
+  color: #0b8f8c;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.stat-box p {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 8px 0 0 0;
+}
+
+/* ===== Bookshelf ===== */
+.bookshelf {
+  margin-top: 40px;
+}
+
+.bookshelf h3 {
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #333;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.book-card {
+  background: var(--card);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.15s;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+}
+
+.book-cover img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+.book-info {
+  padding: 10px;
+  text-align: center;
+}
+
+.book-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.book-author {
+  font-size: 13px;
+  color: #777;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-info .bio {
+    max-width: 100%;
+  }
+}
+/* ===== Follow Button and Actions ===== */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+.follow-btn {
+  background-color: #0b8f8c;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  transition: background 0.2s ease;
+}
+
+.follow-btn:hover {
+  background-color: #077674;
+}

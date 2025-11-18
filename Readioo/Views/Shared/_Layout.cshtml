@@ -13,19 +13,16 @@
         <nav class="nav">
             <div class="empty"></div>
             <div><a href="https://www.goodreads.com/"> <img src="~/images/Logo.jpg" id="logo"> </a></div>
-            <div><a class="bar" href="">Home</a></div>
-            <div><a class="bar" href="">My Books</a></div>
-            <div><a class="bar" href="">Browse</a></div>
+            <div><a class="bar" asp-controller="Home" asp-action="Index">Home</a></div>
+            <div><a class="bar" asp-controller="MyBooks" asp-action="Index">My Books</a></div>
+            <div><a class="bar" asp-controller="Browse" asp-action="Index"></a></div>
             <div><a class="bar" href="">Community</a></div>
-            <div><a class="bar" asp-controller="Account" asp-action="Login">Login</a></div>
 
             <div><input type="text" placeholder="Search Books" size="40" class="search"></div>
 
-            <!-- <div><a><img src=""></a></div>
-            <div><a><img src=""></a></div>
-            <div><a><img src=""></a></div> -->
+            
 
-            <div class="profile"><a href="https://www.goodreads.com/user/show/194460276-abanoub-ayaad"><img src="~/images/Abanoub.jpg"></a></div>
+            <div class="profile"><a asp-controller="User" asp-action="Show"><img src="~/images/Abanoub.jpg"></a></div>
             <div class="empty"></div>
         </nav>
     </header>
@@ -35,14 +32,58 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted">
+    <footer class="gr-footer">
         <div class="container">
-            &copy; 2025 - Readioo - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row mb-5">
+                <div class="col-md-3">
+                    <h4 style="color:var(--muted)">Readioo Choice Awards 2024</h4>
+                </div>
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-6 col-md-3"><ul class="list-unstyled small"><li><a href="#">Readers' Favorite Fiction</a></li><li><a href="#">Readers' Favorite Romance</a></li></ul></div>
+                        <div class="col-6 col-md-3"><ul class="list-unstyled small"><li><a href="#">Readers' Favorite Horror</a></li><li><a href="#">Readers' Favorite Audiobook</a></li></ul></div>
+                        <div class="col-6 col-md-3"><ul class="list-unstyled small"><li><a href="#">Readers' Favorite Mystery & Thriller</a></li><li><a href="#">Readers' Favorite Science Fiction</a></li></ul></div>
+                        <div class="col-6 col-md-3"><ul class="list-unstyled small"><li><a href="#">Readers' Favorite Young Adult</a></li><li><a href="#">Readers' Favorite Nonfiction</a></li></ul></div>
+                    </div>
+                </div>
+            </div>
+
+            <hr style="border-top: 1px solid #ddd;">
+
+            <div class="row align-items-center">
+                <div class="col-md-3">
+                    <h6>COMPANY</h6><ul class="list-unstyled small"><li><a href="#">About us</a></li><li><a href="#">Careers</a></li><li><a href="#">Terms</a></li><li><a href="#">Privacy</a></li></ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>WORK WITH US</h6><ul class="list-unstyled small"><li><a href="#">Authors</a></li><li><a href="#">Advertise</a></li></ul>
+                </div>
+                <div class="col-md-3">
+                    <h6>CONNECT</h6>
+                    <div class="gr-social-icons">
+                        <i class="fab fa-facebook-f me-2"></i>
+                        <i class="fab fa-twitter me-2"></i>
+                        <i class="fab fa-instagram me-2"></i>
+                        <i class="fab fa-linkedin-in me-2"></i>
+                    </div>
+                </div>
+                <div class="col-md-3 text-end">
+                    <div class="gr-app-store-badges mb-2">
+                        <p class="small text-muted mb-0">Download on App Store / Google Play</p>
+                    </div>
+                    <p class="small mt-2">&copy; 2025 Readioo, Inc. | Mobile version</p>
+                </div>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/main.js"></script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

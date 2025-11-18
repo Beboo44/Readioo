@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Services\Interfaces\" />
-    <Folder Include="Services\Classes\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\Readioo.Data\Readioo.Data.csproj" />
   </ItemGroup>
 

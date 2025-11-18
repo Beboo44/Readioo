@@ -1,0 +1,57 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Books - BookConnect</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/globalandbook.css">
+    <link rel="stylesheet" href="~/css/browse.css">
+</head>
+
+<body>
+   
+
+    <!-- ✅ Main Browse Section -->
+    <div class="wrap" id="browse-page">
+        <header class="page-header">
+            <div class="page-meta">
+                <div class="page-title">Browse Books</div>
+                <div class="page-subtitle">Discover your next great read</div>
+            </div>
+        </header>
+
+        <div class="browse-layout">
+            <!-- Sidebar Filters -->
+            <aside class="browse-sidebar">
+                <div class="filter-card">
+                    <h4>Filter by Genre</h4>
+                    <ul class="filter-list" id="genreFilter">
+                        <li data-genre="all" class="active">All</li>
+                        <li data-genre="fiction">Fiction</li>
+                        <li data-genre="fantasy">Fantasy</li>
+                        <li data-genre="classics">Classics</li>
+                        <li data-genre="science-fiction">Science Fiction</li>
+                        <li data-genre="romance">Romance</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Book Grid -->
+            <section class="browse-content">
+                <div class="book-grid" id="bookGrid">
+                    <!-- Books dynamically inserted here -->
+                </div>
+            </section>
+        </div>
+    </div>
+
+    
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/browse.js"></script>
+</body>
+</html>

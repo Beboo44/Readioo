@@ -1,13 +1,16 @@
-﻿using System;
+﻿
+
+using Readioo.Data.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class Author
+public partial class Author:BaseEntity
 {
     public int AuthorId { get; set; }
 
-    public int FullName { get; set; }
+    public string FullName { get; set; }
 
     public string Bio { get; set; } = null!;
 

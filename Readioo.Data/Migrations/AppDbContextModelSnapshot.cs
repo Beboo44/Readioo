@@ -24,11 +24,14 @@ namespace Readioo.Data.Migrations
 
             modelBuilder.Entity("Readioo.Models.Author", b =>
                 {
-                    b.Property<int>("AuthorId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AuthorId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("AuthorImage")
                         .HasColumnType("varbinary(max)");
@@ -51,10 +54,11 @@ namespace Readioo.Data.Migrations
                     b.Property<DateOnly?>("DeathDate")
                         .HasColumnType("date");
 
-                    b.Property<int>("FullName")
-                        .HasColumnType("int");
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("AuthorId");
+                    b.HasKey("Id");
 
                     b.ToTable("Authors");
                 });
@@ -84,17 +88,20 @@ namespace Readioo.Data.Migrations
 
             modelBuilder.Entity("Readioo.Models.Book", b =>
                 {
-                    b.Property<int>("BookId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("AuthorId")
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("BookImage")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("BookImage")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .IsRequired()
@@ -125,7 +132,7 @@ namespace Readioo.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("BookId");
+                    b.HasKey("Id");
 
                     b.HasIndex(new[] { "AuthorId" }, "IX_Books_AuthorId");
 
@@ -183,56 +190,26 @@ namespace Readioo.Data.Migrations
 
             modelBuilder.Entity("Readioo.Models.Genre", b =>
                 {
-                    b.Property<int>("GenreId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GenreId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("GenreId")
+                        .HasColumnType("int");
+
                     b.Property<string>("GenreName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("GenreId");
+                    b.HasKey("Id");
 
                     b.ToTable("Genres");
-                });
-
-            modelBuilder.Entity("Readioo.Models.Message", b =>
-                {
-                    b.Property<int>("MessageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("ReceiverId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("MessageId");
-
-                    b.HasIndex(new[] { "ReceiverId" }, "IX_Messages_ReceiverId");
-
-                    b.HasIndex(new[] { "SenderId" }, "IX_Messages_SenderId");
-
-                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("Readioo.Models.Review", b =>
@@ -244,9 +221,6 @@ namespace Readioo.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReviewId"));
 
                     b.Property<int>("BookId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("BoookId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -276,11 +250,14 @@ namespace Readioo.Data.Migrations
 
             modelBuilder.Entity("Readioo.Models.Shelf", b =>
                 {
-                    b.Property<int>("ShelfId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ShelfId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ShelfId")
+                        .HasColumnType("int");
 
                     b.Property<string>("ShelfName")
                         .IsRequired()
@@ -289,7 +266,7 @@ namespace Readioo.Data.Migrations
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.HasKey("ShelfId");
+                    b.HasKey("Id");
 
                     b.HasIndex(new[] { "UserId" }, "IX_shelves_UserId");
 
@@ -298,12 +275,11 @@ namespace Readioo.Data.Migrations
 
             modelBuilder.Entity("Readioo.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("UserID");
+                        .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Bio")
                         .HasColumnType("nvarchar(max)");
@@ -334,6 +310,10 @@ namespace Readioo.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int")
+                        .HasColumnName("UserID");
+
                     b.Property<byte[]>("UserImage")
                         .HasColumnType("varbinary(max)");
 
@@ -342,7 +322,7 @@ namespace Readioo.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.HasKey("UserId");
+                    b.HasKey("Id");
 
                     b.ToTable("Users");
                 });
@@ -368,29 +348,6 @@ namespace Readioo.Data.Migrations
                     b.HasIndex(new[] { "UserId" }, "IX_UserBooks_UserId");
 
                     b.ToTable("UserBooks");
-                });
-
-            modelBuilder.Entity("Readioo.Models.UserFriend", b =>
-                {
-                    b.Property<int>("UserFriendId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserFriendId"));
-
-                    b.Property<int>("FriendId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("UserFriendId");
-
-                    b.HasIndex(new[] { "FriendId" }, "IX_UserFriends_FriendId");
-
-                    b.HasIndex(new[] { "UserId" }, "IX_UserFriends_UserId");
-
-                    b.ToTable("UserFriends");
                 });
 
             modelBuilder.Entity("Readioo.Models.UserGenre", b =>
@@ -484,23 +441,6 @@ namespace Readioo.Data.Migrations
                     b.Navigation("Shelf");
                 });
 
-            modelBuilder.Entity("Readioo.Models.Message", b =>
-                {
-                    b.HasOne("Readioo.Models.User", "Receiver")
-                        .WithMany("MessageReceivers")
-                        .HasForeignKey("ReceiverId")
-                        .IsRequired();
-
-                    b.HasOne("Readioo.Models.User", "Sender")
-                        .WithMany("MessageSenders")
-                        .HasForeignKey("SenderId")
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
-                });
-
             modelBuilder.Entity("Readioo.Models.Review", b =>
                 {
                     b.HasOne("Readioo.Models.Book", "Book")
@@ -546,24 +486,6 @@ namespace Readioo.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Book");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Readioo.Models.UserFriend", b =>
-                {
-                    b.HasOne("Readioo.Models.User", "Friend")
-                        .WithMany("UserFriendFriends")
-                        .HasForeignKey("FriendId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Readioo.Models.User", "User")
-                        .WithMany("UserFriendUsers")
-                        .HasForeignKey("UserId")
-                        .IsRequired();
-
-                    b.Navigation("Friend");
 
                     b.Navigation("User");
                 });
@@ -621,19 +543,11 @@ namespace Readioo.Data.Migrations
 
             modelBuilder.Entity("Readioo.Models.User", b =>
                 {
-                    b.Navigation("MessageReceivers");
-
-                    b.Navigation("MessageSenders");
-
                     b.Navigation("Reviews");
 
                     b.Navigation("Shelves");
 
                     b.Navigation("UserBooks");
-
-                    b.Navigation("UserFriendFriends");
-
-                    b.Navigation("UserFriendUsers");
 
                     b.Navigation("UserGenres");
                 });

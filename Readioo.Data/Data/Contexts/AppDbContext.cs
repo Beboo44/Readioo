@@ -28,8 +28,6 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<Genre> Genres { get; set; }
 
-    public virtual DbSet<Message> Messages { get; set; }
-
     public virtual DbSet<Review> Reviews { get; set; }
 
     public virtual DbSet<Shelf> Shelves { get; set; }
@@ -37,8 +35,6 @@ public partial class AppDbContext : DbContext
     public virtual DbSet<User> Users { get; set; }
 
     public virtual DbSet<UserBook> UserBooks { get; set; }
-
-    public virtual DbSet<UserFriend> UserFriends { get; set; }
 
     public virtual DbSet<UserGenre> UserGenres { get; set; }
 
@@ -91,20 +87,7 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Shelf).WithMany(p => p.BookShelves).HasForeignKey(d => d.ShelfId);
         });
 
-        modelBuilder.Entity<Message>(entity =>
-        {
-            entity.HasIndex(e => e.ReceiverId, "IX_Messages_ReceiverId");
-
-            entity.HasIndex(e => e.SenderId, "IX_Messages_SenderId");
-
-            entity.HasOne(d => d.Receiver).WithMany(p => p.MessageReceivers)
-                .HasForeignKey(d => d.ReceiverId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            entity.HasOne(d => d.Sender).WithMany(p => p.MessageSenders)
-                .HasForeignKey(d => d.SenderId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
+        
 
         modelBuilder.Entity<Review>(entity =>
         {
@@ -146,18 +129,7 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.UserBooks).HasForeignKey(d => d.UserId);
         });
 
-        modelBuilder.Entity<UserFriend>(entity =>
-        {
-            entity.HasIndex(e => e.FriendId, "IX_UserFriends_FriendId");
-
-            entity.HasIndex(e => e.UserId, "IX_UserFriends_UserId");
-
-            entity.HasOne(d => d.Friend).WithMany(p => p.UserFriendFriends).HasForeignKey(d => d.FriendId);
-
-            entity.HasOne(d => d.User).WithMany(p => p.UserFriendUsers)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-        });
+        
 
         modelBuilder.Entity<UserGenre>(entity =>
         {

@@ -1,0 +1,278 @@
+/* ======================================================================
+   assets/css/global.css
+   (Contains Global Styles, Navigation, Footer, and My Books Specific Layout)
+   ====================================================================== */
+
+/* --- ROOT VARIABLES --- */
+:root{
+    --bg: #ffffff;
+    --card: #f7f7f7;
+    --muted: #6b6b6b;
+    --text: #222222;
+    --gr-green: #0b8f8c; /* BookConnect link/accent green */
+    --gr-brown: #493322; 
+    --accent: var(--gr-green); /* Use the green accent for clarity */
+    --radius: 12px;
+    --container-max: 1100px;
+    --gap: 24px;
+}
+
+/* --- GLOBAL RESET & TYPOGRAPHY --- */
+* { box-sizing: border-box; }
+html,body{height:100%}
+body {
+    margin:0;
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.45;
+}
+a {
+    color: var(--gr-green);
+    text-decoration: none;
+}
+a:hover {
+    color: var(--gr-green);
+    text-decoration: underline;
+}
+
+/* Page container centered */
+.wrap{
+    max-width:var(--container-max);
+    margin:0 auto;
+    padding:28px 16px;
+    padding-top: 50px; /* Space for the fixed navigation bar */
+}
+
+
+/* --- NAVIGATION BAR STYLES (.nav) --- */
+.nav{
+    display: flex;
+    background-color: white;
+    justify-content: space-evenly;
+    position: fixed; /* Fixed position */
+    width: 100%;
+    height: 50px;
+    top: 0px;
+    left: 0px;
+    align-items: center;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+.nav #logo{
+    height: 25px;
+    position:relative;
+    top: 5px;
+}
+.nav a{
+    text-decoration: none;
+    color: black;
+    padding: 15px 20px;
+}
+.nav .bar:hover{
+    background-color: black;
+    color: white;
+}
+.nav .search{
+    padding: 15px;
+    height: 20px;
+    border-radius: 3px;
+    border: 1px solid black;
+}
+.nav .empty{
+    padding-right: 100px;
+}
+.profile img{
+    width:40px;
+    height:40px;
+    border-radius:50%;
+}
+
+
+/* --- PAGE HEADER STYLES (Used on My Books/Profile) --- */
+.page-header{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    padding:18px 6px;
+    margin-bottom:18px;
+}
+.page-title{
+    font-size:28px;
+    font-weight:700;
+    letter-spacing:-0.02em;
+}
+.page-subtitle{
+    font-size:15px;
+    color:var(--muted);
+    margin-top:2px;
+}
+.stats-row{
+    display:flex;
+    gap:18px;
+    align-items:center;
+    margin-top:10px;
+    flex-wrap:wrap;
+}
+.stat{
+    font-size:14px;
+    color:var(--muted);
+}
+.stat strong{
+    color:var(--text);
+    font-weight:600;
+    margin-right:6px
+}
+
+
+/* --- MY BOOKS LAYOUT & SIDEBAR (Specific Layout Styles) --- */
+.main-layout{
+    display:flex;
+    gap:var(--gap);
+    align-items:flex-start;
+}
+.sidebar{
+    width: 300px;
+    flex-shrink: 0;
+}
+.main-content{
+    flex: 1;
+    min-width: 0; 
+}
+.card{
+    background:var(--card);
+    border-radius:12px;
+    padding:16px;
+    box-shadow:0 6px 18px rgba(12,12,12,0.03);
+    margin-bottom:18px;
+}
+.card h3{margin:0 0 10px 0;font-size:16px}
+.shelf-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.shelf-list li{font-size:14px;color:var(--text);cursor:pointer;padding:6px 8px;border-radius:6px;}
+.shelf-list li:hover{background:rgba(11,143,140,0.08);}
+.shelf-list li.active{background:rgba(11,143,140,0.12);color:var(--accent);font-weight:600;}
+
+/* Activity Feed */
+.activity-list{display:flex;flex-direction:column;gap:12px}
+.activity-item{display:flex;gap:10px;align-items:center}
+.book-cover-small{
+    width:44px;height:66px;border-radius:4px;background:#e8e8e8;overflow:hidden;flex-shrink:0;
+    display:flex;align-items:center;justify-content:center;
+}
+.book-cover-small img{width:100%;height:100%;object-fit:cover}
+.activity-meta{font-size:13px;color:var(--muted)}
+.activity-meta strong{color:var(--text);font-weight:600;display:block}
+h2.section-title{
+    font-size:22px;
+    margin:6px 0 16px;
+}
+
+/* --- BOOKS TABLE STYLES --- */
+.books-table-container {
+    overflow-x: auto;
+    border-radius: var(--radius);
+    background: var(--card);
+    box-shadow: 0 6px 18px rgba(12,12,12,0.03);
+}
+.books-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.books-table th {
+    text-align: left;
+    padding: 14px 16px;
+    font-weight: 600;
+    font-size: 14px;
+    border-bottom: 1px solid #e0e0e0;
+    color: var(--muted);
+}
+.books-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+}
+.books-table tr:hover {
+    background: rgba(11,143,140,0.04);
+}
+.book-title-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.table-book-cover {
+    width: 50px;
+    height: 75px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+.table-book-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;   /* 👈 shows the full image without cropping */
+    object-position: center;
+    display: block;
+}
+
+.book-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+.book-link {
+    color: var(--accent);
+    text-decoration: none;
+    font-weight: 600;
+}
+.book-link:hover {
+    text-decoration: underline;
+}
+
+.book-author {
+    font-size: 13px;
+    color: var(--muted);
+}
+.shelf-tag {
+    display: inline-block;
+    padding: 4px 8px;
+    background: rgba(11,143,140,0.1);
+    color: var(--accent);
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    margin-right: 6px;      /* horizontal spacing */
+    margin-bottom: 4px;     /* if wrapping */
+    display: inline-block;  /* ensures spacing works correctly */
+    
+}
+.stars svg{width:14px;height:14px}
+.rating-cell {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+
+/* --- FOOTER STYLES --- */
+.gr-footer {
+    background-color: #f0f0f0;
+    font-size: 0.85rem;
+    padding-top: 30px;
+    padding-bottom: 20px;
+    margin-top: 30px;
+}
+.gr-footer h6 {
+    font-weight: bold;
+    color: #666;
+    margin-bottom: 15px;
+}
+
+/* --- RESPONSIVENESS --- */
+@media(max-width: 899px){
+    .main-layout {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+    }
+}

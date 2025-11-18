@@ -1,9 +1,12 @@
-﻿using System;
+﻿
+
+using Readioo.Data.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class Book
+public partial class Book: BaseEntity
 {
     public int BookId { get; set; }
 
@@ -25,7 +28,7 @@ public partial class Book
 
     public string Description { get; set; } = null!;
 
-    public byte[]? BookImage { get; set; }
+    public string? BookImage { get; set; }
 
     public virtual Author Author { get; set; } = null!;
 
