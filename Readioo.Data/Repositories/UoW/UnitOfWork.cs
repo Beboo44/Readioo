@@ -1,4 +1,5 @@
-﻿using Readioo.Data.Data.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
 using System;
@@ -32,6 +33,20 @@ namespace Demo.DataAccess.Repositories.UoW
         public int SaveChanges()
         {
             return _dbContext.SaveChanges();
+        }
+        // Existing synchronous method
+        public void Commit()
+        {
+            _dbContext.SaveChanges();
+        }
+
+        /// <summary>
+        /// Implements the asynchronous save operation required by IUnitOfWork.
+        /// </summary>
+        public async Task CommitAsync()
+        {
+            // This is the essential fix: using the EF Core asynchronous method.
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

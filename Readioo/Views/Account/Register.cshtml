@@ -1,5 +1,73 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model Readioo.ViewModel.RegisterVM
+
 @{
+    ViewData["Title"] = "Register New Account";
+    Layout = "_SimpleLayout";
+}
+
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <h2 class="text-center">Create Your Readioo Account</h2>
+        <hr />
+
+        <form asp-controller="Account" asp-action="Register" method="post">
+
+            @* Displays general errors (like "Email already exists") or Model-level errors *@
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            @* Success Message Display (from TempData in Controller) *@
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+            }
+
+            @* --- Input Fields --- *@
+
+            <div class="form-group mb-3">
+                <label asp-for="FirstName" class="control-label"></label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="LastName" class="control-label"></label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Email" class="control-label"></label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-4">
+                <label asp-for="ConfirmPassword" class="control-label"></label>
+                <input asp-for="ConfirmPassword" class="form-control" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <input type="submit" value="Register" class="btn btn-primary w-100" />
+            </div>
+
+            <div class="text-center mt-3">
+                <a asp-controller="Account" asp-action="Login">Already have an account? Login here.</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        // This line includes the scripts necessary for client-side validation (optional but recommended)
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
