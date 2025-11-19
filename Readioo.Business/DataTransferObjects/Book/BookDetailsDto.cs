@@ -1,4 +1,5 @@
-﻿using Readioo.Business.DataTransferObjects.Review;
+﻿using Readioo.Business.DataTransferObjects.Author;
+using Readioo.Business.DataTransferObjects.Review;
 using Readioo.Models;
 using System;
 using System.Collections.Generic;
@@ -32,7 +33,7 @@ namespace Readioo.Business.DataTransferObjects.Book
 
         public string? BookImage { get; set; }
 
-        public virtual Author Author { get; set; } = null!;
+        public virtual AuthorDto Author { get; set; } = null!;
 
         public virtual ICollection<String> BookGenres { get; set; } = new List<String>();
         public virtual ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();

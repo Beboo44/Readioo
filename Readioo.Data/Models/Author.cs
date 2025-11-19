@@ -22,7 +22,7 @@ public partial class Author:BaseEntity
 
     public DateOnly? DeathDate { get; set; }
 
-    public byte[]? AuthorImage { get; set; }
+    public string? AuthorImage { get; set; }
 
     public virtual ICollection<AuthorGenre> AuthorGenres { get; set; } = new List<AuthorGenre>();
 
