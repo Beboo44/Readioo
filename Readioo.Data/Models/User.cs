@@ -3,12 +3,14 @@
 using Readioo.Data.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Readioo.Models;
 
 public partial class User: BaseEntity
 {
-    public int UserId { get; set; }
+    
 
     public string FirstName { get; set; } = null!;
 

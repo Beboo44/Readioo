@@ -27,7 +27,7 @@ namespace Readioo.Business.Services.Classes
             }
             var bookDto = new BookDetailsDto()
             {
-                BookId = book.BookId,
+                BookId = book.Id,
                 Title = book.Title,
                 Isbn = book.Isbn,
                 Language = book.Language,
@@ -46,7 +46,7 @@ namespace Readioo.Business.Services.Classes
                 Reviews = book.Reviews
                     .Select(r => new ReviewDto
                     {
-                        ReviewId = r.ReviewId,
+                        ReviewId = r.Id,
                         UserId = r.UserId,
                         Username = r.User.FirstName + " " + r.User.LastName,
                         Rating = r.Rating,
@@ -57,6 +57,28 @@ namespace Readioo.Business.Services.Classes
                     .ToList()
             };
             return bookDto;
+        }
+        public async Task CreateBook(BookCreatedDto bookCreatedDto)
+        {
+            Book newBook = new Book
+            {
+                Title = bookCreatedDto.Title,
+                Isbn = bookCreatedDto.Isbn,
+                Language = bookCreatedDto.Language,
+                AuthorId = bookCreatedDto.AuthorId,
+                PagesCount = bookCreatedDto.PagesCount,
+                PublishDate = bookCreatedDto.PublishDate,
+                MainCharacters = bookCreatedDto.MainCharacters,
+                Description = bookCreatedDto.Description,
+                Rate = 0m // default rate
+            };
+
+            if (bookCreatedDto.BookImage != null)
+            {
+                newBook.BookImage = bookCreatedDto.BookImage;
+            }
+            _unitOfWork.BookRepository.Add(newBook);
+            await _unitOfWork.CommitAsync();
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿
+using Readioo.Data.Models;
 using System;
 using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class AuthorGenre
+public partial class AuthorGenre:BaseEntity
 {
-    public int AuthorGenreId { get; set; }
 
     public int AuthorId { get; set; }
 

@@ -17,6 +17,8 @@ namespace Demo.DataAccess.Repositories.UoW
         public IAuthorRepository AuthorRepository { get; }
 
         public int SaveChanges();
+        Task CommitAsync();
+        void Commit();
 
     }
 }

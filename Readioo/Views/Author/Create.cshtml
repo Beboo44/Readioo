@@ -1,0 +1,77 @@
+﻿@model Readioo.ViewModel.AuthorVM
+
+@{
+    ViewData["Title"] = "Create Author";
+}
+
+<h1>Create Author</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Full Name -->
+            <div class="form-group mb-3">
+                <label asp-for="FullName" class="form-label"></label>
+                <input asp-for="FullName" class="form-control" />
+                <span asp-validation-for="FullName" class="text-danger"></span>
+            </div>
+
+            <!-- Bio -->
+            <div class="form-group mb-3">
+                <label asp-for="Bio" class="form-label"></label>
+                <textarea asp-for="Bio" class="form-control"></textarea>
+                <span asp-validation-for="Bio" class="text-danger"></span>
+            </div>
+
+            <!-- Birth Country -->
+            <div class="form-group mb-3">
+                <label asp-for="BirthCountry" class="form-label"></label>
+                <input asp-for="BirthCountry" class="form-control" />
+                <span asp-validation-for="BirthCountry" class="text-danger"></span>
+            </div>
+
+            <!-- Birth City -->
+            <div class="form-group mb-3">
+                <label asp-for="BirthCity" class="form-label"></label>
+                <input asp-for="BirthCity" class="form-control" />
+                <span asp-validation-for="BirthCity" class="text-danger"></span>
+            </div>
+
+            <!-- Birth Date -->
+            <div class="form-group mb-3">
+                <label asp-for="BirthDate" class="form-label"></label>
+                <input asp-for="BirthDate" type="date" class="form-control" />
+                <span asp-validation-for="BirthDate" class="text-danger"></span>
+            </div>
+
+            <!-- Death Date -->
+            <div class="form-group mb-3">
+                <label asp-for="DeathDate" class="form-label"></label>
+                <input asp-for="DeathDate" type="date" class="form-control" />
+                <span asp-validation-for="DeathDate" class="text-danger"></span>
+            </div>
+
+            <!-- Author Image -->
+            <div class="form-group mb-4">
+                <label asp-for="AuthorImage" class="form-label"></label>
+                <input asp-for="AuthorImage" type="file" accept="image/*" class="form-control" />
+                <span asp-validation-for="AuthorImage" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary">Create</button>
+                <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,71 +1,81 @@
-﻿@model Readioo.Models.Book
+﻿@model Readioo.ViewModel.BookVM
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Create Book";
 }
 
-<h1>Create</h1>
+<h1>Create Book</h1>
 
 <h4>Book</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <div class="col-md-6">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BookId" class="control-label"></label>
-                <input asp-for="BookId" class="form-control" />
-                <span asp-validation-for="BookId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Isbn" class="control-label"></label>
                 <input asp-for="Isbn" class="form-control" />
                 <span asp-validation-for="Isbn" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Language" class="control-label"></label>
                 <input asp-for="Language" class="form-control" />
                 <span asp-validation-for="Language" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AuthorId" class="control-label"></label>
-                <select asp-for="AuthorId" class ="form-control" asp-items="ViewBag.AuthorId"></select>
+
+            <form asp-action="Create" method="get" class="mb-3">
+                <div class="input-group">
+                    <input type="text" name="searchAuthor" class="form-control" placeholder="Search author by name" />
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                </div>
+            </form>
+
+            <div class="form-group mb-3">
+                <label asp-for="AuthorId">Author</label>
+                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorList">
+                    <option value="">-- Select an Author --</option>
+                </select>
+                <span asp-validation-for="AuthorId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="PagesCount" class="control-label"></label>
                 <input asp-for="PagesCount" class="form-control" />
                 <span asp-validation-for="PagesCount" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="PublishDate" class="control-label"></label>
-                <input asp-for="PublishDate" class="form-control" />
+                <input asp-for="PublishDate" class="form-control" type="date" />
                 <span asp-validation-for="PublishDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="MainCharacters" class="control-label"></label>
                 <input asp-for="MainCharacters" class="form-control" />
                 <span asp-validation-for="MainCharacters" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Rate" class="control-label"></label>
-                <input asp-for="Rate" class="form-control" />
-                <span asp-validation-for="Rate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="BookImage" class="control-label"></label>
-                <input asp-for="BookImage" class="form-control" />
+                <input asp-for="BookImage" type="file" class="form-control" />
                 <span asp-validation-for="BookImage" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -73,10 +83,13 @@
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="mt-3">
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
+    

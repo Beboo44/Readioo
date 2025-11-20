@@ -38,7 +38,7 @@ public partial class AppDbContext : DbContext
 
     public virtual DbSet<UserGenre> UserGenres { get; set; }
 
-    
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AuthorGenre>(entity =>
@@ -108,7 +108,7 @@ public partial class AppDbContext : DbContext
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.Id).HasColumnName("UserID");
             entity.Property(e => e.FirstName).HasMaxLength(255);
             entity.Property(e => e.LastName).HasMaxLength(255);
             entity.Property(e => e.ProfileUrl).HasColumnName("ProfileURL");

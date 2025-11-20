@@ -9,6 +9,7 @@ namespace Readioo.Business.Services.Interfaces
     public interface IBookService
     {
         public BookDetailsDto? bookById(int id);
+        public Task CreateBook(BookCreatedDto bookCreatedDto);
     }
 
 }

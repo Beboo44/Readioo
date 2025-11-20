@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Readioo.Data.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class UserGenre
+public partial class UserGenre:BaseEntity
 {
-    public int UserGenreId { get; set; }
 
     public int UserId { get; set; }
 

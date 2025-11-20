@@ -8,7 +8,6 @@ namespace Readioo.Models;
 
 public partial class Book: BaseEntity
 {
-    public int BookId { get; set; }
 
     public string Title { get; set; } = null!;
 

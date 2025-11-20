@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Readioo.Data.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class BookShelf
+public partial class BookShelf:BaseEntity
 {
-    public int BookShelfId { get; set; }
 
     public int BookId { get; set; }
 

@@ -6,7 +6,6 @@ namespace Readioo.Models;
 
 public partial class Shelf: BaseEntity
 {
-    public int ShelfId { get; set; }
 
     public string ShelfName { get; set; } = null!;
 

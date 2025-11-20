@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Readioo.Data.Models;
+using System;
 using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class Review
+public partial class Review:BaseEntity
 {
-    public int ReviewId { get; set; }
 
     public int UserId { get; set; }
 

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Readioo.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class newDb : Migration
+    public partial class fixedVersion : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,14 +17,13 @@ namespace Readioo.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    AuthorId = table.Column<int>(type: "int", nullable: false),
                     FullName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Bio = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthCountry = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthCity = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BirthDate = table.Column<DateOnly>(type: "date", nullable: false),
                     DeathDate = table.Column<DateOnly>(type: "date", nullable: true),
-                    AuthorImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true)
+                    AuthorImage = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -37,7 +36,6 @@ namespace Readioo.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    GenreId = table.Column<int>(type: "int", nullable: false),
                     GenreName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
@@ -50,9 +48,8 @@ namespace Readioo.Data.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    UserID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserID = table.Column<int>(type: "int", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     UserEmail = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -66,7 +63,7 @@ namespace Readioo.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Users", x => x.UserID);
                 });
 
             migrationBuilder.CreateTable(
@@ -75,7 +72,6 @@ namespace Readioo.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BookId = table.Column<int>(type: "int", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     ISBN = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Language = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -102,14 +98,14 @@ namespace Readioo.Data.Migrations
                 name: "AuthorGenres",
                 columns: table => new
                 {
-                    AuthorGenreId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AuthorId = table.Column<int>(type: "int", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AuthorGenres", x => x.AuthorGenreId);
+                    table.PrimaryKey("PK_AuthorGenres", x => x.Id);
                     table.ForeignKey(
                         name: "FK_AuthorGenres_Authors_AuthorId",
                         column: x => x.AuthorId,
@@ -130,7 +126,6 @@ namespace Readioo.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ShelfId = table.Column<int>(type: "int", nullable: false),
                     ShelfName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -141,7 +136,7 @@ namespace Readioo.Data.Migrations
                         name: "FK_shelves_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -149,14 +144,14 @@ namespace Readioo.Data.Migrations
                 name: "UserGenres",
                 columns: table => new
                 {
-                    UserGenreId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserGenres", x => x.UserGenreId);
+                    table.PrimaryKey("PK_UserGenres", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserGenres_Genres_GenreId",
                         column: x => x.GenreId,
@@ -167,7 +162,7 @@ namespace Readioo.Data.Migrations
                         name: "FK_UserGenres_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -175,14 +170,14 @@ namespace Readioo.Data.Migrations
                 name: "BookGenres",
                 columns: table => new
                 {
-                    BookGenreId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookId = table.Column<int>(type: "int", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookGenres", x => x.BookGenreId);
+                    table.PrimaryKey("PK_BookGenres", x => x.Id);
                     table.ForeignKey(
                         name: "FK_BookGenres_Books_BookId",
                         column: x => x.BookId,
@@ -201,7 +196,7 @@ namespace Readioo.Data.Migrations
                 name: "Reviews",
                 columns: table => new
                 {
-                    ReviewId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false),
@@ -212,7 +207,7 @@ namespace Readioo.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reviews", x => x.ReviewId);
+                    table.PrimaryKey("PK_Reviews", x => x.Id);
                     table.ForeignKey(
                         name: "FK_Reviews_Books_BookId",
                         column: x => x.BookId,
@@ -223,7 +218,7 @@ namespace Readioo.Data.Migrations
                         name: "FK_Reviews_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -231,14 +226,14 @@ namespace Readioo.Data.Migrations
                 name: "UserBooks",
                 columns: table => new
                 {
-                    UserBookId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     BookId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserBooks", x => x.UserBookId);
+                    table.PrimaryKey("PK_UserBooks", x => x.Id);
                     table.ForeignKey(
                         name: "FK_UserBooks_Books_BookId",
                         column: x => x.BookId,
@@ -249,7 +244,7 @@ namespace Readioo.Data.Migrations
                         name: "FK_UserBooks_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
+                        principalColumn: "UserID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -257,7 +252,7 @@ namespace Readioo.Data.Migrations
                 name: "BookShelves",
                 columns: table => new
                 {
-                    BookShelfId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     BookId = table.Column<int>(type: "int", nullable: false),
                     ShelfId = table.Column<int>(type: "int", nullable: false),
@@ -265,7 +260,7 @@ namespace Readioo.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookShelves", x => x.BookShelfId);
+                    table.PrimaryKey("PK_BookShelves", x => x.Id);
                     table.ForeignKey(
                         name: "FK_BookShelves_Books_BookId",
                         column: x => x.BookId,

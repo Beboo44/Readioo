@@ -8,7 +8,6 @@ namespace Readioo.Models;
 
 public partial class Author:BaseEntity
 {
-    public int AuthorId { get; set; }
 
     public string FullName { get; set; }
 
