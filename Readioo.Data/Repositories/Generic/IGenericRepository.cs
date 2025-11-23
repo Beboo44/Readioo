@@ -15,5 +15,6 @@ namespace Readioo.DataAccess.Repositories.Generics
         TEntity? GetById(int id);
         void Remove(TEntity entity);
         void Update(TEntity entity);
+        Task<TEntity?> GetByIdAsync(int id);
     }
 }

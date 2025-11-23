@@ -46,6 +46,11 @@ namespace Readioo.DataAccess.Repositories.Generics
         {
             _dbContext.Set<TEntity>().Remove(entity);
         }
+        public async Task<TEntity?> GetByIdAsync(int id)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(id);
+        }
+
 
     }
 }

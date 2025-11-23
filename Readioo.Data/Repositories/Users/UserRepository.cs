@@ -53,5 +53,14 @@ namespace Readioo.Data.Repositories.Books
             return _dbContext.Set<User>()
                              .FirstOrDefault(u => u.UserEmail.ToLower() == email.ToLower());
         }
+        public void UpdateUser(User user)
+        {
+            _dbContext.Users.Update(user);
+        }
+        public async Task<User> GetByIdAsync(int id)
+        {
+            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+        }
+
     }
 }

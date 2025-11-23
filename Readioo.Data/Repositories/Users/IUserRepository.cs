@@ -19,6 +19,8 @@ namespace Readioo.Data.Repositories.Books
 
         // 2. Retrieve a user by email (CRUCIAL for login/authentication)
         User? GetByEmail(string email);
+        void UpdateUser(User user);
+
 
     }
 }

@@ -1,0 +1,29 @@
+﻿@model Readioo.ViewModel.UpdateUserVM
+
+<form method="post" enctype="multipart/form-data">
+
+    <input type="hidden" asp-for="UserId" />
+
+    <label>First Name</label>
+    <input class="form-control" asp-for="FirstName" />
+
+    <label>Last Name</label>
+    <input class="form-control" asp-for="LastName" />
+
+    <label>Bio</label>
+    <textarea class="form-control" asp-for="Bio"></textarea>
+
+    <label>City</label>
+    <input class="form-control" asp-for="City" />
+
+    <label>Country</label>
+    <input class="form-control" asp-for="Country" />
+
+    <label>Profile URL</label>
+    <input class="form-control" asp-for="ProfileUrl" />
+
+    <label>Upload Image</label>
+    <input type="file" class="form-control" asp-for="UserImage" />
+
+    <button class="btn btn-success" type="submit">Save</button>
+</form>
