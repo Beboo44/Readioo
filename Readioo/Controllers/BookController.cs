@@ -47,6 +47,7 @@ namespace Readioo.Controllers
             {
                 return View(book);
             }
+
             BookCreatedDto bookCreatedDto = new BookCreatedDto()
             {
                 Title = book.Title,
