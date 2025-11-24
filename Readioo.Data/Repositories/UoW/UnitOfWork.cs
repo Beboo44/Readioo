@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Readioo.Data.Repositories.Shelfs;
+
 
 namespace Demo.DataAccess.Repositories.UoW
 {
@@ -15,7 +17,11 @@ namespace Demo.DataAccess.Repositories.UoW
         private Lazy<IBookRepository> _bookRepository;
         private Lazy<IAuthorRepository> _authorRepository;
         private Lazy<IUserRepository> _userRepository;
+        private Lazy<IShelfRepository> _shelfRepository;
         private readonly AppDbContext _dbContext;
+
+     
+
 
         public UnitOfWork(AppDbContext dbContext)
         {
@@ -23,6 +29,7 @@ namespace Demo.DataAccess.Repositories.UoW
             _bookRepository = new Lazy<IBookRepository>(() => new BookRepository(_dbContext));
             _authorRepository = new Lazy<IAuthorRepository>(() => new AuthorRepository(_dbContext));
             _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_dbContext));
+            _shelfRepository = new Lazy<IShelfRepository>(() => new ShelfRepository(_dbContext));
         }
 
         public IAuthorRepository AuthorRepository => _authorRepository.Value;
@@ -30,6 +37,7 @@ namespace Demo.DataAccess.Repositories.UoW
         public IBookRepository BookRepository => _bookRepository.Value;
         public IUserRepository UserRepository => _userRepository.Value;
 
+        public IShelfRepository ShelfRepository => _shelfRepository.Value;
         public int SaveChanges()
         {
             return _dbContext.SaveChanges();
@@ -47,6 +55,10 @@ namespace Demo.DataAccess.Repositories.UoW
         {
             // This is the essential fix: using the EF Core asynchronous method.
             await _dbContext.SaveChangesAsync();
+        }
+        public async Task<int> CompleteAsync()
+        {
+            return await _dbContext.SaveChangesAsync();
         }
     }
 }

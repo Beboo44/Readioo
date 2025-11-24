@@ -20,9 +20,15 @@
 
             <div><input type="text" placeholder="Search Books" size="40" class="search"></div>
 
-            
 
-            <div class="profile"><a asp-controller="User" asp-action="Show"><img src="~/images/Abanoub.jpg"></a></div>
+
+            <div class="profile">
+                <a asp-controller="User" asp-action="Profile">
+                    <img src="/User/ProfileImage/@User.FindFirst("nameidentifier")?.Value"
+                         style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+                </a>
+            </div>
+
             <div class="empty"></div>
         </nav>
     </header>

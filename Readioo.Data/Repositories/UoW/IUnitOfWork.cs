@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Readioo.Data.Repositories.Shelfs;
 
 namespace Demo.DataAccess.Repositories.UoW
 {
@@ -15,10 +16,11 @@ namespace Demo.DataAccess.Repositories.UoW
         public IBookRepository BookRepository { get; }
         public IUserRepository UserRepository { get; }
         public IAuthorRepository AuthorRepository { get; }
-
+        public IShelfRepository ShelfRepository { get; }
         public int SaveChanges();
         Task CommitAsync();
         void Commit();
+        Task<int> CompleteAsync();
 
     }
 }

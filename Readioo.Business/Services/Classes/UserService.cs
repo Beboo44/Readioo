@@ -1,5 +1,7 @@
-﻿using Demo.DataAccess.Repositories.UoW;
+﻿using BCrypt.Net;
+using Demo.DataAccess.Repositories.UoW;
 using Readioo.Business.DataTransferObjects.User;
+using Readioo.Business.DTO;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Data.Repositories.Books;
 using Readioo.Models;
@@ -8,7 +10,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BCrypt.Net;
 
 namespace Readioo.Business.Services.Classes
 {
@@ -63,7 +64,25 @@ namespace Readioo.Business.Services.Classes
             // 5. Commit Transaction
             // This method makes the database call to save the new user record.
             await _unitOfWork.CommitAsync(); // Use the async version of commit
+            // ================================
+            // ⭐ CREATE DEFAULT SHELVES ⭐
+            // ================================
+            var defaultShelves = new List<Shelf>
+            {
+                new Shelf { ShelfName = "Currently Reading", UserId = newUser.Id },
+                new Shelf { ShelfName = "Books Read",      UserId = newUser.Id },
+                new Shelf { ShelfName = "Want to Read",          UserId = newUser.Id },
+                new Shelf { ShelfName = "Favorites",        UserId = newUser.Id }
+            };
 
+            foreach (var shelf in defaultShelves)
+            {
+                await _unitOfWork.ShelfRepository.AddAsync(shelf);
+            }
+
+            await _unitOfWork.CommitAsync(); // Save shelves
+
+            // ================================
             return true;
         }
 
@@ -93,5 +112,45 @@ namespace Readioo.Business.Services.Classes
             return BCrypt.Net.BCrypt.Verify(password, user.UserPassword);
         }
 
+
+
+        public async Task<bool> UpdateUserProfileAsync(int userId, UpdateUserDTO dto)
+        {
+            var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
+
+            if (user == null)
+                return false;
+
+            user.FirstName = dto.FirstName;
+            user.LastName = dto.LastName;
+            user.Bio = dto.Bio;
+            user.City = dto.City;
+            user.Country = dto.Country;
+            user.ProfileUrl = dto.ProfileUrl;
+
+            if (dto.UserImage != null)
+                user.UserImage = dto.UserImage;
+
+            _unitOfWork.UserRepository.UpdateUser(user);
+            await _unitOfWork.CompleteAsync();
+
+            return true;
+        }
+        public async Task<User> GetUserByIdAsync(int id)
+        {
+            return await _unitOfWork.UserRepository.GetByIdAsync(id);
+        }
+
+        public async Task<List<ShelfDto>> GetUserShelvesAsync(int userId)
+        {
+            var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
+
+            return shelves.Select(s => new ShelfDto
+            {
+                ShelfId = s.Id,
+                ShelfName = s.ShelfName,
+                BooksCount = s.BookShelves.Count()
+            }).ToList();
+        }
     }
 }

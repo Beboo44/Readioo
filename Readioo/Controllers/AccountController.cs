@@ -42,28 +42,25 @@ namespace Readioo.Controllers
                 return View(loginVm);
             }
 
-            // --- CRITICAL FIX HERE ---
-
-            // 1. Use the secure service method to verify email AND password simultaneously.
             bool isValid = await _userService.VerifyUserCredentialsAsync(loginVm.Email, loginVm.Password);
 
             if (isValid)
             {
-                // 2. Only if the credentials are valid, retrieve the user object to sign them in.
                 var user = await _userService.GetUserByEmailAsync(loginVm.Email);
 
                 if (user != null)
                 {
-                    // 3. Sign the user in
                     await SignInUser(user, loginVm.RememberMe);
+
                     return RedirectToAction("Index", "Home");
+
                 }
             }
 
-            // If isValid is false, or user retrieval failed (which shouldn't happen if isValid is true)
             ModelState.AddModelError(string.Empty, "Invalid email or password.");
             return View(loginVm);
         }
+
 
         // ... rest of AccountController code (Logout, Register, SignInUser) is fine ...
 

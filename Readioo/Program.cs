@@ -1,18 +1,13 @@
-using Demo.DataAccess.Repositories.UoW;
-// --- NEW USING DIRECTIVE FOR AUTHENTICATION ---
+﻿using Demo.DataAccess.Repositories.UoW;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Readioo.Business.Services.Classes;
-// ... existing usings ...
 using Readioo.Business.Services.Interfaces;
 using Readioo.Data.Data.Contexts;
+using Readioo.Data.Repositories;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
-
-// ... existing usings ...
-using System;
-// ----------------------------------------------
-
+using Readioo.Data.Repositories.Shelfs;
 
 namespace Readioo
 {
@@ -22,49 +17,39 @@ namespace Readioo
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // MVC
             builder.Services.AddControllersWithViews();
 
-            // Existing DbContext Registration
+            // DbContext
             builder.Services.AddDbContext<AppDbContext>(opt =>
-            opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));
+          
+           
+            // 🔹 Enable SESSION (You forgot this)
+            builder.Services.AddSession();
 
-            // ==========================================================
-            // === NEW: Configure Authentication Service (CRITICAL STEP 1) ===
-            // ==========================================================
-
+            // 🔹 Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    // This sets the URL where unauthenticated users will be redirected
                     options.LoginPath = "/Account/Login";
                     options.LogoutPath = "/Account/Logout";
-                    options.ExpireTimeSpan = TimeSpan.FromHours(24); // Set cookie expiration
+                    options.ExpireTimeSpan = TimeSpan.FromHours(24);
                     options.SlidingExpiration = true;
                 });
 
-            // ==========================================================
-            // === Dependency Injection Registrations (Your Existing Code) ===
-            // ==========================================================
-
-            // 1. Register Repositories
+            // DI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-
-            // 2. Register the Unit of Work
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
-            // 3. Register the Business Services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
-
-            // ==========================================================
+            builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");
@@ -73,18 +58,16 @@ namespace Readioo
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
 
-            // ==========================================================
-            // === NEW: Authentication Middleware (CRITICAL STEP 2) ===
-            // ==========================================================
-            app.UseAuthentication(); // Must come BEFORE UseAuthorization
-            // ==========================================================
+            // 🔹 Authentication BEFORE Authorization
+            app.UseAuthentication();
+            app.UseAuthorization();
 
-            app.UseAuthorization(); // This line was already present, but it must come AFTER UseAuthentication
+            // 🔹 Enable SESSION Middleware
+            app.UseSession();
 
-            // The default route is now set to the Registration page
+            // 🔹 Correct default route
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Account}/{action=Register}/{id?}");
