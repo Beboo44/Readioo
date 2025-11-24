@@ -25,6 +25,12 @@ namespace Readioo.Controllers
                 
             return View(books);
         }
+        public IActionResult UserIndex()
+        {
+            var books = _bookService.GetAllBooks();
+
+            return View(books);
+        }
 
         [HttpGet]
         public IActionResult Create(/*string searchAuthor = ""*/)
