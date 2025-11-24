@@ -67,6 +67,7 @@ namespace Readioo.Business.Services.Classes
             // ================================
             // ⭐ CREATE DEFAULT SHELVES ⭐
             // ================================
+
             var defaultShelves = new List<Shelf>
             {
                 new Shelf { ShelfName = "Currently Reading", UserId = newUser.Id },
@@ -127,6 +128,7 @@ namespace Readioo.Business.Services.Classes
             user.City = dto.City;
             user.Country = dto.Country;
             user.ProfileUrl = dto.ProfileUrl;
+
 
             if (dto.UserImage != null)
                 user.UserImage = dto.UserImage;
