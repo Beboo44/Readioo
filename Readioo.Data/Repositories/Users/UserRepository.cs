@@ -56,10 +56,12 @@ namespace Readioo.Data.Repositories.Books
         public void UpdateUser(User user)
         {
             _dbContext.Users.Update(user);
+
         }
         public async Task<User> GetByIdAsync(int id)
         {
-            return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            return await _dbContext.Users.FindAsync(id);
+            //return await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
         }
 
     }

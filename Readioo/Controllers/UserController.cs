@@ -56,7 +56,7 @@ namespace Readioo.Controllers
 
             return View(vm);
         }
-
+        [HttpGet]
         public async Task<IActionResult> Edit()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -66,7 +66,7 @@ namespace Readioo.Controllers
 
             var vm = new UpdateUserVM
             {
-                UserId = user.Id,
+                //Id = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Bio = user.Bio,
@@ -81,34 +81,55 @@ namespace Readioo.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(UpdateUserVM vm)
         {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return RedirectToAction("Login", "Account");
+
+            int authenticatedUserId = int.Parse(userIdClaim);
+
             if (!ModelState.IsValid)
+            {
                 return View(vm);
-
-            UpdateUserDTO dto = new()
-            {
-                UserId = vm.UserId,
-                FirstName = vm.FirstName,
-                LastName = vm.LastName,
-                Bio = vm.Bio,
-                City = vm.City,
-                Country = vm.Country,
-                ProfileUrl = vm.ProfileUrl
-            };
-
-            if (vm.UserImage != null)
-            {
-                using var ms = new MemoryStream();
-                await vm.UserImage.CopyToAsync(ms);
-                dto.UserImage = ms.ToArray();
             }
 
-            var result = await _userService.UpdateUserProfileAsync(vm.UserId, dto);
+            try
+            {
+                byte[]? imageBytes = null;
 
-            if (result)
-                return RedirectToAction("Profile");
+                if (vm.UserImageFile != null)
+                {
+                    using (var ms = new MemoryStream())
+                    {
+                        await vm.UserImageFile.CopyToAsync(ms);
+                        imageBytes = ms.ToArray();
+                    }
+                }
 
-            ModelState.AddModelError("", "Update Failed");
-            return View(vm);
+                UpdateUserDTO dto = new()
+                {
+                    UserId = authenticatedUserId,
+                    FirstName = vm.FirstName,
+                    LastName = vm.LastName,
+                    Bio = vm.Bio,
+                    City = vm.City,
+                    Country = vm.Country,
+                    ProfileUrl = vm.ProfileUrl,
+                    UserImage = imageBytes
+                };
+
+                var result = await _userService.UpdateUserProfileAsync(dto.UserId, dto);
+
+                if (result)
+                    return RedirectToAction("Profile");
+
+                ModelState.AddModelError("", "Update Failed");
+                return View(vm);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                ModelState.AddModelError("", $"Error: {ex.Message}");
+                return View(vm);
+            }
         }
         public async Task<IActionResult> ProfileImage(int id)
         {
