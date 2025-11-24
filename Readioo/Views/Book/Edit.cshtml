@@ -1,80 +1,99 @@
 ﻿@model Readioo.ViewModel.BookVM
 
 @{
-    ViewData["Title"] = "Create Book";
+    ViewData["Title"] = "Edit Book";
 }
 
-<h1>Create Book</h1>
+<h1>Edit Book</h1>
 <h4>Book</h4>
 <hr />
 
-
-
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Create" enctype="multipart/form-data">
+
+        <form asp-action="Edit" enctype="multipart/form-data">
 
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
+            <!-- Title -->
             <div class="form-group mb-3">
                 <label asp-for="Title" class="control-label"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
+            <!-- ISBN -->
             <div class="form-group mb-3">
                 <label asp-for="Isbn" class="control-label"></label>
                 <input asp-for="Isbn" class="form-control" />
                 <span asp-validation-for="Isbn" class="text-danger"></span>
             </div>
 
+            <!-- Language -->
             <div class="form-group mb-3">
                 <label asp-for="Language" class="control-label"></label>
                 <input asp-for="Language" class="form-control" />
                 <span asp-validation-for="Language" class="text-danger"></span>
             </div>
 
+            <!-- Author -->
             <div class="form-group mb-3">
                 <label asp-for="AuthorId">Author</label>
-                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorList">
+                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId">
                     <option value=""> -- Select an Author -- </option>
                 </select>
                 <span asp-validation-for="AuthorId" class="text-danger"></span>
             </div>
 
+            <!-- Pages Count -->
             <div class="form-group mb-3">
                 <label asp-for="PagesCount" class="control-label"></label>
                 <input asp-for="PagesCount" class="form-control" />
                 <span asp-validation-for="PagesCount" class="text-danger"></span>
             </div>
 
+            <!-- Publish Date -->
             <div class="form-group mb-3">
                 <label asp-for="PublishDate" class="control-label"></label>
                 <input asp-for="PublishDate" class="form-control" type="date" />
                 <span asp-validation-for="PublishDate" class="text-danger"></span>
             </div>
 
+            <!-- Main Characters -->
             <div class="form-group mb-3">
                 <label asp-for="MainCharacters" class="control-label"></label>
                 <input asp-for="MainCharacters" class="form-control" />
                 <span asp-validation-for="MainCharacters" class="text-danger"></span>
             </div>
 
+            <!-- Description -->
             <div class="form-group mb-3">
                 <label asp-for="Description" class="control-label"></label>
                 <textarea asp-for="Description" class="form-control"></textarea>
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
 
+            <!-- Current Image Preview -->
+            @if (!string.IsNullOrEmpty(Model.BookImg))
+            {
+                <div class="form-group mb-3">
+                    <label>Current Book Image</label><br />
+                    <img src="~/@Model.BookImg" alt="Book Image" class="img-thumbnail" width="150" />
+                </div>
+            }
+
+            <!-- Upload New Image -->
             <div class="form-group mb-3">
                 <label asp-for="BookImage" class="control-label"></label>
                 <input asp-for="BookImage" type="file" class="form-control" />
                 <span asp-validation-for="BookImage" class="text-danger"></span>
             </div>
 
+            <!-- Submit -->
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
             </div>
+
         </form>
     </div>
 </div>

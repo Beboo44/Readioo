@@ -21,30 +21,34 @@ namespace Readioo.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var books = _bookService.GetAllBooks();
+                
+            return View(books);
         }
 
         [HttpGet]
-        public IActionResult Create(string searchAuthor = "")
+        public IActionResult Create(/*string searchAuthor = ""*/)
         {
             var authors = _authorService.getAllAuthors();
 
-            if (!string.IsNullOrEmpty(searchAuthor))
-            {
-                authors = authors.Where(a => a.FullName.Contains(searchAuthor, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
+            //if (!string.IsNullOrEmpty(searchAuthor))
+            //{
+            //    authors = authors.Where(a => a.FullName.Contains(searchAuthor, StringComparison.OrdinalIgnoreCase)).ToList();
+            //}
 
-            // Pass authors to ViewBag for the dropdown
             ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
 
             return View();
         }
 
         [HttpPost]
-        public IActionResult Create(BookVM book)
+        public async Task<IActionResult> Create(BookVM book)
         {
+            Console.WriteLine("erroooooooooooor");
             if (!ModelState.IsValid)
             {
+                var authors = _authorService.getAllAuthors();
+                ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
                 return View(book);
             }
 
@@ -55,19 +59,22 @@ namespace Readioo.Controllers
                 Language = book.Language,
                 AuthorId = book.AuthorId,
                 PagesCount = book.PagesCount,
+                Description = book.Description,
                 MainCharacters = book.MainCharacters,
                 PublishDate = book.PublishDate,
             };
             if (book.BookImage != null)
             {
-                string SaveFolder = "wwwroot/images/books/";
+                string SaveFolder = "images/books/";
                 SaveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
-                book.BookImage.CopyTo(new FileStream(SaveFolder, FileMode.Create));
+
+                string SavePath = Path.Combine("wwwroot", SaveFolder);
+                book.BookImage.CopyTo(new FileStream(SavePath, FileMode.Create));
 
                 bookCreatedDto.BookImage = SaveFolder; 
             }
 
-            _bookService.CreateBook(bookCreatedDto);
+            await _bookService.CreateBook(bookCreatedDto);
             return RedirectToAction(nameof(Index));
         }
 
@@ -81,5 +88,38 @@ namespace Readioo.Controllers
             }
             return View(book);
         }
+
+        [HttpGet]
+
+        public IActionResult Edit(int id)
+        {
+            var book = _bookService.bookById(id);
+            if (book is null)
+                return NotFound();
+
+
+            var bookVM = new BookVM
+            {
+                Title = book.Title,
+                Isbn = book.Isbn,
+                Language = book.Language,
+                AuthorId = book.AuthorId,
+                PagesCount = book.PagesCount,
+                PublishDate = book.PublishDate,
+                MainCharacters = book.MainCharacters,
+                Description = book.Description,
+                BookImg = book.BookImage
+            };
+            var authors = _authorService.getAllAuthors();
+            ViewBag.AuthorId = new SelectList(authors, "AuthorId", "FullName");
+
+            return View(bookVM);
+        }
+
+        //[HttpPost]
+        //public IActionResult Edit()
+        //{
+        //    return View();
+        //}
     }
 }

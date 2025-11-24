@@ -1,95 +1,59 @@
-﻿@model IEnumerable<Readioo.Models.Book>
+﻿@using Readioo.Business.DataTransferObjects.Book
+@model IEnumerable<BookDto>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Books";
 }
 
-<h1>Index</h1>
+<h1>Books</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" class="btn btn-primary">Create New Book</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Isbn)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Language)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AuthorId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PagesCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.MainCharacters)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BookImage)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th></th>
+            <th>Cover</th>
+            <th>@Html.DisplayNameFor(model => model.First().Title)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Isbn)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Language)</th>
+            <th>Author</th>
+            <th>@Html.DisplayNameFor(model => model.First().PagesCount)</th>
+            <th>@Html.DisplayNameFor(model => model.First().Rate)</th>
+            <th>Genres</th>
+            <th>Actions</th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Isbn)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Language)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AuthorId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PagesCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.MainCharacters)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookImage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Id)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
+        @foreach (var book in Model)
+        {
+            <tr>
+                <td>
+                    @if (!string.IsNullOrEmpty(book.BookImage))
+                    {
+                        <img src="~/@book.BookImage" alt="Book Image" style="height:50px;" />
+                    }
+                </td>
+                <td>@book.Title</td>
+                <td>@book.Isbn</td>
+                <td>@book.Language</td>
+                <td><a asp-controller="Author" asp-action="Index"> @book.AuthorName </a></td>
+                <td>@book.PagesCount</td>
+                <td>@book.Rate</td>
+                <td>
+                    @if (book.BookGenres.Any())
+                    {
+                        @string.Join(", ", book.BookGenres)
+                    }
+                </td>
+               
+                <td>
+                    <a asp-action="Edit" asp-route-id="@book.BookId" class="btn btn-sm btn-warning">Edit</a>
+                    <a asp-action="Details" asp-route-id="@book.BookId" class="btn btn-sm btn-info">Details</a>
+                    <a asp-action="Delete" asp-route-id="@book.BookId" class="btn btn-sm btn-danger">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

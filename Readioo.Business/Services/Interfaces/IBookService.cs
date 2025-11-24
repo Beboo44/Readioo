@@ -1,4 +1,5 @@
 ﻿using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,10 @@ namespace Readioo.Business.Services.Interfaces
 {
     public interface IBookService
     {
-        public BookDetailsDto? bookById(int id);
+        public BookDto? bookById(int id);
         public Task CreateBook(BookCreatedDto bookCreatedDto);
+
+        public IEnumerable<BookDto> GetAllBooks();
     }
 
 }

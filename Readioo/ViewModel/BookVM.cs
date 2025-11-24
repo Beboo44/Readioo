@@ -24,5 +24,7 @@ namespace Readioo.ViewModel
         public string Description { get; set; } = null!;
 
         public IFormFile? BookImage { get; set; }
+
+        public string? BookImg { get; set; }
     }
 }

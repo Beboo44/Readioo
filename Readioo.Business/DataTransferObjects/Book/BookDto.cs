@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Readioo.Business.DataTransferObjects.Book
 {
-    public class BookDetailsDto
+    public class BookDto
     {
         public int BookId { get; set; }
 
@@ -32,8 +32,9 @@ namespace Readioo.Business.DataTransferObjects.Book
         public string Description { get; set; } = null!;
 
         public string? BookImage { get; set; }
-
+        public string AuthorName { get; set; }
         public virtual AuthorDto Author { get; set; } = null!;
+
 
         public virtual ICollection<String> BookGenres { get; set; } = new List<String>();
         public virtual ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();

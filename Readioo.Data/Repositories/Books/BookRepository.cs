@@ -1,4 +1,5 @@
-﻿using Readioo.Data.Data.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Readioo.Data.Data.Contexts;
 using Readioo.DataAccess.Repositories.Generics;
 using Readioo.Models;
 using System;
@@ -19,7 +20,7 @@ namespace Readioo.Data.Repositories.Books
         }
         public IEnumerable<Book> GetAll()
         {
-            return _dbContext.Set<Book>().ToList();
+            return _dbContext.Set<Book>().Include(b => b.Author).ToList(); 
         }
 
         public IEnumerable<Book>GetAll(string name)

@@ -1,4 +1,5 @@
 ﻿using Demo.DataAccess.Repositories.UoW;
+using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.DataTransferObjects.Review;
 using Readioo.Business.Services.Interfaces;
@@ -18,14 +19,14 @@ namespace Readioo.Business.Services.Classes
         {
             _unitOfWork = unitOfWork;
         }
-        public BookDetailsDto? bookById(int id)
+        public BookDto? bookById(int id)
         {
             var book = _unitOfWork.BookRepository.GetById(id);
             if (book == null)
             {
                 return null;
             }
-            var bookDto = new BookDetailsDto()
+            var bookDto = new BookDto()
             {
                 BookId = book.Id,
                 Title = book.Title,
@@ -60,7 +61,7 @@ namespace Readioo.Business.Services.Classes
         }
         public async Task CreateBook(BookCreatedDto bookCreatedDto)
         {
-            Book newBook = new Book
+            Book newBook = new Book()
             {
                 Title = bookCreatedDto.Title,
                 Isbn = bookCreatedDto.Isbn,
@@ -70,7 +71,7 @@ namespace Readioo.Business.Services.Classes
                 PublishDate = bookCreatedDto.PublishDate,
                 MainCharacters = bookCreatedDto.MainCharacters,
                 Description = bookCreatedDto.Description,
-                Rate = 0m // default rate
+                Rate = 0m ,// default rate
             };
 
             if (bookCreatedDto.BookImage != null)
@@ -80,5 +81,47 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork.BookRepository.Add(newBook);
             await _unitOfWork.CommitAsync();
         }
+
+        public IEnumerable<BookDto> GetAllBooks()
+        {
+            var books = _unitOfWork.BookRepository.GetAll()
+                .Select(a => new BookDto
+                 {
+                     BookId = a.Id,
+                     Title = a.Title,
+                     Isbn = a.Isbn,
+                     Language = a.Language,
+                     AuthorId = a.AuthorId,
+                     PagesCount = a.PagesCount,
+                     PublishDate = a.PublishDate,
+                     MainCharacters = a.MainCharacters,
+                     Rate = a.Rate,
+                     Description = a.Description,
+                     BookImage = a.BookImage,
+
+                     AuthorName = a.Author.FullName,
+
+                     BookGenres = a.BookGenres
+                    .Select(g => g.Genre.GenreName)
+                    .ToList(),
+
+                     Reviews = a.Reviews
+                    .Select(r => new ReviewDto
+                    {
+                        ReviewId = r.Id,
+                        UserId = r.UserId,
+                        Username = r.User.FirstName + " " + r.User.LastName,
+                        Rating = r.Rating,
+                        ReviewText = r.ReviewText,
+                        CreatedAt = r.CreatedAt
+
+                    })
+                    .ToList()
+                 });
+
+            return books;
+        }
+
+         
     }
 }
