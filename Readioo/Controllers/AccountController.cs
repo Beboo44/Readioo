@@ -67,14 +67,30 @@ namespace Readioo.Controllers
         // ==========================================================
         // === LOGOUT ACTION (NEW) ==================================
         // ==========================================================
+        // Show confirmation page
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            return View();
+        }
 
+        // Perform actual logout
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> LogoutConfirmed()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            TempData["SuccessMessage"] = "You have been successfully logged out.";
+            return RedirectToAction("Login", "Account");
+        }
+        /*
         [HttpGet]
         public async Task<IActionResult> Logout()
         {
             // Deletes the authentication cookie
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Login", "Account");
-        }
+        }*/
 
 
         // ==========================================================

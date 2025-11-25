@@ -9,6 +9,7 @@ using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
 using Readioo.Data.Repositories.Shelfs;
 
+
 namespace Readioo
 {
     public class Program
@@ -19,7 +20,7 @@ namespace Readioo
 
             // MVC
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddHttpContextAccessor();
             // DbContext
             builder.Services.AddDbContext<AppDbContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));

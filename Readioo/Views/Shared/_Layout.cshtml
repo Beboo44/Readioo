@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,7 +10,7 @@
     <link rel="stylesheet" href="~/Readioo.styles.css" asp-append-version="true" />
 </head>
 <body>
-     <header>
+    <header>
         <nav class="nav">
             <div class="empty"></div>
             <div><a href="https://www.goodreads.com/"> <img src="~/images/Logo.jpg" id="logo"> </a></div>
@@ -22,12 +23,30 @@
 
 
 
-            <div class="profile">
-                <a asp-controller="User" asp-action="Profile">
-                    <img src="/User/ProfileImage/@User.FindFirst("nameidentifier")?.Value"
-                         style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
+            <div class="profile dropdown">
+                <a href="#" class="profile-toggle dropdown-toggle"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false">
+                    <img src="/User/ProfileImage/@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value"
+                         style="width:40px; height:40px; border-radius:50%; object-fit:cover;"
+                         onerror="this.src='/images/default-profile.png'">
                 </a>
+
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li>
+                        <a class="dropdown-item" asp-controller="User" asp-action="Profile">
+                            My Profile
+                        </a>
+                    </li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                            Logout
+                        </a>
+                    </li>
+                </ul>
             </div>
+
 
             <div class="empty"></div>
         </nav>
@@ -91,5 +110,6 @@
     <script src="~/js/main.js"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
