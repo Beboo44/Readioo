@@ -1,0 +1,248 @@
+﻿@model Readioo.ViewModel.AuthorVM
+
+@{
+    ViewData["Title"] = "Edit Author";
+    var authorId = ViewBag.AuthorId;
+    var existingImagePath = ViewBag.ExistingImagePath as string;
+
+    // Resolve existing image for preview
+    string ResolveImagePath(string imagePath)
+    {
+        if (string.IsNullOrEmpty(imagePath)) return null;
+        if (imagePath.StartsWith("http://", StringComparison.OrdinalIgnoreCase) ||
+            imagePath.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return imagePath;
+        if (imagePath.StartsWith("~")) return Url.Content(imagePath);
+        if (imagePath.StartsWith("/")) return Url.Content("~" + imagePath);
+        // Handle wwwroot paths
+        if (imagePath.StartsWith("wwwroot/"))
+        {
+            return Url.Content("~/" + imagePath.Substring(8));
+        }
+        return Url.Content("~/" + imagePath);
+    }
+
+    var currentImageUrl = ResolveImagePath(existingImagePath);
+    if (string.IsNullOrEmpty(currentImageUrl))
+    {
+        currentImageUrl = "https://ui-avatars.com/api/?name=" + Uri.EscapeDataString(Model.FullName ?? "Author") + "&size=160&background=6c757d&color=fff";
+    }
+}
+
+<style>
+    .edit-author-container {
+        max-width: 920px;
+        margin: 2rem auto;
+        padding: 1rem;
+        padding-top: 100px;
+    }
+
+    .preview-avatar {
+        width: 160px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        display: block;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control, .form-select {
+        border-radius: 0.375rem;
+        border: 1px solid #ced4da;
+        padding: 0.5rem 0.75rem;
+    }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .btn-group-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .image-upload-section {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .custom-file-input {
+        cursor: pointer;
+    }
+
+    @@media (max-width: 767.98px) {
+        .edit-author-container
+
+    {
+        margin: 1rem auto;
+    }
+
+    .preview-avatar {
+        margin: 0 auto 1rem;
+        width: 120px;
+        height: 120px;
+    }
+
+    }
+</style>
+
+<div class="container edit-author-container">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Authors</a></li>
+            <li class="breadcrumb-item"><a asp-action="Details" asp-route-id="@authorId">@Model.FullName</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="h3 mb-4 text-primary">
+                <i class="bi bi-pencil-square"></i> Edit Author
+            </h1>
+
+            <form asp-action="Edit" asp-route-id="@authorId" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-4">
+                    <!-- Left Column: Image Preview & Upload -->
+                    <div class="col-md-4">
+                        <div class="text-center text-md-start">
+                            <label class="form-label">Author Photo</label>
+                            <img id="imagePreview"
+                                 src="@currentImageUrl"
+                                 alt="Author photo preview"
+                                 class="preview-avatar"
+                                 onerror="this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(Model.FullName ?? "Author")&size=160&background=6c757d&color=fff';" />
+
+                            <div class="image-upload-section">
+                                <label asp-for="AuthorImage" class="form-label">Upload New Photo</label>
+                                <input asp-for="AuthorImage"
+                                       class="form-control custom-file-input"
+                                       type="file"
+                                       accept="image/*"
+                                       onchange="previewImage(event)" />
+                                <span asp-validation-for="AuthorImage" class="text-danger"></span>
+                                <small class="form-text text-muted d-block mt-2">
+                                    Leave empty to keep current photo
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Form Fields -->
+                    <div class="col-md-8">
+                        <h5 class="mb-3">Author Information</h5>
+
+                        <div class="form-group">
+                            <label asp-for="FullName" class="form-label"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Enter full name" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Bio" class="form-label"></label>
+                            <textarea asp-for="Bio" class="form-control" rows="5" placeholder="Enter biography"></textarea>
+                            <span asp-validation-for="Bio" class="text-danger"></span>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BirthCountry" class="form-label"></label>
+                                    <input asp-for="BirthCountry" class="form-control" placeholder="Enter country" />
+                                    <span asp-validation-for="BirthCountry" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BirthCity" class="form-label"></label>
+                                    <input asp-for="BirthCity" class="form-control" placeholder="Enter city" />
+                                    <span asp-validation-for="BirthCity" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="BirthDate" class="form-label"></label>
+                                    <input asp-for="BirthDate" class="form-control" type="date" />
+                                    <span asp-validation-for="BirthDate" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label asp-for="DeathDate" class="form-label"></label>
+                                    <input asp-for="DeathDate" class="form-control" type="date" />
+                                    <span asp-validation-for="DeathDate" class="text-danger"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="btn-group-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                            <a asp-action="Details" asp-route-id="@authorId" class="btn btn-secondary">
+                                <i class="bi bi-x-circle"></i> Cancel
+                            </a>
+                            <a asp-action="Index" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to List
+                            </a>
+
+                            @* Link to GET Delete (confirmation) in AuthorController *@
+                            <a asp-action="Delete" asp-route-id="@authorId" class="btn btn-outline-danger ms-auto"
+                               title="Delete author">
+                                <i class="bi bi-trash"></i> Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
