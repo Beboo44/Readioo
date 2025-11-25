@@ -1,0 +1,158 @@
+﻿@* @model IEnumerable<Readioo.Business.DataTransferObjects.Book.BookDto>
+@using System.Security.Claims
+@inject Readioo.Business.Services.Interfaces.IUserService UserService
+
+@{
+    ViewData["Title"] = "My Books";
+
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var currentUser = userId != null ? await UserService.GetUserByIdAsync(int.Parse(userId)) : null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Books - Readioo</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/globalandbook.css">
+    <link rel="stylesheet" href="~/css/my_books.css">
+</head>
+<body>
+    <!-- Main Wrapper -->
+    <div class="wrap" id="app">
+        <header class="page-header">
+            <div class="page-meta">
+                <div class="page-title">My Books</div>
+                <div class="page-subtitle">Track your reading journey</div>
+            </div>
+            <div class="stats-row">
+                <div class="stat"><strong>@Model.Count()</strong> Books Added</div>
+                <!-- Add more stats as needed -->
+            </div>
+        </header>
+
+        <div class="main-layout">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="card">
+                    <h3>My Bookshelves</h3>
+                    <ul class="shelf-list" id="shelfList">
+                        <li class="active" data-shelf="all">All Books</li>
+                        <li data-shelf="read">Read</li>
+                        <li data-shelf="currently-reading">Currently Reading</li>
+                        <li data-shelf="to-read">Want to Read</li>
+                        <li data-shelf="favorites">Favorites</li>
+                    </ul>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <section class="main-content">
+                <h2 class="section-title" id="sectionTitle">All Books</h2>
+
+                <div class="books-table-container">
+                    <table class="books-table">
+                        <thead>
+                            <tr>
+                                <th>Book</th>
+                                <th>Author</th>
+                                <th>My Rating</th>
+                                <th>Date Added</th>
+                                <th>Bookshelf</th>
+                            </tr>
+                        </thead>
+                        <tbody id="booksTableBody">
+                            @foreach (var book in Model)
+                            {
+                                <tr data-shelves="@string.Join(",", book.BookShelves ?? new List<string>())">
+                                    <td>
+                                        <div class="book-title-cell">
+                                            <div class="table-book-cover">
+                                                <img src="~/@book.BookImage" alt="@book.Title" />
+                                            </div>
+                                            <div class="book-title-info">
+                                                <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="book-link">@book.Title</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@book.AuthorName</td>
+                                    <td>
+                                        <div class="rating-cell">
+                                            @for (int i = 0; i < 5; i++)
+                                            {
+                                                if (i < book.Rate)
+                                                {
+                                                    <i class="fas fa-star" style="color:#f6b438"></i>
+                                                }
+                                                else
+                                                {
+                                                    <i class="far fa-star" style="color:#e0e0e0"></i>
+                                                }
+                                            }
+                                        </div>
+                                    </td>
+                                    <td>@book.PublishDate.ToShortDateString()</td>
+                                    <td>
+                                        @if (book.BookShelves != null)
+                                        {
+                                            foreach (var shelf in book.BookShelves)
+                                            {
+                                                <span class="shelf-tag">@shelf</span>
+                                            }
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Footer (same as your HTML) -->
+    <footer class="gr-footer">
+        <!-- ... copy your footer HTML here ... -->
+    </footer>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/my_books.js"></script>
+
+    <script>
+        // --- Shelf filtering client-side ---
+        document.addEventListener("DOMContentLoaded", () => {
+            const shelfItems = document.querySelectorAll(".shelf-list li");
+            const rows = document.querySelectorAll("#booksTableBody tr");
+            const sectionTitle = document.getElementById("sectionTitle");
+
+            shelfItems.forEach(li => {
+                li.addEventListener("click", () => {
+                    const shelf = li.dataset.shelf;
+                    shelfItems.forEach(x => x.classList.remove("active"));
+                    li.classList.add("active");
+
+                    rows.forEach(row => {
+                        const shelves = row.dataset.shelves.split(",");
+                        if (shelf === "all" || shelves.Contains(shelf)) {
+                            row.style.display = "";
+                        } else {
+                            row.style.display = "none";
+                        }
+                    });
+
+                    sectionTitle.textContent = shelf === "all" ? "All Books" :
+                        shelf === "read" ? "Read Books" :
+                        shelf === "currently-reading" ? "Currently Reading" :
+                        shelf === "to-read" ? "Want to Read" :
+                        "Favorite Books";
+                });
+            });
+        });
+    </script>
+</body>
+</html> *@

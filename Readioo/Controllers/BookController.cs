@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using Readioo.ViewModel;
 using System.Drawing;
+using System.Security.Claims;
 
 namespace Readioo.Controllers
 {
@@ -13,10 +16,12 @@ namespace Readioo.Controllers
 
         private readonly IBookService _bookService;
         private readonly IAuthorService _authorService;
-        public BookController(IBookService bookService, IAuthorService authorService)
+        private readonly IUserService _userService;
+        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService)
         {
             _bookService = bookService;
             _authorService = authorService;
+            _userService = userService;
         }
 
         public IActionResult Index()
@@ -158,17 +163,7 @@ namespace Readioo.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        //[HttpGet]
-        //public IActionResult Delete(int? id)
-        //{
-
-        //    var book = _bookService.bookById(id.Value);
-        //    if (book == null)
-        //        return NotFound();
-
-        //    return View(book);
-        //}
-
+       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
@@ -181,6 +176,22 @@ namespace Readioo.Controllers
             await _bookService.DeleteBook(id.Value);
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task <IActionResult> MyBooks()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+            {
+                return RedirectToAction("Login","Account");
+            }
+
+            var user = await _userService.GetUserByIdAsync(int.Parse(userId));
+
+            var books = _bookService.GetAllBooks();
+
+            return View(books); 
         }
     }
 }
