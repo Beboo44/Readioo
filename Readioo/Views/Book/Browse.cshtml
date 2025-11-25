@@ -1,0 +1,103 @@
+﻿@using Readioo.Business.DataTransferObjects.Book
+@model IEnumerable<BookDto>
+
+@{
+    ViewData["Title"] = "Browse Books";
+}
+
+<!-- Page Container -->
+<div class="wrap" id="browse-page">
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="page-meta">
+            <div class="page-title">Browse Books</div>
+            <div class="page-subtitle">Discover your next great read</div>
+        </div>
+    </header>
+
+    <div class="browse-layout">
+
+        <!-- Sidebar Filters -->
+        <aside class="browse-sidebar">
+            <div class="filter-card">
+                <h4>Filter by Genre</h4>
+                <ul class="filter-list" id="genreFilter">
+                    <li data-genre="all" class="active">All</li>
+
+                    @* Dynamically list genres from books if needed *@
+                    <li data-genre="fiction">Fiction</li>
+                    <li data-genre="fantasy">Fantasy</li>
+                    <li data-genre="classics">Classics</li>
+                    <li data-genre="science-fiction">Science Fiction</li>
+                    <li data-genre="romance">Romance</li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Book Grid -->
+        <section class="browse-content">
+            <div class="book-grid" id="bookGrid">
+                @foreach (var item in Model)
+                {
+                    <div class="book-card" data-genre="@string.Join(" ", item.BookGenres)">
+                        <div class="book-cover">
+                            <img src="~/@item.BookImage" alt="@item.Title" />
+                        </div>
+
+                        <div class="book-info">
+                            <div class="book-title">
+                                <a asp-controller="Book" asp-action="Details" asp-route-id="@item.BookId" class="book-link">
+                                    @item.Title
+                                </a>
+                            </div>
+
+                            <div class="book-author">@item.AuthorName</div>
+
+                            <!-- Rating -->
+                            <div class="book-rating">
+                                @for (int i = 0; i < 5; i++)
+                                {
+                                    if (i < item.Rate)
+                                    {
+                                        <svg viewBox="0 0 20 20" fill="#f6b438" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286
+                                                3.951a1 1 0 00.95.69h4.162c.969 0 1.371
+                                                1.24.588 1.81l-3.37 2.448a1 1 0
+                                                00-.364 1.118l1.286 3.951c.3.921-.755
+                                                1.688-1.538 1.118l-3.37-2.448a1
+                                                1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.197-1.538-1.118l1.286-3.951a1
+                                                1 0 00-.364-1.118L2.063 9.378c-.783-.57-.38-1.81.588-1.81h4.162a1
+                                                1 0 00.95-.69l1.286-3.951z" />
+                                        </svg>
+                                    }
+                                    else
+                                    {
+                                        <svg viewBox="0 0 20 20" fill="#e0e0e0" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286
+                                                3.951a1 1 0 00.95.69h4.162c.969 0 1.371
+                                                1.24.588 1.81l-3.37 2.448a1 1 0
+                                                00-.364 1.118l1.286 3.951c.3.921-.755
+                                                1.688-1.538 1.118l-3.37-2.448a1
+                                                1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.197-1.538-1.118l1.286-3.951a1
+                                                1 0 00-.364-1.118L2.063 9.378c-.783-.57-.38-1.81.588-1.81h4.162a1
+                                                1 0 00.95-.69l1.286-3.951z" />
+                                        </svg>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </section>
+
+    </div>
+</div>
+
+<link rel="stylesheet" href="~/css/globalandbook.css" />
+<link rel="stylesheet" href="~/css/browse.css" />
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="~/js/browse.js"></script>

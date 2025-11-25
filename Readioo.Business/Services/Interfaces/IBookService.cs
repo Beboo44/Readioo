@@ -13,6 +13,10 @@ namespace Readioo.Business.Services.Interfaces
         public Task CreateBook(BookCreatedDto bookCreatedDto);
 
         public IEnumerable<BookDto> GetAllBooks();
+
+        public Task UpdateBook(BookDto bookDto);
+
+        public Task DeleteBook(int id);
     }
 
 }

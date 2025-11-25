@@ -25,7 +25,7 @@ namespace Readioo.Controllers
                 
             return View(books);
         }
-        public IActionResult UserIndex()
+        public IActionResult Browse()
         {
             var books = _bookService.GetAllBooks();
 
@@ -122,10 +122,65 @@ namespace Readioo.Controllers
             return View(bookVM);
         }
 
-        //[HttpPost]
-        //public IActionResult Edit()
+        [HttpPost]
+        public async Task<IActionResult> Edit([FromRoute] int? id,BookVM book)
+        {
+            if (id is null)
+                return BadRequest();  //error 404
+
+            if (ModelState is null)
+                return NotFound();
+
+            var bookDto = new BookDto()
+            {
+                BookId = id.Value,
+                Title = book.Title,
+                Isbn = book.Isbn,
+                MainCharacters = book.MainCharacters,
+                Language = book.Language,
+                AuthorId = book.AuthorId,
+                PagesCount = book.PagesCount,
+                PublishDate = book.PublishDate,
+                
+            };
+            if(book.BookImage != null)
+            {
+                string SaveFolder = "images/books/";
+                SaveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
+
+                string SavePath = Path.Combine("wwwroot",SaveFolder);
+                book.BookImage.CopyTo(new FileStream(SavePath, FileMode.Create));
+
+                bookDto.BookImage = SaveFolder;
+            }
+            await _bookService.UpdateBook(bookDto);
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        //[HttpGet]
+        //public IActionResult Delete(int? id)
         //{
-        //    return View();
+
+        //    var book = _bookService.bookById(id.Value);
+        //    if (book == null)
+        //        return NotFound();
+
+        //    return View(book);
         //}
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(int? id)
+        {
+
+            if (id is null)
+                return BadRequest();
+
+
+            await _bookService.DeleteBook(id.Value);
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

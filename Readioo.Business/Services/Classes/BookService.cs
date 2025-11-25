@@ -121,7 +121,43 @@ namespace Readioo.Business.Services.Classes
 
             return books;
         }
+        public async Task UpdateBook(BookDto bookDto)
+        {
+            var book = await _unitOfWork.BookRepository.GetByIdAsync(bookDto.BookId);
 
-         
+            if (book == null)
+                throw new Exception("Book Not Found");
+
+            book.Title = bookDto.Title;
+            book.Isbn = bookDto.Isbn;
+            book.MainCharacters = bookDto.MainCharacters;
+            book.Language = bookDto.Language;
+            book.AuthorId = bookDto.AuthorId;
+            book.PagesCount = bookDto.PagesCount;
+            book.PublishDate = bookDto.PublishDate;
+            if(bookDto.BookImage != null)
+            {
+                book.BookImage = bookDto.BookImage;
+            }
+
+             _unitOfWork.BookRepository.Update(book);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task DeleteBook(int id)
+        {
+            var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
+
+            if(book is null)
+                throw new Exception("Book Not Found");
+            
+
+            _unitOfWork.BookRepository.Remove(book);
+
+            await _unitOfWork.CommitAsync();
+        }
+
+
+
     }
 }
