@@ -22,7 +22,7 @@ namespace Readioo.Business.Services.Classes
 
         public BookDto? bookById(int id)
         {
-            var book = _unitOfWork.BookRepository.GetById(id);
+            var book = _unitOfWork.BookRepository.GetBookWithDetails(id);
             if (book == null) return null;
 
             return new BookDto
@@ -43,7 +43,20 @@ namespace Readioo.Business.Services.Classes
                 // Map DB Entities -> String List for viewing
                 BookGenres = book.BookGenres
                     .Select(g => g.Genre.GenreName)
-                    .ToList()
+                    .ToList(),
+                    // ⭐ Add Reviews to DTO
+                Reviews = book.Reviews.Select(r => new ReviewDto
+                {
+                    ReviewId = r.Id,
+                    UserId = r.UserId,
+                    BookId = r.BookId,
+                    Username = r.User != null
+                        ? r.User.FirstName + " " + r.User.LastName
+                        : "Unknown",
+                    Rating = r.Rating,
+                    ReviewText = r.ReviewText,
+                    CreatedAt = r.CreatedAt
+                }).ToList()
             };
         }
 
@@ -153,5 +166,6 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork.BookRepository.Remove(book);
             await _unitOfWork.CommitAsync();
         }
+
     }
 }

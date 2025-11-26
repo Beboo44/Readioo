@@ -27,22 +27,48 @@ function renderAvgRating() {
 
 // --- Handle User Rating ---
 function renderUserRating() {
-  const container = document.getElementById("userStars");
-  let currentRating = 0;
+    // 1. Target the visual stars in the header section
+    const visualContainer = document.getElementById("userStars");
 
-  function updateStars() {
-    container.innerHTML = Array.from({ length: 5 }, (_, i) =>
-      makeStarSVG(i < currentRating)
-    ).join('');
-    container.querySelectorAll("svg").forEach((svg, idx) => {
-      svg.addEventListener("click", () => {
-        currentRating = idx + 1;
-        updateStars();
-      });
+    // 2. Target the radio buttons in the review form
+    const formRatingInputs = document.querySelectorAll('.gr-rating-input input[name="Rating"]');
+
+    let currentRating = 0;
+
+    function updateVisualStars(rating) {
+        visualContainer.innerHTML = Array.from({ length: 5 }, (_, i) =>
+            makeStarSVG(i < rating)
+        ).join('');
+
+        // Add click handlers to the new visual stars
+        visualContainer.querySelectorAll("svg").forEach((svg, idx) => {
+            svg.addEventListener("click", () => {
+                currentRating = idx + 1;
+                // Update both visual stars and form inputs
+                updateVisualStars(currentRating);
+                updateFormRating(currentRating);
+            });
+        });
+    }
+
+    function updateFormRating(rating) {
+        // Check the radio button in the actual form that matches the rating
+        formRatingInputs.forEach(input => {
+            input.checked = (parseInt(input.value) === rating);
+        });
+    }
+
+    // Initialize stars (optional: can be loaded from model if user has rated before)
+    updateVisualStars(currentRating);
+
+    // Optional: Add event listener to the form's radio buttons 
+    // to update the visual stars if the user rates using the form directly
+    formRatingInputs.forEach(input => {
+        input.addEventListener('change', (e) => {
+            currentRating = parseInt(e.target.value);
+            updateVisualStars(currentRating);
+        });
     });
-  }
-
-  updateStars();
 }
 
 // --- Toggle Description ---
@@ -62,32 +88,10 @@ function setupDescriptionToggle() {
   });
 }
 
-// --- Load Mock Reviews ---
-function loadReviews() {
-  const reviews = [
-    { user: "Sarah", rating: 5, text: "A haunting masterpiece that explores the consequences of creation and rejection." },
-    { user: "Ahmed", rating: 4, text: "Beautifully written and deeply philosophical. A timeless classic." },
-    { user: "Mina", rating: 3, text: "Interesting ideas, but the pacing felt slow in the middle chapters." }
-  ];
 
-  const container = document.getElementById("reviewsContainer");
-  reviews.forEach(r => {
-    const div = document.createElement("div");
-    div.className = "review-item";
-    const stars = Array.from({ length: 5 }, (_, i) => makeStarSVG(i < r.rating)).join('');
-    div.innerHTML = `
-      <div class="review-user">${r.user}</div>
-      <div class="review-rating">${stars}</div>
-      <p>${r.text}</p>
-    `;
-    container.appendChild(div);
-  });
-}
-
-// --- Init ---
 document.addEventListener("DOMContentLoaded", () => {
   renderAvgRating();
   renderUserRating();
   setupDescriptionToggle();
-  loadReviews();
+  
 });
