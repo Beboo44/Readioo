@@ -163,5 +163,22 @@ namespace Readioo.Business.Services.Classes
             await _unitOfWork.CommitAsync();
         }
 
+        public IEnumerable<BookDto> GetRecentlyAddedBooks(int count)
+        {
+            // Assuming _unitOfWork is already injected
+            return _unitOfWork.BookRepository.GetAll()
+                .OrderByDescending(b => b.Id) // Or use a CreatedDate column if you have one
+                .Take(count)
+                .Select(b => new BookDto
+                {
+                    BookId = b.Id,
+                    Title = b.Title,
+                    BookImage = b.BookImage,
+                    Rate = b.Rate,
+                    AuthorName = b.Author.FullName
+                })
+                .ToList();
+        }
+
     }
 }

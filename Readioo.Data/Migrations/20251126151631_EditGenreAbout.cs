@@ -2,24 +2,24 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace Readioo.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class EditGenreAbout : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            // =========================================================================
-            // STEP 1: SAFE TABLE RECONSTRUCTION
-            // We cannot alter the Identity column, so we recreate the table instead.
-            // =========================================================================
+            // --- PART 1: SAFELY RESTRUCTURE BookGenres (Preserve Data) ---
 
-            // 1. Rename the existing table to backup (Safe keeping)
-            migrationBuilder.Sql("IF OBJECT_ID('dbo.BookGenres', 'U') IS NOT NULL EXEC sp_rename 'dbo.BookGenres', 'BookGenres_Backup'");
+            // 1. Rename the existing table to a temporary name so we don't lose data
+            migrationBuilder.RenameTable(
+                name: "BookGenres",
+                newName: "BookGenres_Backup");
 
-            // 2. Create the NEW table (Using Composite Key: BookId + GenreId)
-            // Note: We intentionally do NOT create an 'Id' column here.
+            // 2. Create the NEW table with the correct structure (No 'Id' column, Composite Key)
             migrationBuilder.CreateTable(
                 name: "BookGenres",
                 columns: table => new
@@ -29,18 +29,13 @@ namespace Readioo.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    // Set the Combined Primary Key
                     table.PrimaryKey("PK_BookGenres", x => new { x.BookId, x.GenreId });
-
-                    // Re-link to Books
                     table.ForeignKey(
                         name: "FK_BookGenres_Books_BookId",
                         column: x => x.BookId,
                         principalTable: "Books",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-
-                    // Re-link to Genres
                     table.ForeignKey(
                         name: "FK_BookGenres_Genres_GenreId",
                         column: x => x.GenreId,
@@ -49,28 +44,23 @@ namespace Readioo.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            // 3. Restore Data (Copy only the Links, ignore the old Id)
-            migrationBuilder.Sql(@"
-        IF OBJECT_ID('dbo.BookGenres_Backup', 'U') IS NOT NULL
-        BEGIN
-            INSERT INTO BookGenres (BookId, GenreId)
-            SELECT BookId, GenreId FROM BookGenres_Backup
-        END
-    ");
+            // 3. Restore the data from the Backup table to the New table
+            // We only copy BookId and GenreId (ignoring the old Id column)
+            migrationBuilder.Sql("INSERT INTO BookGenres (BookId, GenreId) SELECT BookId, GenreId FROM BookGenres_Backup");
 
-            // 4. Add Index (For performance)
+            // 4. Create the Index for performance
             migrationBuilder.CreateIndex(
                 name: "IX_BookGenres_GenreId",
                 table: "BookGenres",
                 column: "GenreId");
 
-            // 5. Cleanup (Delete the backup table)
-            migrationBuilder.Sql("IF OBJECT_ID('dbo.BookGenres_Backup', 'U') IS NOT NULL DROP TABLE dbo.BookGenres_Backup");
+            // 5. Drop the backup table now that data is safe
+            migrationBuilder.DropTable(
+                name: "BookGenres_Backup");
 
 
-            // =========================================================================
-            // STEP 2: UPDATE GENRE DESCRIPTIONS
-            // =========================================================================
+            // --- PART 2: UPDATE DESCRIPTIONS ---
+
             migrationBuilder.Sql("UPDATE Genres SET Description = 'Explore the limitless possibilities of the universe. From space operas and alien civilizations to cybernetic futures and time travel, these stories ask the ultimate ''what if'' questions about technology and humanity.' WHERE GenreName = 'Science Fiction'");
             migrationBuilder.Sql("UPDATE Genres SET Description = 'Prepare to be terrified. These spine-chilling tales explore the darker side of existence, featuring supernatural entities, psychological torments, and the unknown, designed to keep you on the edge of your seat and awake at night.' WHERE GenreName = 'Horror'");
             migrationBuilder.Sql("UPDATE Genres SET Description = 'Enter worlds where society has collapsed or turned oppressive. These gripping narratives explore survival, rebellion, and the resilience of the human spirit amidst totalitarian regimes, environmental disasters, or post-apocalyptic ruins.' WHERE GenreName = 'Dystopian'");
@@ -90,23 +80,87 @@ namespace Readioo.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropPrimaryKey(
-                name: "PK_BookGenres",
-                table: "BookGenres");
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 1);
 
-            migrationBuilder.AlterColumn<int>(
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 2);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 3);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 4);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 5);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 6);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 7);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 8);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 9);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 10);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 11);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 12);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 13);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 14);
+
+            migrationBuilder.DeleteData(
+                table: "Genres",
+                keyColumn: "Id",
+                keyValue: 15);
+
+            migrationBuilder.AddColumn<int>(
                 name: "Id",
                 table: "BookGenres",
                 type: "int",
                 nullable: false,
-                oldClrType: typeof(int),
-                oldType: "int")
-                .Annotation("SqlServer:Identity", "1, 1");
-
-            migrationBuilder.AddPrimaryKey(
-                name: "PK_BookGenres",
-                table: "BookGenres",
-                column: "Id");
+                defaultValue: 0);
         }
     }
 }

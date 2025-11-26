@@ -1,0 +1,46 @@
+﻿@using Readioo.Business.DataTransferObjects.Genre
+@model IEnumerable<GenreDto>
+
+@{
+    ViewData["Title"] = "Genres - Readioo";
+}
+
+<div class="wrap">
+    <div class="container mt-5">
+        <h2 class="mb-4" style="font-weight: 700;">Browse Genres</h2>
+        <div class="row">
+            @foreach (var genre in Model)
+            {
+                <div class="col-md-4 col-sm-6 mb-4">
+                    <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; transition: transform 0.2s;">
+                        <div class="card-body text-center p-4">
+                            <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(genre.GenreName)&size=100&background=random&color=fff&font-size=0.5"
+                                 class="rounded-circle mb-3 shadow-sm"
+                                 alt="@genre.GenreName"
+                                 style="width: 80px; height: 80px;">
+
+                            <h5 class="card-title fw-bold">@genre.GenreName</h5>
+
+                            <p class="card-text text-muted small">
+                                @(genre.Description.Length > 80 ? genre.Description.Substring(0, 80) + "..." : genre.Description)
+                            </p>
+
+                            <a href="@Url.Action("Details", "Genre", new { id = genre.Id })"
+                               class="btn btn-outline-primary btn-sm rounded-pill px-4 mt-2">
+                                Explore
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Hover effect for the index cards */
+    .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+</style>

@@ -52,19 +52,58 @@ namespace Readioo.Business.Services.Classes
         }
 
         // Get genre by id
-        public GenreDto GetGenreById(int id)
+        public GenreDetailsDto GetGenreById(int id)
         {
             var genre = _unitOfWork.GenreRepository
-                .GetAll()
+                .GetAllQueryable()
+                .Include(g => g.BookGenres)
+                    .ThenInclude(bg => bg.Book)
+                        .ThenInclude(b => b.Author)
+                .Include(g => g.AuthorGenres)
+                    .ThenInclude(ag => ag.Author)
                 .FirstOrDefault(g => g.Id == id);
 
             if (genre == null) return null;
 
-            return new GenreDto
+            // Map books
+            var books = genre.BookGenres
+                .Select(bg => new BookDto
+                {
+                    BookId = bg.Book.Id,
+                    Title = bg.Book.Title,
+                    Isbn = bg.Book.Isbn,
+                    Language = bg.Book.Language,
+                    AuthorName = bg.Book.Author.FullName,
+                    PagesCount = bg.Book.PagesCount,
+                    PublishDate = bg.Book.PublishDate,
+                    Description = bg.Book.Description,
+                    Rate = bg.Book.Rate,
+                    BookImage = bg.Book.BookImage
+                })
+                .ToList();
+
+            // Map authors
+            var authors = genre.AuthorGenres
+                .Select(ag => new AuthorDto
+                {
+                    AuthorId = ag.Author.Id,
+                    FullName = ag.Author.FullName,
+                    Bio = ag.Author.Bio,
+                    BirthDate = ag.Author.BirthDate,
+                    DeathDate = ag.Author.DeathDate,
+                    BirthCity = ag.Author.BirthCity,
+                    BirthCountry = ag.Author.BirthCountry,
+                    AuthorImage = ag.Author.AuthorImage
+                })
+                .ToList();
+
+            return new GenreDetailsDto
             {
                 Id = genre.Id,
                 GenreName = genre.GenreName,
-                Description = genre.Description
+                Description = genre.Description,
+                Books = books,
+                Authors = authors
             };
         }
 
