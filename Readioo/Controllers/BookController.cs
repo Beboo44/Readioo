@@ -44,7 +44,7 @@ namespace Readioo.Controllers
         public IActionResult Create(/*string searchAuthor = ""*/)
         {
             var authors = _authorService.getAllAuthors();
-            var genres = _genreService.getAllGenres();
+            var genres = _genreService.GetAllGenres();
 
             ViewBag.Genres = genres;
             ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
@@ -77,7 +77,9 @@ namespace Readioo.Controllers
                 Description = book.Description,
                 MainCharacters = book.MainCharacters,
                 PublishDate = book.PublishDate,
+                BookGenres = book.BookGenres ?? new List<string>()  
             };
+    
             if (book.BookImage != null)
             {
                 string SaveFolder = "images/books/";

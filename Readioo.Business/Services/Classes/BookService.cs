@@ -49,7 +49,7 @@ namespace Readioo.Business.Services.Classes
 
         public async Task CreateBook(BookCreatedDto bookCreatedDto)
         {
-            // 1. Create the Book Object
+            // Create the Book Object
             var newBook = new Book
             {
                 Title = bookCreatedDto.Title,
@@ -60,7 +60,8 @@ namespace Readioo.Business.Services.Classes
                 PublishDate = bookCreatedDto.PublishDate,
                 MainCharacters = bookCreatedDto.MainCharacters,
                 Description = bookCreatedDto.Description,
-                Rate = 0m
+                Rate = 0m,
+                BookImage = bookCreatedDto.BookImage
             };
 
             if (bookCreatedDto.BookImage != null)
@@ -68,40 +69,35 @@ namespace Readioo.Business.Services.Classes
                 newBook.BookImage = bookCreatedDto.BookImage;
             }
 
-            // 2. FIRST SAVE: Save Book to database to generate the ID
+            // 1. FIRST SAVE: Persist the book to generate the 'Id'
             _unitOfWork.BookRepository.Add(newBook);
             await _unitOfWork.CommitAsync();
 
-            // 3. SECOND STEP: Add Genres now that Book.Id exists
+            // 2. ADD GENRES: Now that the book has an Id, add the BookGenre relationships
             if (bookCreatedDto.BookGenres != null && bookCreatedDto.BookGenres.Any())
             {
                 var allGenres = _unitOfWork.GenreRepository.GetAll().ToList();
-                bool genresAdded = false;
 
                 foreach (var genreName in bookCreatedDto.BookGenres)
                 {
-                    // Use Trim() to handle accidental spaces
-                    var genre = allGenres.FirstOrDefault(g => g.GenreName.Equals(genreName.Trim(), StringComparison.OrdinalIgnoreCase));
+                    // Find matching genre (case-insensitive, trimmed)
+                    var genre = allGenres.FirstOrDefault(g =>
+                        g.GenreName.Equals(genreName.Trim(), StringComparison.OrdinalIgnoreCase));
 
                     if (genre != null)
-                    { 
-                        var link = new BookGenre
+                    {
+                        // Add to the collection (EF will handle the foreign key)
+                        newBook.BookGenres.Add(new BookGenre
                         {
-                            BookId = newBook.Id,
                             GenreId = genre.Id
-                        };
-
-                        newBook.BookGenres.Add(link);
-                        genresAdded = true;
+                            // BookId will be set automatically by EF after save
+                        });
                     }
                 }
 
-                // 4. FINAL SAVE: Update the book to persist the relationships
-                if (genresAdded)
-                {
-                    _unitOfWork.BookRepository.Update(newBook);
-                    await _unitOfWork.CommitAsync();
-                }
+                // 3. SECOND SAVE: Persist the genre relationships
+                _unitOfWork.BookRepository.Update(newBook);
+                await _unitOfWork.CommitAsync();
             }
         }
 

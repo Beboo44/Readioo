@@ -41,6 +41,26 @@ public partial class AppDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        base.OnModelCreating(modelBuilder);
+
+        // Configure BookGenre composite key
+        modelBuilder.Entity<BookGenre>()
+            .HasKey(bg => new { bg.BookId, bg.GenreId });
+
+        // Configure Book -> BookGenre relationship
+        modelBuilder.Entity<BookGenre>()
+            .HasOne(bg => bg.Book)
+            .WithMany(b => b.BookGenres)
+            .HasForeignKey(bg => bg.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        // Configure Genre -> BookGenre relationship
+        modelBuilder.Entity<BookGenre>()
+            .HasOne(bg => bg.Genre)
+            .WithMany(g => g.BookGenres)
+            .HasForeignKey(bg => bg.GenreId)
+            .OnDelete(DeleteBehavior.Cascade);
+
         modelBuilder.Entity<AuthorGenre>(entity =>
         {
             entity.HasIndex(e => e.AuthorId, "IX_AuthorGenres_AuthorId");
@@ -57,6 +77,7 @@ public partial class AppDbContext : DbContext
             entity.HasIndex(e => e.AuthorId, "IX_Books_AuthorId");
 
             entity.Property(e => e.Isbn).HasColumnName("ISBN");
+
             entity.Property(e => e.Rate).HasColumnType("decimal(3, 2)");
 
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasForeignKey(d => d.AuthorId);

@@ -1,4 +1,5 @@
-﻿using Readioo.Data.Data.Contexts;
+﻿using Microsoft.EntityFrameworkCore;
+using Readioo.Data.Data.Contexts;
 using Readioo.DataAccess.Repositories.Generics;
 using Readioo.Models;
 using System;
@@ -26,6 +27,11 @@ namespace Readioo.Data.Repositories.Genres
         public Genre GetById(int id)
         {
             return _dbContext.Set<Genre>().FirstOrDefault(g => g.Id == id);
+        }
+
+        public IQueryable<Genre> GetAllQueryable()
+        {
+            return _dbContext.Genres.AsQueryable();
         }
     }
 }

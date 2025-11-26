@@ -12,5 +12,6 @@ namespace Readioo.Data.Repositories.Genres
     {
         public IEnumerable<Genre> GetAll();
         public Genre GetById(int id);
+        public IQueryable<Genre> GetAllQueryable();
     }
 }

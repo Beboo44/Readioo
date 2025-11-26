@@ -31,7 +31,7 @@
 
             <div class="book-info">
                 <h1 class="book-title">@Model.Title</h1>
-                <h3 class="book-author">by @Model.AuthorName</h3>
+                <h3 class="book-author"><a asp-controller="Author" asp-action="Details" asp-route-id="@Model.AuthorId"> by @Model.AuthorName </a></h3>
 
                 <div class="book-meta">
                     <div class="rating">

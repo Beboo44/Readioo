@@ -22,7 +22,6 @@ namespace Readioo.Business.DataTransferObjects.Book
         public string Description { get; set; } = null!;
 
         public string? BookImage { get; set; }
-
         public virtual ICollection<String> BookGenres { get; set; } = new List<String>();
     }
 }
