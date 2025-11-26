@@ -7,8 +7,9 @@ using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
-using Readioo.Data.Repositories.Shelfs;
 using Readioo.Data.Repositories.Genres;
+using Readioo.Data.Repositories.Reviews;
+using Readioo.Data.Repositories.Shelfs;
 
 namespace Readioo
 {
@@ -28,7 +29,7 @@ namespace Readioo
            
             // 🔹 Enable SESSION (You forgot this)
             builder.Services.AddSession();
-
+            
             // 🔹 Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -50,6 +51,10 @@ namespace Readioo
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IGenreService, GenreService>();
+            builder.Services.AddScoped<IReviewService, ReviewService>();
+            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            
+
 
             // Register Genre repository and service so DI can resolve IGenreService
 
