@@ -13,6 +13,8 @@ namespace Readioo.ViewModel
         public string Language { get; set; } = null!;
         [Required]
         public int AuthorId { get; set; }
+
+        public virtual ICollection<String> BookGenres { get; set; } = new List<String>();
         [Required]
         public int PagesCount { get; set; }
         [Required]

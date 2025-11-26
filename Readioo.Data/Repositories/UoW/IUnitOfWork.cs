@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Readioo.Data.Repositories.Shelfs;
+using Readioo.Data.Repositories.Genres;
 
 namespace Demo.DataAccess.Repositories.UoW
 {
@@ -17,6 +18,7 @@ namespace Demo.DataAccess.Repositories.UoW
         public IUserRepository UserRepository { get; }
         public IAuthorRepository AuthorRepository { get; }
         public IShelfRepository ShelfRepository { get; }
+        public IGenreRepository GenreRepository { get; }
         public int SaveChanges();
         Task CommitAsync();
         void Commit();

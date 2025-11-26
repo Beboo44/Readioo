@@ -2,12 +2,14 @@
 using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
+using Readioo.Data.Repositories.Genres;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Readioo.Data.Repositories.Shelfs;
+using Readioo.DataAccess.Repositories.Generics;
 
 
 namespace Demo.DataAccess.Repositories.UoW
@@ -18,26 +20,24 @@ namespace Demo.DataAccess.Repositories.UoW
         private Lazy<IAuthorRepository> _authorRepository;
         private Lazy<IUserRepository> _userRepository;
         private Lazy<IShelfRepository> _shelfRepository;
-        private readonly AppDbContext _dbContext;
-
-     
-
+        private Lazy<IGenreRepository> _genreRepository;
+        readonly AppDbContext _dbContext;
 
         public UnitOfWork(AppDbContext dbContext)
         {
             _dbContext = dbContext;
-            _bookRepository = new Lazy<IBookRepository>(() => new BookRepository(_dbContext));
+            _bookRepository   = new Lazy<IBookRepository>(() => new BookRepository(_dbContext));
             _authorRepository = new Lazy<IAuthorRepository>(() => new AuthorRepository(_dbContext));
-            _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_dbContext));
-            _shelfRepository = new Lazy<IShelfRepository>(() => new ShelfRepository(_dbContext));
+            _userRepository   = new Lazy<IUserRepository>(() => new UserRepository(_dbContext));
+            _shelfRepository  = new Lazy<IShelfRepository>(() => new ShelfRepository(_dbContext));
+            _genreRepository  = new Lazy<IGenreRepository>(() => new GenreRepository(_dbContext));
         }
 
         public IAuthorRepository AuthorRepository => _authorRepository.Value;
-
         public IBookRepository BookRepository => _bookRepository.Value;
         public IUserRepository UserRepository => _userRepository.Value;
-
         public IShelfRepository ShelfRepository => _shelfRepository.Value;
+        public IGenreRepository GenreRepository => _genreRepository.Value;
         public int SaveChanges()
         {
             return _dbContext.SaveChanges();
