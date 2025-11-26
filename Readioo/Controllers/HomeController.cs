@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Readioo.Business.Services.Interfaces; //  1. Import the Service Interface
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using Readioo.ViewModel; // Needed if you are initializing the LoginVM in the Index
 using System.Diagnostics;
 
 namespace Readioo.Controllers
 {
+    [Authorize]  // Protects all actions in this controller
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

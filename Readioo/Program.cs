@@ -19,18 +19,15 @@ namespace Readioo
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
-            // DbContext
+
             builder.Services.AddDbContext<AppDbContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));
-          
-           
-            // 🔹 Enable SESSION (You forgot this)
+
             builder.Services.AddSession();
-            
-            // 🔹 Authentication
+
+            // 🔹 Authentication Configuration
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -38,9 +35,11 @@ namespace Readioo
                     options.LogoutPath = "/Account/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromHours(24);
                     options.SlidingExpiration = true;
+                    // Redirect to login if access is denied
+                    options.AccessDeniedPath = "/Account/Login";
                 });
 
-            // DI
+            // DI Registrations
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -53,10 +52,6 @@ namespace Readioo
             builder.Services.AddScoped<IGenreService, GenreService>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
-            
-
-
-            // Register Genre repository and service so DI can resolve IGenreService
 
             var app = builder.Build();
 
@@ -70,19 +65,17 @@ namespace Readioo
             app.UseStaticFiles();
             app.UseRouting();
 
-            // 🔹 Authentication BEFORE Authorization
+            // 🔹 CRITICAL: Authentication middleware BEFORE Authorization
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // 🔹 Enable SESSION Middleware
             app.UseSession();
 
-            // 🔹 Correct default route
+            // 🔹 DEFAULT ROUTE: Redirect unauthenticated users to Login
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Account}/{action=Register}/{id?}");
+                pattern: "{controller=Account}/{action=Login}/{id?}");
 
-            // --- CALL THE SEEDER USING A SCOPE BEFORE RUN ---
             using (var scope = app.Services.CreateScope())
             {
                 Readioo.Data.Data.AppInitializer.Seed(app);

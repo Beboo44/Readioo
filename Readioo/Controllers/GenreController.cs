@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Readioo.Business.Services.Interfaces;
 
 namespace Readioo.Controllers
 {
+    [Authorize]  // ✅ Protects all Genre actions
     public class GenreController : Controller
     {
         private readonly IGenreService _genreService;

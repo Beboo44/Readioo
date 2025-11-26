@@ -1,10 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Readioo.Business.DataTransferObjects.Review;
 using Readioo.Business.Services.Interfaces;
 using System.Security.Claims;
 
 namespace Readioo.Controllers
 {
+    [Authorize]  // ✅ Protects all Book actions
+
     public class ReviewController : Controller
     {
         private readonly IReviewService _reviewService;

@@ -15,5 +15,7 @@ namespace Readioo.Data.Repositories.Books
         public IEnumerable<Book> GetAll(string name);
         public Book? GetBookWithDetails(int id);
 
+        IEnumerable<Book> GetAllBooksWithDetails();
+
     }
 }
