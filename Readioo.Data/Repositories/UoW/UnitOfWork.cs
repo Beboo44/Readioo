@@ -12,7 +12,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Readioo.Data.Repositories.Shelfs;
-using Readioo.Data.Repositories.BookShelves;
 
 
 namespace Demo.DataAccess.Repositories.UoW
@@ -25,7 +24,6 @@ namespace Demo.DataAccess.Repositories.UoW
         private Lazy<IShelfRepository> _shelfRepository;
         private Lazy<IGenreRepository> _genreRepository;
         private Lazy<IReviewRepository> _reviewRepository;
-        private Lazy<IBookShelfRepository> _bookShelfRepository;
 
         private readonly AppDbContext _dbContext;
 
@@ -39,7 +37,6 @@ namespace Demo.DataAccess.Repositories.UoW
             _shelfRepository  = new Lazy<IShelfRepository>(() => new ShelfRepository(_dbContext));
             _genreRepository = new Lazy<IGenreRepository>(() => new GenreRepository(_dbContext));
             _reviewRepository = new Lazy<IReviewRepository>(() => new ReviewRepository(_dbContext));
-            _bookShelfRepository = new Lazy<IBookShelfRepository>(() => new BookShelfRepository(_dbContext));
 
         }
 
@@ -50,7 +47,6 @@ namespace Demo.DataAccess.Repositories.UoW
         public IGenreRepository GenreRepository => _genreRepository.Value;
         public IReviewRepository ReviewRepository => _reviewRepository.Value;
 
-        public IBookShelfRepository BookShelfRepository => _bookShelfRepository.Value;
         public int SaveChanges()
         {
             return _dbContext.SaveChanges();

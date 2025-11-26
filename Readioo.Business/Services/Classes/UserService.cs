@@ -1,5 +1,6 @@
 ﻿using BCrypt.Net;
 using Demo.DataAccess.Repositories.UoW;
+using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.DataTransferObjects.User;
 using Readioo.Business.DTO;
 using Readioo.Business.Services.Interfaces;
@@ -148,11 +149,33 @@ namespace Readioo.Business.Services.Classes
             var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
 
             return shelves.Select(s => new ShelfDto
+    {
+            ShelfId = s.Id,
+            ShelfName = s.ShelfName,
+            UserId = s.UserId,
+            BooksCount = s.BookShelves.Count(),
+            BookShelves = s.BookShelves.Select(bs => new BookShelf
             {
-                ShelfId = s.Id,
-                ShelfName = s.ShelfName,
-                BooksCount = s.BookShelves.Count
-            }).ToList();
+                BookId = bs.BookId,
+                ShelfId = bs.ShelfId,
+            
+            
+            }).ToList()?? new List<BookShelf>()
+        }).ToList();
+
+
+        }
+
+        public async Task<IEnumerable<BookDto>> GetShelfBooksAsync(string shelfName, int userId)
+        {
+            var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
+            var shelf = shelves.FirstOrDefault(s => s.ShelfName == shelfName);
+
+
+            var books = 
+
+
+
         }
     }
 }

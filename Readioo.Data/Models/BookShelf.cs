@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class BookShelf:BaseEntity
+public partial class BookShelf 
 {
 
     public int BookId { get; set; }

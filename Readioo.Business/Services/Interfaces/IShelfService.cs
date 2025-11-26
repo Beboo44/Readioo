@@ -13,7 +13,7 @@ namespace Readioo.Business.Services.Interfaces
     public interface IShelfService
     {
         public Task <IEnumerable<ShelfDto>> GetAllShelves();
-        public Task <ShelfDto> GetShelfByName(string ShelfName);
+        public Task <ShelfDto> GetShelfById(int id);
 
         public Task AddBook(int shelfId, int bookId, int favoriteShelfId);
     }

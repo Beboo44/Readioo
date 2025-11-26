@@ -7,8 +7,10 @@ using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
+using Readioo.Data.Repositories.Genres;
 using Readioo.Data.Repositories.Reviews;
 using Readioo.Data.Repositories.Shelfs;
+using Readioo.DataAccess.Repositories.Generics;
 
 namespace Readioo
 {
@@ -50,6 +52,9 @@ namespace Readioo
             builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
             builder.Services.AddScoped<IReviewService, ReviewService>();
             builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            builder.Services.AddScoped<IShelfService, ShelfService>();
+            builder.Services.AddScoped<IGenreService, GenreService>();
+            builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 
             var app = builder.Build();
 

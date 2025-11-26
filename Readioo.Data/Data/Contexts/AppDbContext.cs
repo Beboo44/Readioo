@@ -61,6 +61,23 @@ public partial class AppDbContext : DbContext
             .HasForeignKey(bg => bg.GenreId)
             .OnDelete(DeleteBehavior.Cascade);
 
+        modelBuilder.Entity<BookShelf>()
+        .HasKey(bg => new { bg.BookId, bg.ShelfId });
+
+        modelBuilder.Entity<BookShelf>()
+            .HasOne(bg => bg.Book)
+            .WithMany(b => b.BookShelves)
+            .HasForeignKey(bg => bg.BookId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<BookShelf>()
+            .HasOne(bg => bg.Shelf)
+            .WithMany(g => g.BookShelves)
+            .HasForeignKey(bg => bg.ShelfId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+
+
         modelBuilder.Entity<AuthorGenre>(entity =>
         {
             entity.HasIndex(e => e.AuthorId, "IX_AuthorGenres_AuthorId");
@@ -83,27 +100,27 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasForeignKey(d => d.AuthorId);
         });
 
-        modelBuilder.Entity<BookGenre>(entity =>
-        {
-            entity.HasIndex(e => e.BookId, "IX_BookGenres_BookId");
+        //modelBuilder.Entity<BookGenre>(entity =>
+        //{
+        //    entity.HasIndex(e => e.BookId, "IX_BookGenres_BookId");
 
-            entity.HasIndex(e => e.GenreId, "IX_BookGenres_GenreId");
+        //    entity.HasIndex(e => e.GenreId, "IX_BookGenres_GenreId");
 
-            entity.HasOne(d => d.Book).WithMany(p => p.BookGenres).HasForeignKey(d => d.BookId);
+        //    entity.HasOne(d => d.Book).WithMany(p => p.BookGenres).HasForeignKey(d => d.BookId);
 
-            entity.HasOne(d => d.Genre).WithMany(p => p.BookGenres).HasForeignKey(d => d.GenreId);
-        });
+        //    entity.HasOne(d => d.Genre).WithMany(p => p.BookGenres).HasForeignKey(d => d.GenreId);
+        //});
 
-        modelBuilder.Entity<BookShelf>(entity =>
-        {
-            entity.HasIndex(e => e.BookId, "IX_BookShelves_BookId");
+        //modelBuilder.Entity<BookShelf>(entity =>
+        //{
+        //    entity.HasIndex(e => e.BookId, "IX_BookShelves_BookId");
 
-            entity.HasIndex(e => e.ShelfId, "IX_BookShelves_ShelfId");
+        //    entity.HasIndex(e => e.ShelfId, "IX_BookShelves_ShelfId");
 
-            entity.HasOne(d => d.Book).WithMany(p => p.BookShelves).HasForeignKey(d => d.BookId);
+        //    entity.HasOne(d => d.Book).WithMany(p => p.BookShelves).HasForeignKey(d => d.BookId);
 
-            entity.HasOne(d => d.Shelf).WithMany(p => p.BookShelves).HasForeignKey(d => d.ShelfId);
-        });
+        //    entity.HasOne(d => d.Shelf).WithMany(p => p.BookShelves).HasForeignKey(d => d.ShelfId);
+        //});
 
 
 

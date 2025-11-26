@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Readioo.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class fixedVersion : Migration
+    public partial class anotherone : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -170,14 +170,12 @@ namespace Readioo.Data.Migrations
                 name: "BookGenres",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     BookId = table.Column<int>(type: "int", nullable: false),
                     GenreId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookGenres", x => x.Id);
+                    table.PrimaryKey("PK_BookGenres", x => new { x.BookId, x.GenreId });
                     table.ForeignKey(
                         name: "FK_BookGenres_Books_BookId",
                         column: x => x.BookId,
@@ -252,15 +250,12 @@ namespace Readioo.Data.Migrations
                 name: "BookShelves",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     BookId = table.Column<int>(type: "int", nullable: false),
-                    ShelfId = table.Column<int>(type: "int", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    ShelfId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_BookShelves", x => x.Id);
+                    table.PrimaryKey("PK_BookShelves", x => new { x.BookId, x.ShelfId });
                     table.ForeignKey(
                         name: "FK_BookShelves_Books_BookId",
                         column: x => x.BookId,
@@ -286,11 +281,6 @@ namespace Readioo.Data.Migrations
                 column: "GenreId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_BookGenres_BookId",
-                table: "BookGenres",
-                column: "BookId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_BookGenres_GenreId",
                 table: "BookGenres",
                 column: "GenreId");
@@ -299,11 +289,6 @@ namespace Readioo.Data.Migrations
                 name: "IX_Books_AuthorId",
                 table: "Books",
                 column: "AuthorId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_BookShelves_BookId",
-                table: "BookShelves",
-                column: "BookId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_BookShelves_ShelfId",

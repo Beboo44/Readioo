@@ -196,9 +196,9 @@ namespace Readioo.Controllers
 
             var user = await _userService.GetUserByIdAsync(int.Parse(userId));
 
-            var books = _bookService.GetAllBooks();
+            var shelfDtos = await _userService.GetUserShelvesAsync(int.Parse(userId));
 
-            return View(books); 
+            return View(shelfDtos); 
         }
 
         [HttpPost]
@@ -213,6 +213,7 @@ namespace Readioo.Controllers
             }
 
             var user = await _userService.GetUserByIdAsync(int.Parse(userId));
+            
 
             if (bookId is null || shelfName is null)
                 return BadRequest();

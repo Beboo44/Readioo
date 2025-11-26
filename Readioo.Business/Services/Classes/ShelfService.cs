@@ -1,4 +1,5 @@
 ﻿using Demo.DataAccess.Repositories.UoW;
+using Microsoft.EntityFrameworkCore;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.DTO;
 using Readioo.Business.Services.Interfaces;
@@ -33,9 +34,9 @@ namespace Readioo.Business.Services.Classes
             return shelves;
         }
 
-        public async Task <ShelfDto> GetShelfByName(string ShelfName)
+        public async Task<ShelfDto> GetShelfById(int id)
         {
-            var shelf = _unitOfWork.ShelfRepository.GetByName(ShelfName);
+            var shelf = _unitOfWork.ShelfRepository.GetById(id);
             var shelfDto = new ShelfDto()
             {
                 ShelfId = shelf.Id,
@@ -52,6 +53,7 @@ namespace Readioo.Business.Services.Classes
         {
             var book = await _unitOfWork.BookRepository.GetByIdAsync(bookId);
             var shelf = await _unitOfWork.ShelfRepository.GetByIdAsync(shelfId);
+
             var favoriteShelf = await _unitOfWork.ShelfRepository.GetByIdAsync(favoriteId);
 
             if (book == null || shelf == null || favoriteShelf == null)
@@ -60,26 +62,48 @@ namespace Readioo.Business.Services.Classes
             var mainEntry = new BookShelf { BookId = bookId, ShelfId = shelfId };
             var favoriteEntry = new BookShelf { BookId = bookId, ShelfId = favoriteId };
 
-            bool favoriteExists = await _unitOfWork.BookShelfRepository.ExistsAsync(favoriteId, bookId);
-            bool shelfExists = await _unitOfWork.BookShelfRepository.ExistsAsync(shelfId, bookId);
 
-            if (!favoriteExists)
-            {
-                _unitOfWork.BookShelfRepository.Add(favoriteEntry);
 
-                favoriteShelf.BookShelves.Add(favoriteEntry);
-                book.BookShelves.Add(favoriteEntry);
-            }
-
-            if (!shelfExists)
-            {
-                _unitOfWork.BookShelfRepository.Add(mainEntry);
-
+            if (!shelf.BookShelves.Any(bs => bs.BookId == bookId))
                 shelf.BookShelves.Add(mainEntry);
-                book.BookShelves.Add(mainEntry);
-            }
+
+            if (!favoriteShelf.BookShelves.Any(bs => bs.BookId == bookId))
+                favoriteShelf.BookShelves.Add(favoriteEntry);
+
 
             await _unitOfWork.CommitAsync();
+        }
+
+
+        public List<BookDto> GetShelfBooks(int shelfId)
+        {
+            var shelf = _unitOfWork.ShelfRepository
+                .GetAllQueryable()
+                .Include(g => g.BookShelves)
+                    .ThenInclude(bg => bg.Book)
+                        .ThenInclude(b => b.Author)
+                .FirstOrDefault(g => g.Id == shelfId);
+
+            if (shelf == null)
+            {
+                return new List<BookDto>();
+            }
+
+            return shelf.BookShelves
+                .Select(bg => new BookDto
+                {
+                    BookId = bg.Book.Id,
+                    Title = bg.Book.Title,
+                    Isbn = bg.Book.Isbn,
+                    Language = bg.Book.Language,
+                    AuthorName = bg.Book.Author.FullName,
+                    PagesCount = bg.Book.PagesCount,
+                    PublishDate = bg.Book.PublishDate,
+                    Description = bg.Book.Description,
+                    Rate = bg.Book.Rate,
+                    BookImage = bg.Book.BookImage
+                })
+                .ToList();
         }
 
 

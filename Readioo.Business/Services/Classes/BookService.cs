@@ -81,33 +81,27 @@ namespace Readioo.Business.Services.Classes
                 newBook.BookImage = bookCreatedDto.BookImage;
             }
 
-            // 1. FIRST SAVE: Persist the book to generate the 'Id'
             _unitOfWork.BookRepository.Add(newBook);
             await _unitOfWork.CommitAsync();
 
-            // 2. ADD GENRES: Now that the book has an Id, add the BookGenre relationships
             if (bookCreatedDto.BookGenres != null && bookCreatedDto.BookGenres.Any())
             {
                 var allGenres = _unitOfWork.GenreRepository.GetAll().ToList();
 
                 foreach (var genreName in bookCreatedDto.BookGenres)
                 {
-                    // Find matching genre (case-insensitive, trimmed)
                     var genre = allGenres.FirstOrDefault(g =>
                         g.GenreName.Equals(genreName.Trim(), StringComparison.OrdinalIgnoreCase));
 
                     if (genre != null)
                     {
-                        // Add to the collection (EF will handle the foreign key)
                         newBook.BookGenres.Add(new BookGenre
                         {
                             GenreId = genre.Id
-                            // BookId will be set automatically by EF after save
                         });
                     }
                 }
 
-                // 3. SECOND SAVE: Persist the genre relationships
                 _unitOfWork.BookRepository.Update(newBook);
                 await _unitOfWork.CommitAsync();
             }
@@ -146,6 +140,10 @@ namespace Readioo.Business.Services.Classes
                         CreatedAt = r.CreatedAt
 
                     })
+                    .ToList(),
+
+                    BookShelves = a.BookShelves
+                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId).ShelfName)
                     .ToList()
                 });
         }

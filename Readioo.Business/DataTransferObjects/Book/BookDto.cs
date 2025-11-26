@@ -37,6 +37,7 @@ namespace Readioo.Business.DataTransferObjects.Book
 
 
         public virtual ICollection<String> BookGenres { get; set; } = new List<String>();
+        public virtual ICollection<String> BookShelves { get; set; } = new List<String>();
         public virtual ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
 
     }

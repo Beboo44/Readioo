@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Readioo.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,5 +13,7 @@ namespace Readioo.Business.DTO
         public string ShelfName { get; set; }
         public int UserId { get; set; }
         public int BooksCount { get; set; }
+        public virtual ICollection<BookShelf> BookShelves { get; set; } 
+
     }
 }

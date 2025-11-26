@@ -38,11 +38,16 @@ namespace Readioo.Data.Repositories.Shelfs
         {
             return await _dbContext.Shelves
                 .Where(s => s.UserId == userId)
+                .Include(s => s.BookShelves)
                 .ToListAsync();
         }
         public IEnumerable<Shelf> GetAll()
         {
             return _dbContext.Set<Shelf>().ToList();
+        }
+        public IQueryable<Shelf> GetAllQueryable()
+        {
+            return _dbContext.Shelves.AsQueryable();
         }
     }
 

@@ -141,37 +141,24 @@ namespace Readioo.Data.Migrations
                     b.Property<int>("GenreId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.HasKey("BookId", "GenreId");
 
-                    b.HasIndex(new[] { "BookId" }, "IX_BookGenres_BookId");
-
-                    b.HasIndex(new[] { "GenreId" }, "IX_BookGenres_GenreId");
+                    b.HasIndex("GenreId");
 
                     b.ToTable("BookGenres");
                 });
 
             modelBuilder.Entity("Readioo.Models.BookShelf", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
                     b.Property<int>("ShelfId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.HasKey("BookId", "ShelfId");
 
-                    b.HasIndex(new[] { "BookId" }, "IX_BookShelves_BookId");
-
-                    b.HasIndex(new[] { "ShelfId" }, "IX_BookShelves_ShelfId");
+                    b.HasIndex("ShelfId");
 
                     b.ToTable("BookShelves");
                 });
