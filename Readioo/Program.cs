@@ -7,9 +7,7 @@ using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
-using Readioo.Data.Repositories.BookShelves;
 using Readioo.Data.Repositories.Shelfs;
-
 
 namespace Readioo
 {
@@ -29,7 +27,7 @@ namespace Readioo
            
             // 🔹 Enable SESSION (You forgot this)
             builder.Services.AddSession();
-
+            
             // 🔹 Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -44,15 +42,11 @@ namespace Readioo
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
-            builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
-            builder.Services.AddScoped<IBookShelfRepository, BookShelfRepository>();
-
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
-            builder.Services.AddScoped<IShelfService, ShelfService>();
-
+            builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
 
             var app = builder.Build();
 
@@ -77,6 +71,12 @@ namespace Readioo
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Account}/{action=Register}/{id?}");
+
+            // --- CALL THE SEEDER USING A SCOPE BEFORE RUN ---
+            using (var scope = app.Services.CreateScope())
+            {
+                Readioo.Data.Data.AppInitializer.Seed(app);
+            }
 
             app.Run();
         }

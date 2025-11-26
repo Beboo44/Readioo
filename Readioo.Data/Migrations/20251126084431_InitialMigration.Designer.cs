@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Readioo.Data.Data.Contexts;
 
@@ -11,9 +12,11 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251126084431_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -165,6 +168,9 @@ namespace Readioo.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ShelfId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

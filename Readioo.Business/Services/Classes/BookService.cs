@@ -7,7 +7,6 @@ using Readioo.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Readioo.Business.Services.Classes
@@ -15,18 +14,18 @@ namespace Readioo.Business.Services.Classes
     public class BookService : IBookService
     {
         private readonly IUnitOfWork _unitOfWork;
-        public BookService (IUnitOfWork unitOfWork)
+
+        public BookService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
         }
+
         public BookDto? bookById(int id)
         {
-            var book = _unitOfWork.BookRepository.GetById(id);
-            if (book == null)
-            {
-                return null;
-            }
-            var bookDto = new BookDto()
+            var book = _unitOfWork.BookRepository.GetBookWithDetails(id);
+            if (book == null) return null;
+
+            return new BookDto
             {
                 BookId = book.Id,
                 Title = book.Title,
@@ -39,30 +38,32 @@ namespace Readioo.Business.Services.Classes
                 Rate = book.Rate,
                 Description = book.Description,
                 BookImage = book.BookImage,
+                AuthorName = book.Author?.FullName,
 
+                // Map DB Entities -> String List for viewing
                 BookGenres = book.BookGenres
-                .Select(g => g.Genre.GenreName)
-                .ToList(),
-
-                Reviews = book.Reviews
-                    .Select(r => new ReviewDto
-                    {
-                        ReviewId = r.Id,
-                        UserId = r.UserId,
-                        Username = r.User.FirstName + " " + r.User.LastName,
-                        Rating = r.Rating,
-                        ReviewText = r.ReviewText,
-                        CreatedAt = r.CreatedAt
-
-                    })
+                    .Select(g => g.Genre.GenreName)
                     .ToList(),
-                AuthorName = _unitOfWork.AuthorRepository.GetById(book.AuthorId).FullName
+                    // ⭐ Add Reviews to DTO
+                Reviews = book.Reviews.Select(r => new ReviewDto
+                {
+                    ReviewId = r.Id,
+                    UserId = r.UserId,
+                    BookId = r.BookId,
+                    Username = r.User != null
+                        ? r.User.FirstName + " " + r.User.LastName
+                        : "Unknown",
+                    Rating = r.Rating,
+                    ReviewText = r.ReviewText,
+                    CreatedAt = r.CreatedAt
+                }).ToList()
             };
-            return bookDto;
         }
+
         public async Task CreateBook(BookCreatedDto bookCreatedDto)
         {
-            Book newBook = new Book()
+            // Create the Book Object
+            var newBook = new Book
             {
                 Title = bookCreatedDto.Title,
                 Isbn = bookCreatedDto.Isbn,
@@ -79,28 +80,56 @@ namespace Readioo.Business.Services.Classes
             {
                 newBook.BookImage = bookCreatedDto.BookImage;
             }
+
+            // 1. FIRST SAVE: Persist the book to generate the 'Id'
             _unitOfWork.BookRepository.Add(newBook);
             await _unitOfWork.CommitAsync();
+
+            // 2. ADD GENRES: Now that the book has an Id, add the BookGenre relationships
+            if (bookCreatedDto.BookGenres != null && bookCreatedDto.BookGenres.Any())
+            {
+                var allGenres = _unitOfWork.GenreRepository.GetAll().ToList();
+
+                foreach (var genreName in bookCreatedDto.BookGenres)
+                {
+                    // Find matching genre (case-insensitive, trimmed)
+                    var genre = allGenres.FirstOrDefault(g =>
+                        g.GenreName.Equals(genreName.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                    if (genre != null)
+                    {
+                        // Add to the collection (EF will handle the foreign key)
+                        newBook.BookGenres.Add(new BookGenre
+                        {
+                            GenreId = genre.Id
+                            // BookId will be set automatically by EF after save
+                        });
+                    }
+                }
+
+                // 3. SECOND SAVE: Persist the genre relationships
+                _unitOfWork.BookRepository.Update(newBook);
+                await _unitOfWork.CommitAsync();
+            }
         }
 
         public IEnumerable<BookDto> GetAllBooks()
         {
-            var books = _unitOfWork.BookRepository.GetAll()
+            return _unitOfWork.BookRepository.GetAll()
                 .Select(a => new BookDto
-                 {
-                     BookId = a.Id,
-                     Title = a.Title,
-                     Isbn = a.Isbn,
-                     Language = a.Language,
-                     AuthorId = a.AuthorId,
-                     PagesCount = a.PagesCount,
-                     PublishDate = a.PublishDate,
-                     MainCharacters = a.MainCharacters,
-                     Rate = a.Rate,
-                     Description = a.Description,
-                     BookImage = a.BookImage,
-
-                     AuthorName = a.Author.FullName,
+                {
+                    BookId = a.Id,
+                    Title = a.Title,
+                    Isbn = a.Isbn,
+                    Language = a.Language,
+                    AuthorId = a.AuthorId,
+                    PagesCount = a.PagesCount,
+                    PublishDate = a.PublishDate,
+                    MainCharacters = a.MainCharacters,
+                    Rate = a.Rate,
+                    Description = a.Description,
+                    BookImage = a.BookImage,
+                    AuthorName = a.Author.FullName,
 
                      BookGenres = a.BookGenres
                     .Select(g => g.Genre.GenreName)
@@ -120,14 +149,10 @@ namespace Readioo.Business.Services.Classes
                     .ToList()
                  });
 
-            return books;
-        }
         public async Task UpdateBook(BookDto bookDto)
         {
             var book = await _unitOfWork.BookRepository.GetByIdAsync(bookDto.BookId);
-
-            if (book == null)
-                throw new Exception("Book Not Found");
+            if (book == null) throw new Exception("Book Not Found");
 
             book.Title = bookDto.Title;
             book.Isbn = bookDto.Isbn;
@@ -136,29 +161,20 @@ namespace Readioo.Business.Services.Classes
             book.AuthorId = bookDto.AuthorId;
             book.PagesCount = bookDto.PagesCount;
             book.PublishDate = bookDto.PublishDate;
-            if(bookDto.BookImage != null)
-            {
-                book.BookImage = bookDto.BookImage;
-            }
+            if (bookDto.BookImage != null) book.BookImage = bookDto.BookImage;
 
-             _unitOfWork.BookRepository.Update(book);
+            _unitOfWork.BookRepository.Update(book);
             await _unitOfWork.CommitAsync();
         }
 
         public async Task DeleteBook(int id)
         {
             var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
-
-            if(book is null)
-                throw new Exception("Book Not Found");
-            
+            if (book == null) throw new Exception("Book Not Found");
 
             _unitOfWork.BookRepository.Remove(book);
-
             await _unitOfWork.CommitAsync();
         }
-
-
 
     }
 }

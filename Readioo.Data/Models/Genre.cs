@@ -6,7 +6,6 @@ namespace Readioo.Models;
 
 public partial class Genre: BaseEntity
 {
-
     public string GenreName { get; set; } = null!;
 
     public string Description { get; set; } = null!;

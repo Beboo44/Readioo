@@ -4,9 +4,8 @@ using System.Collections.Generic;
 
 namespace Readioo.Models;
 
-public partial class BookGenre:BaseEntity
+public partial class BookGenre
 {
-
     public int BookId { get; set; }
 
     public int GenreId { get; set; }

@@ -17,12 +17,16 @@ namespace Readioo.Controllers
         private readonly IBookService _bookService;
         private readonly IAuthorService _authorService;
         private readonly IUserService _userService;
+        private readonly IGenreService _genreService;
+
+        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IGenreService genreService)
         private readonly IShelfService _shelfService;
         public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IShelfService shelfService)
         {
             _bookService = bookService;
             _authorService = authorService;
             _userService = userService;
+            _genreService = genreService;
             _shelfService = shelfService;
         }
 
@@ -43,15 +47,16 @@ namespace Readioo.Controllers
         public IActionResult Create(/*string searchAuthor = ""*/)
         {
             var authors = _authorService.getAllAuthors();
+            var genres = _genreService.GetAllGenres();
 
+            ViewBag.Genres = genres;
+            ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
+
+            return View();
             //if (!string.IsNullOrEmpty(searchAuthor))
             //{
             //    authors = authors.Where(a => a.FullName.Contains(searchAuthor, StringComparison.OrdinalIgnoreCase)).ToList();
             //}
-
-            ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
-
-            return View();
         }
 
         [HttpPost]
@@ -75,7 +80,9 @@ namespace Readioo.Controllers
                 Description = book.Description,
                 MainCharacters = book.MainCharacters,
                 PublishDate = book.PublishDate,
+                BookGenres = book.BookGenres ?? new List<string>()  
             };
+    
             if (book.BookImage != null)
             {
                 string SaveFolder = "images/books/";

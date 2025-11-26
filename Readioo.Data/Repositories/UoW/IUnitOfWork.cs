@@ -1,5 +1,8 @@
 ﻿using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
+using Readioo.Data.Repositories.Genres;
+using Readioo.Data.Repositories.Reviews;
+using Readioo.Data.Repositories.Shelfs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,6 +22,8 @@ namespace Demo.DataAccess.Repositories.UoW
         public IAuthorRepository AuthorRepository { get; }
         public IShelfRepository ShelfRepository { get; }
         public IBookShelfRepository BookShelfRepository { get; }
+        public IGenreRepository GenreRepository { get; }
+        public IReviewRepository ReviewRepository { get; }
         public int SaveChanges();
         Task CommitAsync();
         void Commit();
