@@ -18,10 +18,9 @@ namespace Readioo.Controllers
         private readonly IAuthorService _authorService;
         private readonly IUserService _userService;
         private readonly IGenreService _genreService;
-
-        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IGenreService genreService)
         private readonly IShelfService _shelfService;
-        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IShelfService shelfService)
+        
+        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IShelfService shelfService, IGenreService genreService)
         {
             _bookService = bookService;
             _authorService = authorService;
@@ -62,7 +61,6 @@ namespace Readioo.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(BookVM book)
         {
-            Console.WriteLine("erroooooooooooor");
             if (!ModelState.IsValid)
             {
                 var authors = _authorService.getAllAuthors();

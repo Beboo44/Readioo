@@ -131,11 +131,11 @@ namespace Readioo.Business.Services.Classes
                     BookImage = a.BookImage,
                     AuthorName = a.Author.FullName,
 
-                     BookGenres = a.BookGenres
+                    BookGenres = a.BookGenres
                     .Select(g => g.Genre.GenreName)
                     .ToList(),
 
-                     Reviews = a.Reviews
+                    Reviews = a.Reviews
                     .Select(r => new ReviewDto
                     {
                         ReviewId = r.Id,
@@ -147,7 +147,8 @@ namespace Readioo.Business.Services.Classes
 
                     })
                     .ToList()
-                 });
+                });
+        }
 
         public async Task UpdateBook(BookDto bookDto)
         {

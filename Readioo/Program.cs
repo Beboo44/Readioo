@@ -7,6 +7,7 @@ using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
+using Readioo.Data.Repositories.Reviews;
 using Readioo.Data.Repositories.Shelfs;
 
 namespace Readioo
@@ -47,6 +48,8 @@ namespace Readioo
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
             builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
+            builder.Services.AddScoped<IReviewService, ReviewService>();
+            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
 
             var app = builder.Build();
 

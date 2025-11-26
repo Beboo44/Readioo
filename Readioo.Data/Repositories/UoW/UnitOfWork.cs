@@ -29,7 +29,6 @@ namespace Demo.DataAccess.Repositories.UoW
 
         private readonly AppDbContext _dbContext;
 
-        readonly AppDbContext _dbContext;
 
         public UnitOfWork(AppDbContext dbContext)
         {
@@ -40,9 +39,6 @@ namespace Demo.DataAccess.Repositories.UoW
             _shelfRepository  = new Lazy<IShelfRepository>(() => new ShelfRepository(_dbContext));
             _genreRepository = new Lazy<IGenreRepository>(() => new GenreRepository(_dbContext));
             _reviewRepository = new Lazy<IReviewRepository>(() => new ReviewRepository(_dbContext));
-
-            _userRepository = new Lazy<IUserRepository>(() => new UserRepository(_dbContext));
-            _shelfRepository = new Lazy<IShelfRepository>(() => new ShelfRepository(_dbContext));
             _bookShelfRepository = new Lazy<IBookShelfRepository>(() => new BookShelfRepository(_dbContext));
 
         }
@@ -54,7 +50,6 @@ namespace Demo.DataAccess.Repositories.UoW
         public IGenreRepository GenreRepository => _genreRepository.Value;
         public IReviewRepository ReviewRepository => _reviewRepository.Value;
 
-        public IShelfRepository ShelfRepository => _shelfRepository.Value;
         public IBookShelfRepository BookShelfRepository => _bookShelfRepository.Value;
         public int SaveChanges()
         {
