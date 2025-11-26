@@ -39,8 +39,12 @@ namespace Readioo.Data.Repositories.Shelfs
             return await _dbContext.Shelves
                 .Where(s => s.UserId == userId)
                 .Include(s => s.BookShelves)
+                    .ThenInclude(bs => bs.Book)
+                        .ThenInclude(b => b.Author)
                 .ToListAsync();
         }
+
+
         public IEnumerable<Shelf> GetAll()
         {
             return _dbContext.Set<Shelf>().ToList();

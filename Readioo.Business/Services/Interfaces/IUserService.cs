@@ -1,4 +1,5 @@
-﻿using Readioo.Business.DataTransferObjects.User;
+﻿using Readioo.Business.DataTransferObjects.Shelves;
+using Readioo.Business.DataTransferObjects.User;
 using Readioo.Business.DTO;
 using Readioo.Data.Models;
 using Readioo.Models;
@@ -20,6 +21,7 @@ namespace Readioo.Business.Services.Interfaces
         Task<bool> VerifyUserCredentialsAsync(string email, string password);
         Task<bool> UpdateUserProfileAsync(int userId, UpdateUserDTO dto);
         Task<User> GetUserByIdAsync(int id);
+        Task<IEnumerable<ShelfWithBooksDto>> GetUserShelvesWithBooksAsync(int userId);
 
 
 

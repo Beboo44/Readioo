@@ -186,19 +186,26 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public async Task <IActionResult> MyBooks()
+
+        public async Task<IActionResult> MyBooks()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (userId == null)
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            var shelves = await _userService.GetUserShelvesWithBooksAsync(userId);
+
+            var books = await _bookService.GetUserBooksAsync(userId);
+
+            var vm = new MyBooksViewModel
             {
-                return RedirectToAction("Login","Account");
-            }
+                UserId = user.Id,
+                UserName = $"{user.FirstName} {user.LastName}",
+                Shelveswithbook = shelves
 
-            var user = await _userService.GetUserByIdAsync(int.Parse(userId));
+            };
 
-            var shelfDtos = await _userService.GetUserShelvesAsync(int.Parse(userId));
-
-            return View(shelfDtos); 
+            return View(vm);
         }
 
         [HttpPost]
