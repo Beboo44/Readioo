@@ -10,7 +10,7 @@ namespace Readioo.ViewModel
         public string Country { get; set; }
         public string ProfileUrl { get; set; }
         public byte[]? UserImage { get; set; }
-        public List<ShelfInfoVM> Shelves { get; set; } = new ();
+        public IEnumerable<ShelfInfoVM> Shelves { get; set; }
 
 
     }

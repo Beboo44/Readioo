@@ -36,6 +36,8 @@ namespace Readioo.Controllers
             var user = await _userService.GetUserByIdAsync(int.Parse(userId));
             var userIdValue = int.Parse(userId);
             var shelfDtos = await _userService.GetUserShelvesAsync(userIdValue);
+
+
             var vm = new UserProfileVM
             {
                 UserId = user.Id,

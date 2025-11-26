@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 
 namespace Readioo.Data.Repositories.Shelfs
 {
-    public interface IShelfRepository
+    public interface IShelfRepository : IGenericRepository<Shelf>
     {
         Task AddAsync(Shelf shelf);
         Shelf? GetById(int id);
-        Task<List<Shelf>> GetUserShelvesAsync(int userId);
+        Task<IEnumerable<Shelf>> GetUserShelvesAsync(int userId);
+
+        public IEnumerable<Shelf> GetAll();
+        public Shelf? GetByName(string ShelfName);
     }
 }

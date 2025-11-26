@@ -7,6 +7,7 @@ using Readioo.Data.Data.Contexts;
 using Readioo.Data.Repositories;
 using Readioo.Data.Repositories.Authors;
 using Readioo.Data.Repositories.Books;
+using Readioo.Data.Repositories.BookShelves;
 using Readioo.Data.Repositories.Shelfs;
 
 
@@ -43,11 +44,15 @@ namespace Readioo
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
+            builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
+            builder.Services.AddScoped<IBookShelfRepository, BookShelfRepository>();
+
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IBookService, BookService>();
             builder.Services.AddScoped<IAuthorService, AuthorService>();
-            builder.Services.AddScoped<IShelfRepository, ShelfRepository>();
+            builder.Services.AddScoped<IShelfService, ShelfService>();
+
 
             var app = builder.Build();
 

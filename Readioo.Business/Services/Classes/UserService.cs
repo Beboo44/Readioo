@@ -143,7 +143,7 @@ namespace Readioo.Business.Services.Classes
             return await _unitOfWork.UserRepository.GetByIdAsync(id);
         }
 
-        public async Task<List<ShelfDto>> GetUserShelvesAsync(int userId)
+        public async Task<IEnumerable<ShelfDto>> GetUserShelvesAsync(int userId)
         {
             var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
 
@@ -151,7 +151,7 @@ namespace Readioo.Business.Services.Classes
             {
                 ShelfId = s.Id,
                 ShelfName = s.ShelfName,
-                BooksCount = s.BookShelves.Count()
+                BooksCount = s.BookShelves.Count
             }).ToList();
         }
     }

@@ -86,6 +86,16 @@
                                     }
                                 }
                             </div>
+                            <br />
+                            <div class="book-actions">
+                                <form asp-controller="Book" asp-action="AddToShelf"  method="post">
+                                    <input type="hidden" name="bookId" value="@item.BookId" />
+                                    <input type="hidden" name="shelfName" value="Want to Read" />
+                                    <button type="submit" class="shelf-btn">
+                                        Want to Read
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 }

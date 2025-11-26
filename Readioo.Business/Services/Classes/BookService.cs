@@ -41,7 +41,7 @@ namespace Readioo.Business.Services.Classes
                 BookImage = book.BookImage,
 
                 BookGenres = book.BookGenres
-                .Select(g=>g.Genre.GenreName)
+                .Select(g => g.Genre.GenreName)
                 .ToList(),
 
                 Reviews = book.Reviews
@@ -53,9 +53,10 @@ namespace Readioo.Business.Services.Classes
                         Rating = r.Rating,
                         ReviewText = r.ReviewText,
                         CreatedAt = r.CreatedAt
-                        
+
                     })
-                    .ToList()
+                    .ToList(),
+                AuthorName = _unitOfWork.AuthorRepository.GetById(book.AuthorId).FullName
             };
             return bookDto;
         }

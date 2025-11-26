@@ -45,11 +45,11 @@
         <tbody>
             @foreach (var item in Model)
             {
-                var avatar = GetAvatar(item.FullName, item.AuthorImage);
+                @* var avatar = GetAvatar(item.FullName, item.AuthorImage); *@
 
                 <tr>
                     <td>
-                        <img src="@avatar"
+                        <img src="~/@item.AuthorImage"
                              alt="Photo of @item.FullName"
                              style="width: 80px; height: 80px; object-fit: cover; border-radius: 0.25rem;"
                              onerror="this.src='https://ui-avatars.com/api/?name=@Uri.EscapeDataString(item.FullName ?? "Author")&size=80&background=6c757d&color=fff';" />

@@ -17,11 +17,13 @@ namespace Readioo.Controllers
         private readonly IBookService _bookService;
         private readonly IAuthorService _authorService;
         private readonly IUserService _userService;
-        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService)
+        private readonly IShelfService _shelfService;
+        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IShelfService shelfService)
         {
             _bookService = bookService;
             _authorService = authorService;
             _userService = userService;
+            _shelfService = shelfService;
         }
 
         public IActionResult Index()
@@ -192,6 +194,34 @@ namespace Readioo.Controllers
             var books = _bookService.GetAllBooks();
 
             return View(books); 
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>AddToShelf(int? bookId, string? shelfName)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _userService.GetUserByIdAsync(int.Parse(userId));
+
+            if (bookId is null || shelfName is null)
+                return BadRequest();
+
+            var shelves = await _userService.GetUserShelvesAsync(int.Parse(userId));
+            var shelf = shelves.FirstOrDefault(a => a.ShelfName == shelfName);
+            var favoriteShelf = shelves.FirstOrDefault(a => a.ShelfName == "Favorites");
+
+            var book = _bookService.bookById(bookId.Value);
+
+            await _shelfService.AddBook(bookId.Value, shelf.ShelfId,favoriteShelf.ShelfId);
+
+
+            return RedirectToAction("Browse", "Book");
         }
     }
 }

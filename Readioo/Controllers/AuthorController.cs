@@ -229,7 +229,7 @@ namespace Readioo.Controllers
                 }
 
                 // Store the web-accessible path (NOT the physical path)
-                authorDto.AuthorImage = "/images/authors/" + fileName;
+                authorDto.AuthorImage = "images/authors/" + fileName;
             }
 
             try

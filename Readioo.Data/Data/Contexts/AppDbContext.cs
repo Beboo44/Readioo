@@ -84,7 +84,9 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Shelf).WithMany(p => p.BookShelves).HasForeignKey(d => d.ShelfId);
         });
 
-        
+
+
+
 
         modelBuilder.Entity<Review>(entity =>
         {

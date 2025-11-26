@@ -128,3 +128,25 @@
     width: 100%;
   }
 }
+
+
+.shelf-btn {
+    background: rgba(11, 143, 140, 0.12); /* same soft teal background */
+    color: #0B8F8C; /* accent color */
+    border: none;
+    padding: 8px 14px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+    .shelf-btn:hover {
+        background: rgba(11, 143, 140, 0.18);
+    }
+
+    .shelf-btn:active {
+        background: rgba(11, 143, 140, 0.25);
+        transform: scale(0.97);
+    }

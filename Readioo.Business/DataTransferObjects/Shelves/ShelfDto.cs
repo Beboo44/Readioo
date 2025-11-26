@@ -10,6 +10,7 @@ namespace Readioo.Business.DTO
     {
         public int ShelfId { get; set; }
         public string ShelfName { get; set; }
+        public int UserId { get; set; }
         public int BooksCount { get; set; }
     }
 }
