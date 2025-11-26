@@ -55,6 +55,7 @@ namespace Readioo
             builder.Services.AddScoped<IShelfService, ShelfService>();
             builder.Services.AddScoped<IGenreService, GenreService>();
             builder.Services.AddScoped<IGenreRepository, GenreRepository>();
+            builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 
             var app = builder.Build();
 
