@@ -167,6 +167,7 @@ namespace Readioo.Business.Services.Classes
 
         }
 
+<<<<<<< HEAD
         public async Task<IEnumerable<ShelfWithBooksDto>> GetUserShelvesWithBooksAsync(int userId)
         {
             var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
@@ -208,12 +209,22 @@ namespace Readioo.Business.Services.Classes
         {
             var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
             var shelf = shelves.FirstOrDefault(s => s.ShelfName == shelfName);
+=======
+        //public async Task<IEnumerable<BookDto>> GetShelfBooksAsync(string shelfName, int userId)
+        //{
+        //    var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
+        //    var shelf = shelves.FirstOrDefault(s => s.ShelfName == shelfName);
+>>>>>>> 7f30b78f1944c3dd0b18331d8915a8d971aa13b0
 
 
-            var books = 
+        //    var books = 
 
 
 
+<<<<<<< HEAD
         }*/
+=======
+        //}
+>>>>>>> 7f30b78f1944c3dd0b18331d8915a8d971aa13b0
     }
 }
