@@ -21,6 +21,8 @@ namespace Readioo.Business.Services.Interfaces
         public IEnumerable<BookDto> GetRecentlyAddedBooks(int count);
         public Task<List<BookDto>> GetUserBooksAsync(int userId);
 
+        IEnumerable<BookDto> GetAllBooksWithGenres();
+
     }
 
 }

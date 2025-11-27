@@ -18,10 +18,6 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork = unitOfWork;
         }
 
-        // ... (bookById, CreateBook, GetAllBooks, DeleteBook methods remain the same) ...
-        // For brevity, I am focusing on the modified UpdateBook method below.
-        // Ensure you keep the other methods as they were in your previous working version.
-
         public BookDto? bookById(int id)
         {
             var book = _unitOfWork.BookRepository.GetBookWithDetails(id);
@@ -59,7 +55,7 @@ namespace Readioo.Business.Services.Classes
                 PublishDate = bookCreatedDto.PublishDate,
                 MainCharacters = bookCreatedDto.MainCharacters,
                 Description = bookCreatedDto.Description,
-                Rate = 0m ,// default rate
+                Rate = 0m, // default rate
             };
 
             if (bookCreatedDto.BookImage != null)
@@ -111,28 +107,27 @@ namespace Readioo.Business.Services.Classes
                     .ToList(),
                     Genres = a.BookGenres
                     .Select(bg => new GenreDto { Id = bg.Genre.Id, GenreName = bg.Genre.GenreName })
-                    .ToList(),
+                    .ToList() ?? new List<GenreDto>(),
 
                     Reviews = a.Reviews
                     .Select(r => new ReviewDto
                     {
                         ReviewId = r.Id,
                         UserId = r.UserId,
-                        Username = r.User.FirstName + " " + r.User.LastName,
+                        Username = (r.User?.FirstName + " " + r.User?.LastName)??"",
                         Rating = r.Rating,
                         ReviewText = r.ReviewText,
                         CreatedAt = r.CreatedAt
 
                     })
-                    .ToList(),
+                    .ToList()??new List<ReviewDto>(),
 
-                    BookShelves = a.BookShelves
-                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId).ShelfName)
-                    .ToList()
+                    BookShelves = a.BookShelves?
+                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId)?.ShelfName??"")
+                    .ToList()?? new List<String>()
                 });
         }
 
-        // ✅ MODIFIED METHOD
         public async Task UpdateBook(BookDto bookDto)
         {
             // 1. We need the book WITH details (genres) to modify the collection
@@ -191,6 +186,7 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork.BookRepository.Remove(book);
             await _unitOfWork.CommitAsync();
         }
+
         public async Task<List<BookDto>> GetUserBooksAsync(int userId)
         {
             // 1️⃣ Get all shelves that belong to the user
@@ -207,7 +203,7 @@ namespace Readioo.Business.Services.Classes
 
             // 3️⃣ Get BookShelf entries for these shelves
             var bookShelves = await _unitOfWork.BookShelfRepository
-                .Query()                                 // must expose IQueryable
+                .Query()
                 .Where(bs => shelfIds.Contains(bs.ShelfId))
                 .Include(bs => bs.Book)
                     .ThenInclude(b => b.BookGenres)
@@ -243,10 +239,46 @@ namespace Readioo.Business.Services.Classes
             }).ToList();
         }
 
-
         public IEnumerable<BookDto> GetRecentlyAddedBooks(int count)
         {
-            return _unitOfWork.BookRepository.GetAll().OrderByDescending(b => b.Id).Take(count).Select(b => new BookDto { BookId = b.Id, Title = b.Title, BookImage = b.BookImage, Rate = b.Rate, AuthorName = b.Author != null ? b.Author.FullName : "Unknown" }).ToList();
+            return _unitOfWork.BookRepository.GetAll()
+                .OrderByDescending(b => b.Id)
+                .Take(count)
+                .Select(b => new BookDto
+                {
+                    BookId = b.Id,
+                    Title = b.Title,
+                    BookImage = b.BookImage,
+                    Rate = b.Rate,
+                    AuthorName = b.Author != null ? b.Author.FullName : "Unknown"
+                }).ToList();
+        }
+
+        // ✅ CORRECTED METHOD - Uses existing repository method
+        public IEnumerable<BookDto> GetAllBooksWithGenres()
+        {
+            // Use the existing GetAllBooksWithDetails method from repository
+            var books = _unitOfWork.BookRepository.GetAllBooksWithDetails();
+
+            // Map to DTOs
+            return books.Select(a => new BookDto
+            {
+                BookId = a.Id,
+                Title = a.Title,
+                Isbn = a.Isbn,
+                Language = a.Language,
+                AuthorId = a.AuthorId,
+                PagesCount = a.PagesCount,
+                PublishDate = a.PublishDate,
+                MainCharacters = a.MainCharacters,
+                Rate = a.Rate,
+                Description = a.Description,
+                BookImage = a.BookImage,
+                AuthorName = a.Author?.FullName ?? "Unknown",
+                BookGenres = a.BookGenres?
+                    .Select(g => g.Genre.GenreName)
+                    .ToList() ?? new List<string>()
+            }).ToList();
         }
     }
 }
