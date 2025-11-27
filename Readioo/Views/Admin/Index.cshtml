@@ -1,15 +1,123 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
 }
-<br />
-<br />
-<a class="btn width-100% mb-1000 border" style="width:100%" asp-controller="Book" asp-action="Index"><h1>📚 Manage Books</h1></a>
-<br />
-<br />
-<a class="btn width-100% mb-1000 border" style="width:100%" asp-controller="Author" asp-action="Index"><h1>✍️ Manage Authors</h1></a>
-<br />
-<br />
-<br />
-<br />
+
+<div class="container my-5">
+    <!-- Header Section -->
+    <div class="row mb-5">
+        <div class="col-12">
+            <h1 class="display-5 fw-bold text-dark border-bottom pb-3">
+                <span style="color: #002B5B;"><i class="fa-solid fa-user-gear me-2"></i>Admin</span> Dashboard
+            </h1>
+            <p class="lead text-muted mt-2">
+                Manage your library's core content. Select a module below to get started.
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard Cards -->
+    <div class="row g-4 justify-content-center">
+
+        <!-- Manage Books Module -->
+        <div class="col-md-6 col-lg-5">
+            <a asp-controller="Book" asp-action="Index" class="text-decoration-none card-link">
+                <div class="card h-100 border-0 shadow-sm dashboard-card">
+                    <div class="card-body text-center py-5 px-4">
+                        <div class="icon-wrapper mb-4 mx-auto">
+                            <i class="fa-solid fa-book fa-3x"></i>
+                        </div>
+                        <h2 class="h3 fw-bold mb-3" style="color: #002B5B;">Manage Books</h2>
+                        <p class="text-muted mb-4">
+                            Add new titles, update inventory, and curate the book collection.
+                        </p>
+                        <span class="btn btn-action rounded-pill px-4 fw-bold">
+                            View Books <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Manage Authors Module -->
+        <div class="col-md-6 col-lg-5">
+            <a asp-controller="Author" asp-action="Index" class="text-decoration-none card-link">
+                <div class="card h-100 border-0 shadow-sm dashboard-card">
+                    <div class="card-body text-center py-5 px-4">
+                        <div class="icon-wrapper mb-4 mx-auto">
+                            <i class="fa-solid fa-pen-nib fa-3x"></i>
+                        </div>
+                        <h2 class="h3 fw-bold mb-3" style="color: #002B5B;">Manage Authors</h2>
+                        <p class="text-muted mb-4">
+                            Create author profiles, edit biographies, and link works.
+                        </p>
+                        <span class="btn btn-action rounded-pill px-4 fw-bold">
+                            View Authors <i class="fa-solid fa-arrow-right ms-2"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<style>
+    /* Local Styles for Admin Dashboard */
+    :root {
+        --admin-navy: #002B5B;
+        --admin-orange: #FF9F1C;
+        --admin-bg: #f4f7f6;
+    }
+
+    body {
+        background-color: var(--admin-bg);
+    }
+
+    /* Card Styling */
+    .dashboard-card {
+        background: #fff;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        position: relative;
+        overflow: hidden;
+        border-bottom: 4px solid transparent !important;
+    }
+
+    /* Hover Effects */
+    .card-link:hover .dashboard-card {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(0, 43, 91, 0.15) !important;
+        border-bottom-color: var(--admin-orange) !important;
+    }
+
+    /* Icon Circle */
+    .icon-wrapper {
+        width: 100px;
+        height: 100px;
+        background-color: rgba(0, 43, 91, 0.05); /* Very light navy */
+        color: var(--admin-navy);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+
+    .card-link:hover .icon-wrapper {
+        background-color: var(--admin-navy);
+        color: #fff;
+    }
+
+    /* Button Styling */
+    .btn-action {
+        background-color: transparent;
+        color: var(--admin-navy);
+        border: 2px solid var(--admin-navy);
+        transition: all 0.3s ease;
+    }
+
+    .card-link:hover .btn-action {
+        background-color: var(--admin-navy);
+        color: #fff;
+        border-color: var(--admin-navy);
+    }
+</style>
