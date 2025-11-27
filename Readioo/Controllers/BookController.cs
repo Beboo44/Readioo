@@ -128,11 +128,19 @@ namespace Readioo.Controllers
                 PublishDate = book.PublishDate,
                 MainCharacters = book.MainCharacters,
                 Description = book.Description,
-                BookImg = book.BookImage
+                BookImg = book.BookImage,
+                BookGenres = book.BookGenres ?? new List<string>()
             };
 
             var authors = _authorService.getAllAuthors();
+
+            ViewBag.BookId = id;
             ViewBag.AuthorId = new SelectList(authors, "AuthorId", "FullName");
+
+            var genres = _genreService.GetAllGenres();
+            ViewBag.Genres = genres;
+
+            
 
             return View(bookVM);
         }
@@ -141,6 +149,18 @@ namespace Readioo.Controllers
         public async Task<IActionResult> Edit([FromRoute] int? id, BookVM book)
         {
             if (id is null) return BadRequest();
+
+            if (!ModelState.IsValid)
+            {
+                var authors = _authorService.getAllAuthors();
+                ViewBag.AuthorId = new SelectList(authors, "AuthorId", "FullName");
+
+                // Reload Genres so checkboxes don't disappear on error
+                ViewBag.Genres = _genreService.GetAllGenres();
+
+                return View(book);
+            }
+
 
             var bookDto = new BookDto()
             {
@@ -152,7 +172,8 @@ namespace Readioo.Controllers
                 AuthorId = book.AuthorId,
                 PagesCount = book.PagesCount,
                 PublishDate = book.PublishDate,
-                Description = book.Description
+                Description = book.Description,
+                BookGenres = book.BookGenres ?? new List<string>()
             };
 
             if (book.BookImage != null)

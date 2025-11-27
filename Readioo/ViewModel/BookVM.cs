@@ -4,6 +4,9 @@ namespace Readioo.ViewModel
 {
     public class BookVM
     {
+
+        
+
         [Required]
         [Display(Name = "Book Name")]
         public string Title { get; set; } = null!;

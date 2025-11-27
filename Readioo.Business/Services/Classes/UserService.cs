@@ -128,7 +128,6 @@ namespace Readioo.Business.Services.Classes
             user.Bio = dto.Bio;
             user.City = dto.City;
             user.Country = dto.Country;
-            user.ProfileUrl = dto.ProfileUrl;
 
             if (dto.UserImage != null)
                 user.UserImage = dto.UserImage;

@@ -18,9 +18,6 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork = unitOfWork;
         }
 
-        // ... (bookById, CreateBook, GetAllBooks, DeleteBook methods remain the same) ...
-        // For brevity, I am focusing on the modified UpdateBook method below.
-        // Ensure you keep the other methods as they were in your previous working version.
 
         public BookDto? bookById(int id)
         {

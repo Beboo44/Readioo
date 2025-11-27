@@ -49,7 +49,6 @@ namespace Readioo.Controllers
                 Bio = user.Bio,
                 City = user.City,
                 Country = user.Country,
-                ProfileUrl = user.ProfileUrl,
                 UserImage = user.UserImage,
                 Shelves = shelfDtos.Select(s => new ShelfInfoVM
                 {
@@ -78,7 +77,6 @@ namespace Readioo.Controllers
                 Bio = user.Bio,
                 City = user.City,
                 Country = user.Country,
-                ProfileUrl = user.ProfileUrl
             };
 
             return View(vm);
@@ -118,7 +116,6 @@ namespace Readioo.Controllers
                     Bio = vm.Bio,
                     City = vm.City,
                     Country = vm.Country,
-                    ProfileUrl = vm.ProfileUrl,
                     UserImage = imageBytes
                 };
 

@@ -15,7 +15,6 @@ namespace Readioo.Business.DataTransferObjects.User
         public string? Bio { get; set; }
         public string? City { get; set; }
         public string? Country { get; set; }
-        public string? ProfileUrl { get; set; }
         public byte[]? UserImage { get; set; }  // optional
     }
 }
