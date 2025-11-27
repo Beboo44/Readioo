@@ -56,7 +56,7 @@ namespace Readioo.Business.Services.Classes
                 PublishDate = bookCreatedDto.PublishDate,
                 MainCharacters = bookCreatedDto.MainCharacters,
                 Description = bookCreatedDto.Description,
-                Rate = 0m ,// default rate
+                Rate = 0m,// default rate
             };
 
             if (bookCreatedDto.BookImage != null)
@@ -87,7 +87,7 @@ namespace Readioo.Business.Services.Classes
 
         public IEnumerable<BookDto> GetAllBooks()
         {
-            return _unitOfWork.BookRepository.GetAll()
+            return _unitOfWork.BookRepository.GetAllBooksWithDetails() // ✅ CHANGED: Use GetAllBooksWithDetails()
                 .Select(a => new BookDto
                 {
                     BookId = a.Id,
@@ -109,24 +109,24 @@ namespace Readioo.Business.Services.Classes
 
                     Genres = a.BookGenres?
                     .Select(bg => new GenreDto { Id = bg.Genre.Id, GenreName = bg.Genre.GenreName })
-                    .ToList()??new List<GenreDto>(),
+                    .ToList() ?? new List<GenreDto>(),
 
                     Reviews = a.Reviews?
                     .Select(r => new ReviewDto
                     {
                         ReviewId = r.Id,
                         UserId = r.UserId,
-                        Username = (r.User?.FirstName + " " + r.User?.LastName)??"",
+                        Username = (r.User?.FirstName + " " + r.User?.LastName) ?? "",
                         Rating = r.Rating,
                         ReviewText = r.ReviewText,
                         CreatedAt = r.CreatedAt
 
                     })
-                    .ToList()??new List<ReviewDto>(),
+                    .ToList() ?? new List<ReviewDto>(),
 
                     BookShelves = a.BookShelves?
-                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId)?.ShelfName??"")
-                    .ToList()?? new List<String>()
+                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId)?.ShelfName ?? "")
+                    .ToList() ?? new List<String>()
                 });
         }
 
