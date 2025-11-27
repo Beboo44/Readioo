@@ -14,14 +14,12 @@ namespace Readioo.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IGenreService _genreService; //  2. Define the service field
         private readonly IBookService _bookService; // 1. Add BookService field
-        private readonly IBookService _bookService;
         private readonly IRecommendationService _recommendationService;
 
-        public HomeController(ILogger<HomeController> logger, IBookService bookService, IRecommendationService recommendationService)
+        public HomeController(ILogger<HomeController> logger, IBookService bookService, IRecommendationService recommendationService, IGenreService genreService)
         {
             _logger = logger;
             _genreService = genreService;
-            _bookService = bookService;
             _bookService = bookService;
             _recommendationService = recommendationService;
         }

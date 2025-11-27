@@ -109,6 +109,9 @@ namespace Readioo.Business.Services.Classes
                     BookGenres = a.BookGenres
                     .Select(g => g.Genre.GenreName)
                     .ToList(),
+                    Genres = a.BookGenres
+                    .Select(bg => new GenreDto { Id = bg.Genre.Id, GenreName = bg.Genre.GenreName })
+                    .ToList(),
 
                     Reviews = a.Reviews
                     .Select(r => new ReviewDto

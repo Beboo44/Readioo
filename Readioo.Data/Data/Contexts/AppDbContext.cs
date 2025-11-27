@@ -85,28 +85,7 @@ public partial class AppDbContext : DbContext
             entity.HasOne(d => d.Author).WithMany(p => p.Books).HasForeignKey(d => d.AuthorId);
         });
 
-        //modelBuilder.Entity<BookGenre>(entity =>
-        //{
-        //    entity.HasIndex(e => e.BookId, "IX_BookGenres_BookId");
-
-        //    entity.HasIndex(e => e.GenreId, "IX_BookGenres_GenreId");
-
-        //    entity.HasOne(d => d.Book).WithMany(p => p.BookGenres).HasForeignKey(d => d.BookId);
-
-        //    entity.HasOne(d => d.Genre).WithMany(p => p.BookGenres).HasForeignKey(d => d.GenreId);
-        //});
-
-        //modelBuilder.Entity<BookShelf>(entity =>
-        //{
-        //    entity.HasIndex(e => e.BookId, "IX_BookShelves_BookId");
-
-        //    entity.HasIndex(e => e.ShelfId, "IX_BookShelves_ShelfId");
-
-        //    entity.HasOne(d => d.Book).WithMany(p => p.BookShelves).HasForeignKey(d => d.BookId);
-
-        //    entity.HasOne(d => d.Shelf).WithMany(p => p.BookShelves).HasForeignKey(d => d.ShelfId);
-        //});
-
+        
 
 
 

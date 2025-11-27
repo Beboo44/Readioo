@@ -8,7 +8,7 @@
     var trending = ViewBag.TrendingBooks as List<BookDto>;
     var recent = ViewBag.RecentBooks as List<BookDto>;
     var recommendations = ViewBag.Recommendations as List<BookDto>;
-}
+
     var genreList = ViewBag.Genres as IEnumerable<GenreDto>;
     var recentBooks = ViewBag.RecentBooks as IEnumerable<BookDto>;
 
@@ -146,7 +146,7 @@
             <h2 class="section-title">🆕 Recently Added</h2>
             <div class="book-grid" id="recentBooks">
 
-                @if (recentBooks != null && recentBooks.Any())
+                @if (recent != null && recentBooks.Any())
                 {
                     @foreach (var book in recentBooks)
                     {
