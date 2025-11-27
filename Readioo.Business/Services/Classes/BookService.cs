@@ -104,31 +104,32 @@ namespace Readioo.Business.Services.Classes
                     Rate = a.Rate,
                     Description = a.Description,
                     BookImage = a.BookImage,
-                    AuthorName = a.Author.FullName,
+                    AuthorName = a.Author?.FullName,
 
-                    BookGenres = a.BookGenres
+                    BookGenres = a.BookGenres?
                     .Select(g => g.Genre.GenreName)
-                    .ToList(),
-                    Genres = a.BookGenres
-                    .Select(bg => new GenreDto { Id = bg.Genre.Id, GenreName = bg.Genre.GenreName })
-                    .ToList(),
+                    .ToList() ?? new List<string>(),
 
-                    Reviews = a.Reviews
+                    Genres = a.BookGenres?
+                    .Select(bg => new GenreDto { Id = bg.Genre.Id, GenreName = bg.Genre.GenreName })
+                    .ToList()??new List<GenreDto>(),
+
+                    Reviews = a.Reviews?
                     .Select(r => new ReviewDto
                     {
                         ReviewId = r.Id,
                         UserId = r.UserId,
-                        Username = r.User.FirstName + " " + r.User.LastName,
+                        Username = (r.User?.FirstName + " " + r.User?.LastName)??"",
                         Rating = r.Rating,
                         ReviewText = r.ReviewText,
                         CreatedAt = r.CreatedAt
 
                     })
-                    .ToList(),
+                    .ToList()??new List<ReviewDto>(),
 
-                    BookShelves = a.BookShelves
-                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId).ShelfName)
-                    .ToList()
+                    BookShelves = a.BookShelves?
+                    .Select(s => _unitOfWork.ShelfRepository.GetById(s.ShelfId)?.ShelfName??"")
+                    .ToList()?? new List<String>()
                 });
         }
 

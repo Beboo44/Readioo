@@ -32,19 +32,20 @@ namespace Readioo.Controllers
             {
                 var recommendations = await _recommendationService.GetRecommendationsForUserAsync(userId);
                 ViewBag.Recommendations = recommendations;
+
+                // 2. Genres
+                var genres = _genreService.GetAllGenres();
+                ViewBag.Genres = genres;
+
+                // 3. Books (Only Recently Added)
+                var allBooks = _bookService.GetAllBooks();
+
+
+                // Recently Added: Newest by Date
+                ViewBag.RecentBooks = allBooks.OrderByDescending(b => b.PublishDate).Take(4).ToList();
             }
 
-            // 2. Genres
-            var genres = _genreService.GetAllGenres();
-            ViewBag.Genres = genres;
-
-            // 3. Books (Only Recently Added)
-            var allBooks = _bookService.GetAllBooks();
-
-            // REMOVED: Trending Books logic
-
-            // Recently Added: Newest by Date
-            ViewBag.RecentBooks = allBooks.OrderByDescending(b => b.PublishDate).Take(4).ToList();
+            
 
             return View(new LoginVM());
         }
