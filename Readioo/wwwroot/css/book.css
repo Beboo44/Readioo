@@ -270,3 +270,22 @@
 .gr-rating-input label:has(input[type="radio"]:checked) ~ label .star-input {
     color: #ffc107;
 }
+.user-rating .stars {
+    display: inline-flex;
+    gap: 2px;
+}
+
+.star-rate {
+    cursor: pointer;
+    font-size: 24px;
+    color: #ddd;
+    transition: color 0.2s;
+}
+
+    .star-rate.filled {
+        color: #ffc107;
+    }
+
+    .star-rate:hover {
+        transform: scale(1.1);
+    }

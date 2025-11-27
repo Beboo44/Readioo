@@ -246,5 +246,29 @@ namespace Readioo.Business.Services.Classes
         {
             return _unitOfWork.BookRepository.GetAll().OrderByDescending(b => b.Id).Take(count).Select(b => new BookDto { BookId = b.Id, Title = b.Title, BookImage = b.BookImage, Rate = b.Rate, AuthorName = b.Author != null ? b.Author.FullName : "Unknown" }).ToList();
         }
+        public async Task<int?> GetUserRating(int userId, int bookId)
+        {
+            var userBook = _unitOfWork.BookRepository.GetUserBookRating(userId, bookId);
+            return userBook?.UserRating;
+        }
+
+        public async Task SaveUserRating(int userId, int bookId, int rating)
+        {
+            await _unitOfWork.BookRepository.SaveUserRating(userId, bookId, rating);
+            await UpdateBookAverageRating(bookId);
+            await _unitOfWork.CommitAsync();
+        }
+
+        public async Task UpdateBookAverageRating(int bookId)
+        {
+            var avgRating = _unitOfWork.BookRepository.CalculateAverageRating(bookId);
+            var book = await _unitOfWork.BookRepository.GetByIdAsync(bookId);
+
+            if (book != null)
+            {
+                book.Rate = avgRating;
+                _unitOfWork.BookRepository.Update(book);
+            }
+        }
     }
 }

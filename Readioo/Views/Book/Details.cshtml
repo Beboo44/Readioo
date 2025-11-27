@@ -68,7 +68,12 @@
 
                     <div class="user-rating">
                         <span>Your Rating:</span>
-                        <div id="userStars" class="stars"></div>
+                        <div id="userStars" class="stars" data-book-id="@Model.BookId" data-user-rating="@(Model.UserRating ?? 0)">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span class="star-rate @(Model.UserRating.HasValue && i <= Model.UserRating.Value ? "filled" : "")" data-rating="@i">★</span>
+                            }
+                        </div>
                     </div>
                 </div>
             </div>
@@ -158,16 +163,35 @@
 
 
     <script>
-        // Use model's rate for star rendering
-        document.addEventListener("DOMContentLoaded", () => {
+        function createStarSVG(filled) {
+            const color = filled ? '#f6b438' : '#e0e0e0';
+            const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            svg.setAttribute("viewBox", "0 0 20 20");
+            svg.setAttribute("fill", color);
+            svg.style.width = "18px";
+            svg.style.height = "18px";
+            svg.style.display = "inline-block";
+
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            path.setAttribute("d", "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.951a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.951c.3.921-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.197-1.538-1.118l1.286-3.951a1 1 0 00-.364-1.118L2.063 9.378c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.951z");
+
+            svg.appendChild(path);
+            return svg;
+        }
+
+        // Render average rating stars
+        document.addEventListener("DOMContentLoaded", function() {
             const avg = @Model.Rate;
             const container = document.getElementById("avgRating");
 
-            let html = "";
-            for (let i = 0; i < 5; i++) {
-                html += makeStarSVG(i < avg);
+            if (container) {
+                container.innerHTML = ''; // Clear existing content
+                for (let i = 0; i < 5; i++) {
+                    const filled = i < Math.floor(avg);
+                    const star = createStarSVG(filled);
+                    container.appendChild(star);
+                }
             }
-            container.innerHTML = html;
         });
     </script>
 

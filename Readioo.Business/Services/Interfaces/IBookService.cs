@@ -20,7 +20,9 @@ namespace Readioo.Business.Services.Interfaces
 
         public IEnumerable<BookDto> GetRecentlyAddedBooks(int count);
         public Task<List<BookDto>> GetUserBooksAsync(int userId);
-
+        public Task<int?> GetUserRating(int userId, int bookId);
+        public Task SaveUserRating(int userId, int bookId, int rating);
+        public Task UpdateBookAverageRating(int bookId);
     }
 
 }
