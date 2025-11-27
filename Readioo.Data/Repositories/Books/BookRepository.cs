@@ -44,6 +44,46 @@ namespace Readioo.Data.Repositories.Books
                     .ThenInclude(bg => bg.Genre) // Include Genre so we can get GenreName
                 .ToList();
         }
+        public UserBook? GetUserBookRating(int userId, int bookId)
+        {
+            return _dbContext.Set<UserBook>()
+                .FirstOrDefault(ub => ub.UserId == userId && ub.BookId == bookId);
+        }
+
+        public async Task SaveUserRating(int userId, int bookId, int rating)
+        {
+            var userBook = _dbContext.Set<UserBook>()
+                .FirstOrDefault(ub => ub.UserId == userId && ub.BookId == bookId);
+
+            if (userBook == null)
+            {
+                userBook = new UserBook
+                {
+                    UserId = userId,
+                    BookId = bookId,
+                    UserRating = rating
+                };
+                _dbContext.Set<UserBook>().Add(userBook);
+            }
+            else
+            {
+                userBook.UserRating = rating;
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+        public decimal CalculateAverageRating(int bookId)
+        {
+            var ratings = _dbContext.Set<UserBook>()
+                .Where(ub => ub.BookId == bookId && ub.UserRating.HasValue)
+                .Select(ub => ub.UserRating.Value)
+                .ToList();
+
+            if (!ratings.Any())
+                return 0m;
+
+            return (decimal)ratings.Average();
+        }
 
     }
 }

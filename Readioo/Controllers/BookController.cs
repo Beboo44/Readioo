@@ -5,6 +5,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using NToastNotify;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.Services.Interfaces;
+using Readioo.Models;
 using Readioo.ViewModel;
 using System.Security.Claims;
 
@@ -103,9 +104,15 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(int id)
+        public async Task<IActionResult> DetailsAsync(int id)
         {
             var book = _bookService.bookById(id);
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (userId > 0)
+            {
+                book.UserRating = await _bookService.GetUserRating(userId, id);
+            }         
+
             if (book is null)
                 return NotFound();
             return View(book);
@@ -232,10 +239,10 @@ namespace Readioo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>AddToShelf(int? bookId, string? shelfName)
+        public async Task<IActionResult> AddToShelf(int? bookId, string? shelfName)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            
+
 
             if (userId == null)
             {
@@ -243,7 +250,7 @@ namespace Readioo.Controllers
             }
 
             var user = await _userService.GetUserByIdAsync(int.Parse(userId));
-            
+
 
             if (bookId is null || shelfName is null)
                 return BadRequest();
@@ -254,10 +261,21 @@ namespace Readioo.Controllers
 
             var book = _bookService.bookById(bookId.Value);
 
-            await _shelfService.AddBook(bookId.Value, shelf.ShelfId,favoriteShelf.ShelfId);
+            await _shelfService.AddBook(bookId.Value, shelf.ShelfId, favoriteShelf.ShelfId);
 
             _toast.AddSuccessToastMessage("Book Added Successfully");
             return RedirectToAction("Browse", "Book");
+        }
+        [HttpPost]
+        public async Task<IActionResult> RateBook(int bookId, int rating)
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            if (userId <= 0)
+                return Unauthorized();
+
+            await _bookService.SaveUserRating(userId, bookId, rating);
+
+            return RedirectToAction("Details", new { id = bookId });
         }
     }
 }   

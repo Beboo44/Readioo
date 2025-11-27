@@ -19,6 +19,7 @@ namespace Readioo.Business.DataTransferObjects.Book
         public string Description { get; set; } = null!;
         public string? BookImage { get; set; }
         public string AuthorName { get; set; }
+        public int? UserRating { get; set; }
         public virtual AuthorDto Author { get; set; } = null!;
 
         // This is the list of strings (keep it if you use it elsewhere)
@@ -29,5 +30,6 @@ namespace Readioo.Business.DataTransferObjects.Book
 
         public virtual ICollection<String> BookShelves { get; set; } = new List<String>();
         public virtual ICollection<ReviewDto> Reviews { get; set; } = new List<ReviewDto>();
+
     }
 }
