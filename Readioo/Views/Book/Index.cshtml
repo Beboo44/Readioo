@@ -8,7 +8,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h1>Books Library</h1>
-        <a asp-action="Create" class="btn btn-primary">
+        <a asp-action="Create" class="btn btn-success btn-lg">
             <i class="fa-solid fa-plus"></i> Create New Book
         </a>
     </div>
@@ -23,7 +23,7 @@
                 <th>Author</th>
                 <th>Pages</th>
                 <th>Rate</th>
-                <th style="width: 15%;">Genres</th>
+                <th style="width: 20%;">Genres</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -31,6 +31,7 @@
             @foreach (var book in Model)
             {
                 <tr>
+                    <!-- Cover Image -->
                     <td>
                         @if (!string.IsNullOrEmpty(book.BookImage))
                         {
@@ -46,30 +47,51 @@
                             </div>
                         }
                     </td>
-                    <td class="fw-bold">@book.Title</td>
+
+                    <!-- Title -->
+                    <td>
+                        <a asp-action="Details" asp-route-id="@book.BookId"
+                           class="text-decoration-none fw-bold text-dark">
+                            @book.Title
+                        </a>
+                    </td>
+
                     <td>@book.Isbn</td>
                     <td>@book.Language</td>
+
+                    <!-- Author -->
                     <td>
                         <a asp-controller="Author" asp-action="Details" asp-route-id="@book.AuthorId"
                            class="text-decoration-none fw-semibold">
                             @book.AuthorName
                         </a>
                     </td>
+
                     <td>@book.PagesCount</td>
 
+                    <!-- Rate -->
                     <td>
                         <span class="text-warning"><i class="fa-solid fa-star"></i> @book.Rate.ToString("0.00")</span>
                     </td>
 
+                    <!-- ✅ GENRES COLUMN - MEDIUM GREY WITH WHITE TEXT -->
                     <td>
                         @if (book.Genres != null && book.Genres.Any())
                         {
                             @foreach (var genre in book.Genres)
                             {
                                 <a asp-controller="Genre" asp-action="Details" asp-route-id="@genre.Id"
-                                   class="badge bg-secondary text-decoration-none me-1 mb-1">
+                                   class="badge text-decoration-none text-white me-1 mb-1"
+                                   style="background-color: #9E9E9E; cursor: pointer;">
                                     @genre.GenreName
                                 </a>
+                            }
+                        }
+                        else if (book.BookGenres != null && book.BookGenres.Any())
+                        {
+                            @foreach (var genreName in book.BookGenres)
+                            {
+                                <span class="badge me-1 mb-1" style="background-color: #9E9E9E; color: white;">@genreName</span>
                             }
                         }
                         else
@@ -78,19 +100,25 @@
                         }
                     </td>
 
+                    <!-- Actions -->
                     <td>
-                        <div class="d-flex gap-2 flex-wrap">
-                            <a asp-action="Edit" asp-route-id="@book.BookId" class="btn btn-warning btn-sm text-dark">
-                                <i class="fa-solid fa-pen"></i> Edit
+                        <div class="btn-group" role="group" aria-label="Book Actions">
+                            <a asp-action="Edit" asp-route-id="@book.BookId" 
+                               class="btn btn-sm btn-warning text-dark" 
+                               title="Edit Book">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
                             </a>
-                            <a asp-action="Details" asp-route-id="@book.BookId" class="btn btn-info btn-sm text-white">
+                            <a asp-action="Details" asp-route-id="@book.BookId" 
+                               class="btn btn-sm btn-info text-white"
+                               title="View Details">
                                 <i class="fa-solid fa-circle-info"></i> Details
                             </a>
                             <form asp-action="Delete" asp-route-id="@book.BookId" method="post" style="display:inline;">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-danger btn-sm"
+                                <button type="submit" class="btn btn-sm btn-danger"
+                                        title="Delete Book"
                                         onclick="return confirm('Are you sure you want to delete \'@book.Title\'?');">
-                                    <i class="fa-solid fa-trash"></i> Delete
+                                    <i class="fa-solid fa-trash-can"></i> Delete
                                 </button>
                             </form>
                         </div>
@@ -100,3 +128,18 @@
         </tbody>
     </table>
 </div>
+
+<style>
+    .table-hover tbody tr:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.4rem 0.6rem;
+    }
+    
+    .btn-group .btn {
+        margin: 0 2px;
+    }
+</style>
