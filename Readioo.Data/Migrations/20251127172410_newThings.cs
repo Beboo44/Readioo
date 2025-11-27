@@ -5,7 +5,7 @@
 namespace Readioo.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddUserRatingToUserBook : Migration
+    public partial class newThings : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
