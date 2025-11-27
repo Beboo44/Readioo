@@ -10,12 +10,29 @@
     var userId = Model.UserId;
     var shelveswithBooks = Model.Shelveswithbook;
 
-    var favoriteShelf = shelveswithBooks.FirstOrDefault(s => s.ShelfName == "Favorites");
+    // --- LOGIC: Create a master list of ALL unique books from all shelves ---
+    // This logic automatically handles "Want to Read", "Currently Reading", "Books Read", etc.
+    // regardless of which specific shelf they are on.
+    var allUserBooks = shelveswithBooks
+        .SelectMany(s => s.Books)
+        .GroupBy(b => b.BookId)
+        .Select(group =>
+        {
+            var firstBook = group.First();
 
-    // Calculate total unique books added across all shelves for the stat
-    var totalBooks = shelveswithBooks != null
-        ? shelveswithBooks.SelectMany(s => s.Books).Select(b => b.BookId).Distinct().Count()
-        : 0;
+            // Collect ALL unique shelf names for this book from the group
+            // We look at the shelf objects themselves to get the accurate names
+            var allShelvesForBook = shelveswithBooks
+                .Where(shelf => shelf.Books.Any(b => b.BookId == firstBook.BookId))
+                .Select(shelf => shelf.ShelfName)
+                .Distinct()
+                .ToList();
+
+            return new { Book = firstBook, Shelves = allShelvesForBook };
+        })
+        .ToList();
+
+    var totalBooks = allUserBooks.Count();
 }
 
 <!DOCTYPE html>
@@ -31,28 +48,24 @@
     <link rel="stylesheet" href="~/css/my_books.css?v=@DateTime.Now.Ticks">
 
     <style>
-        /* ✅ ADDED: Flexbox layout to handle side-by-side positioning with gap */
         .main-layout {
             display: flex;
             flex-direction: row;
-            gap: 40px; /* This creates the margin space you requested */
+            gap: 40px;
             align-items: flex-start;
             margin-top: 20px;
         }
 
-        /* Sidebar Styling */
         .sidebar {
-            width: 280px; /* Fixed width for the sidebar */
-            flex-shrink: 0; /* Prevent sidebar from shrinking */
+            width: 280px;
+            flex-shrink: 0;
         }
 
-        /* Main Content Styling */
         .main-content {
-            flex-grow: 1; /* Take up remaining space */
-            width: 100%; /* Ensure table container fills the space */
+            flex-grow: 1;
+            width: 100%;
         }
 
-        /* Styling for the moved header info */
         .sidebar-header {
             margin-bottom: 20px;
         }
@@ -79,13 +92,9 @@
 <body>
     <div class="wrap" id="app">
 
-        <!-- Moved header content inside the main layout/sidebar logic below -->
-
         <div class="main-layout container">
             <!-- Sidebar -->
             <aside class="sidebar">
-
-                <!-- ✅ MOVED: Header Info is now above the side table -->
                 <div class="sidebar-header">
                     <div class="page-title">My Books</div>
                     <div class="page-subtitle">Track your reading journey</div>
@@ -126,11 +135,17 @@
                         </thead>
 
                         <tbody id="booksTableBody">
-                            @if (favoriteShelf != null && favoriteShelf.Books != null)
+                            @if (allUserBooks != null && allUserBooks.Any())
                             {
-                                foreach (var book in favoriteShelf.Books)
+                                foreach (var item in allUserBooks)
                                 {
-                                    <tr data-shelves="@string.Join(",", book.BookShelves.Select(s => s.ToLower().Replace(" ", "-")))">
+                                    var book = item.Book;
+                                    var shelves = item.Shelves;
+
+                                    // Construct the filter string (e.g., "favorites,want-to-read,currently-reading")
+                                    var shelfFilterString = string.Join(",", shelves.Select(s => s.ToLower().Replace(" ", "-")));
+
+                                    <tr data-shelves="@shelfFilterString">
                                         <td>
                                             <div class="book-title-cell d-flex align-items-center">
                                                 <div class="table-book-cover me-3">
@@ -163,18 +178,23 @@
                                         </td>
 
                                         <td>
-                                            <!-- Date Added placeholder if available in model -->
                                             @book.PublishDate.ToString("MMM dd, yyyy")
                                         </td>
 
                                         <td>
-                                            @foreach (var s in book.BookShelves)
+                                            @foreach (var s in shelves)
                                             {
                                                 <span class="badge bg-light text-dark border me-1">@s</span>
                                             }
                                         </td>
                                     </tr>
                                 }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="5" class="text-center text-muted p-4">No books found in your library.</td>
+                                </tr>
                             }
                         </tbody>
 
