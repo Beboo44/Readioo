@@ -5,7 +5,7 @@
     ViewData["Title"] = "Home Page";
 
     // Cast ViewBag data to safe types
-    var trending = ViewBag.TrendingBooks as List<BookDto>;
+    // Removed: var trending = ViewBag.TrendingBooks as List<BookDto>;
     var recent = ViewBag.RecentBooks as List<BookDto>;
     var recommendations = ViewBag.Recommendations as List<BookDto>;
 
@@ -35,16 +35,15 @@
     <link rel="stylesheet" href="~/css/home.css">
 
     <style>
-        /* Custom Button Style for Explore Books */
         .btn-custom-green {
             background-color: #146c43;
             border-color: #146c43;
             color: white;
             font-weight: 500;
         }
-            /* Ensure it stays green on hover */
+
             .btn-custom-green:hover {
-                background-color: #0f5132; /* Slightly darker green on hover */
+                background-color: #0f5132;
                 border-color: #0a3622;
                 color: white;
             }
@@ -112,35 +111,6 @@
             </div>
         </section>
 
-        <!-- Recommendations (Only if User is Logged In & Data Exists) -->
-        @if (recommendations != null && recommendations.Any())
-        {
-            <section class="section recommendations">
-                <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles text-warning"></i> Recommended For You</h2>
-                <div class="book-grid">
-                    @foreach (var book in recommendations)
-                    {
-                        <div class="book-card-home">
-                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none text-dark">
-                                <img src="@(string.IsNullOrEmpty(book.BookImage) ? "https://placehold.co/180x250?text=No+Cover" : Url.Content("~/" + book.BookImage))" alt="@book.Title">
-                                <div class="book-card-body">
-                                    <h6 class="text-truncate" title="@book.Title">@book.Title</h6>
-                                    <small class="text-muted d-block">@book.AuthorName</small>
-                                    <small class="text-warning"><i class="fa-solid fa-star"></i> @book.Rate.ToString("0.0")</small>
-                                </div>
-                            </a>
-                        </div>
-                    }
-                </div>
-            </section>
-        }
-
-        <section class="section trending">
-            <h2 class="section-title">📈 Trending Books</h2>
-            <div class="book-grid" id="trendingBooks">
-            </div>
-        </section>
-
         <section class="section recent">
             <h2 class="section-title">🆕 Recently Added</h2>
             <div class="book-grid" id="recentBooks">
@@ -184,6 +154,42 @@
             </div>
         </section>
 
+        <!-- Recommendations Section -->
+        @if (recommendations != null && recommendations.Any())
+        {
+            <section class="section recommendations">
+                <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles text-warning"></i> Recommended For You</h2>
+                <div class="book-grid">
+                    @foreach (var book in recommendations)
+                    {
+                        var bookImgUrl = ResolveImagePath(book.BookImage);
+                        <div class="book-card">
+                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none text-dark">
+                                <img src="@(string.IsNullOrEmpty(bookImgUrl) ? "https://placehold.co/180x250?text=No+Cover" : bookImgUrl)"
+                                     alt="@book.Title"
+                                     onerror="this.src='https://placehold.co/180x250?text=No+Cover'" />
+                                <div class="book-card-body">
+                                    <div class="book-card-title" title="@book.Title">@book.Title</div>
+                                    <small class="text-muted d-block">@book.AuthorName</small>
+                                    <small class="text-warning">
+                                        @if (book.Rate > 0)
+                                        {
+                                            <i class="fa-solid fa-star text-warning"></i>
+                                            @book.Rate.ToString("0.0")
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-success">New</span>
+                                        }
+                                    </small>
+                                </div>
+                            </a>
+                        </div>
+                    }
+                </div>
+            </section>
+        }
+
         <section class="section genres">
             <h2 class="section-title">🎨 Popular Genres</h2>
             <div class="genre-list">
@@ -201,7 +207,6 @@
                 }
                 else
                 {
-
                     <p class="text-muted">No genres found.</p>
                 }
             </div>

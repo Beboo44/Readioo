@@ -24,17 +24,28 @@ namespace Readioo.Controllers
             _recommendationService = recommendationService;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //  4. Fetch genres and store them in ViewBag
-            // This allows the view to loop through them without changing your main LoginVM model
+            // 1. Recommendations
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId != null)
+            {
+                var recommendations = await _recommendationService.GetRecommendationsForUserAsync(userId);
+                ViewBag.Recommendations = recommendations;
+            }
+
+            // 2. Genres
             var genres = _genreService.GetAllGenres();
             ViewBag.Genres = genres;
-            // Fetch recently added books and store them in ViewBag
-            var recentBooks = _bookService.GetRecentlyAddedBooks(4);
-            ViewBag.RecentBooks = recentBooks;
 
-            // Assuming you are passing a LoginVM based on your previous View code
+            // 3. Books (Only Recently Added)
+            var allBooks = _bookService.GetAllBooks();
+
+            // REMOVED: Trending Books logic
+
+            // Recently Added: Newest by Date
+            ViewBag.RecentBooks = allBooks.OrderByDescending(b => b.PublishDate).Take(4).ToList();
+
             return View(new LoginVM());
         }
 

@@ -5,15 +5,17 @@
 @inject IShelfService ShelfService
 
 @{
-
     ViewData["Title"] = "My Books";
 
     var userId = Model.UserId;
     var shelveswithBooks = Model.Shelveswithbook;
 
-
-
     var favoriteShelf = shelveswithBooks.FirstOrDefault(s => s.ShelfName == "Favorites");
+
+    // Calculate total unique books added across all shelves for the stat
+    var totalBooks = shelveswithBooks != null
+        ? shelveswithBooks.SelectMany(s => s.Books).Select(b => b.BookId).Distinct().Count()
+        : 0;
 }
 
 <!DOCTYPE html>
@@ -27,22 +29,71 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/globalandbook.css">
     <link rel="stylesheet" href="~/css/my_books.css?v=@DateTime.Now.Ticks">
+
+    <style>
+        /* ✅ ADDED: Flexbox layout to handle side-by-side positioning with gap */
+        .main-layout {
+            display: flex;
+            flex-direction: row;
+            gap: 40px; /* This creates the margin space you requested */
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 280px; /* Fixed width for the sidebar */
+            flex-shrink: 0; /* Prevent sidebar from shrinking */
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            flex-grow: 1; /* Take up remaining space */
+            width: 100%; /* Ensure table container fills the space */
+        }
+
+        /* Styling for the moved header info */
+        .sidebar-header {
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .stats-row {
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
     <div class="wrap" id="app">
-        <header class="page-header">
-            <div class="page-meta">
-                <div class="page-title">My Books</div>
-                <div class="page-subtitle">Track your reading journey</div>
-            </div>
-            <div class="stats-row">
-                <div class="stat"><strong></strong> Books Added</div>
-            </div>
-        </header>
 
-        <div class="main-layout">
+        <!-- Moved header content inside the main layout/sidebar logic below -->
+
+        <div class="main-layout container">
             <!-- Sidebar -->
             <aside class="sidebar">
+
+                <!-- ✅ MOVED: Header Info is now above the side table -->
+                <div class="sidebar-header">
+                    <div class="page-title">My Books</div>
+                    <div class="page-subtitle">Track your reading journey</div>
+                    <div class="stats-row">
+                        <div class="stat"><strong>@totalBooks</strong> Books Added</div>
+                    </div>
+                </div>
+
                 <div class="card">
                     <h3>My Bookshelves</h3>
                     <ul class="shelf-list" id="shelfList">
@@ -63,7 +114,7 @@
                 <h2 class="section-title" id="sectionTitle">All Books</h2>
 
                 <div class="books-table-container">
-                    <table class="books-table">
+                    <table class="books-table table table-hover">
                         <thead>
                             <tr>
                                 <th>Book</th>
@@ -75,57 +126,56 @@
                         </thead>
 
                         <tbody id="booksTableBody">
-                            @* @foreach (var shelf in shelveswithBooks)
-                            { *@
-
-                                @if (favoriteShelf.Books != null)
+                            @if (favoriteShelf != null && favoriteShelf.Books != null)
+                            {
+                                foreach (var book in favoriteShelf.Books)
                                 {
-                                    foreach (var book in favoriteShelf.Books)
-                                    {
-                                        <tr data-shelves="@string.Join(",", book.BookShelves.Select(s => s.ToLower().Replace(" ", "-")))">
-                                            <td>
-                                                <div class="book-title-cell">
-                                                    <div class="table-book-cover">
-                                                        <img src="~/@book.BookImage" alt="@book.Title" />
-                                                    </div>
-                                                    <div class="book-title-info">
-                                                        <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="book-link">
-                                                            @book.Title
-                                                        </a>
-                                                    </div>
+                                    <tr data-shelves="@string.Join(",", book.BookShelves.Select(s => s.ToLower().Replace(" ", "-")))">
+                                        <td>
+                                            <div class="book-title-cell d-flex align-items-center">
+                                                <div class="table-book-cover me-3">
+                                                    <img src="~/@book.BookImage" alt="@book.Title" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;" />
                                                 </div>
-                                            </td>
-
-                                            <td>@book.AuthorName</td>
-
-                                            <td>
-                                                <div class="rating-cell">
-                                                    @for (int i = 0; i < 5; i++)
-                                                    {
-                                                        if (i < book.Rate)
-                                                        {
-                                                            <i class="fas fa-star" style="color:#f6b438"></i>
-                                                        }
-                                                        else
-                                                        {
-                                                            <i class="far fa-star" style="color:#e0e0e0"></i>
-                                                        }
-                                                    }
+                                                <div class="book-title-info">
+                                                    <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="book-link fw-bold text-decoration-none text-dark">
+                                                        @book.Title
+                                                    </a>
                                                 </div>
-                                            </td>
+                                            </div>
+                                        </td>
 
-                                           
+                                        <td>@book.AuthorName</td>
 
-                                            <td>
-                                                @foreach (var s in book.BookShelves)
+                                        <td>
+                                            <div class="rating-cell">
+                                                @for (int i = 0; i < 5; i++)
                                                 {
-                                                    <span class="shelf-tag">@s</span>
+                                                    if (i < book.Rate)
+                                                    {
+                                                        <i class="fas fa-star" style="color:#f6b438"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <i class="far fa-star" style="color:#e0e0e0"></i>
+                                                    }
                                                 }
-                                            </td>
-                                        </tr>
-                                    }
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <!-- Date Added placeholder if available in model -->
+                                            @book.PublishDate.ToString("MMM dd, yyyy")
+                                        </td>
+
+                                        <td>
+                                            @foreach (var s in book.BookShelves)
+                                            {
+                                                <span class="badge bg-light text-dark border me-1">@s</span>
+                                            }
+                                        </td>
+                                    </tr>
                                 }
-                            @* } *@
+                            }
                         </tbody>
 
                     </table>
