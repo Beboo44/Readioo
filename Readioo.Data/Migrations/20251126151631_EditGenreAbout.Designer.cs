@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Readioo.Data.Data.Contexts;
 
@@ -11,9 +12,11 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251126151631_EditGenreAbout")]
+    partial class EditGenreAbout
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -143,22 +146,35 @@ namespace Readioo.Data.Migrations
 
                     b.HasKey("BookId", "GenreId");
 
-                    b.HasIndex("GenreId");
+                    b.HasIndex(new[] { "BookId" }, "IX_BookGenres_BookId");
+
+                    b.HasIndex(new[] { "GenreId" }, "IX_BookGenres_GenreId");
 
                     b.ToTable("BookGenres");
                 });
 
             modelBuilder.Entity("Readioo.Models.BookShelf", b =>
                 {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<int>("BookId")
                         .HasColumnType("int");
 
                     b.Property<int>("ShelfId")
                         .HasColumnType("int");
 
-                    b.HasKey("BookId", "ShelfId");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                    b.HasIndex("ShelfId");
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "BookId" }, "IX_BookShelves_BookId");
+
+                    b.HasIndex(new[] { "ShelfId" }, "IX_BookShelves_ShelfId");
 
                     b.ToTable("BookShelves");
                 });

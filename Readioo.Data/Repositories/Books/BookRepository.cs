@@ -36,5 +36,14 @@ namespace Readioo.Data.Repositories.Books
                 .FirstOrDefault(b => b.Id == id);
         }
 
+        public IEnumerable<Book> GetAllBooksWithDetails()
+        {
+            return _dbContext.Books
+                .Include(b => b.Author)
+                .Include(b => b.BookGenres)
+                    .ThenInclude(bg => bg.Genre) // Include Genre so we can get GenreName
+                .ToList();
+        }
+
     }
 }

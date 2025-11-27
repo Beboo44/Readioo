@@ -17,6 +17,8 @@ namespace Readioo.Business.Services.Interfaces
         public Task UpdateBook(BookDto bookDto);
 
         public Task DeleteBook(int id);
+
+        IEnumerable<BookDto> GetRecentlyAddedBooks(int count);
         public Task<List<BookDto>> GetUserBooksAsync(int userId);
 
     }

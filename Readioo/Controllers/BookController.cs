@@ -1,20 +1,18 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using NToastNotify;
 using Readioo.Business.DataTransferObjects.Book;
-using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
-using Readioo.Models;
 using Readioo.ViewModel;
-using System.Drawing;
 using System.Security.Claims;
 
 namespace Readioo.Controllers
 {
+    [Authorize]  // ✅ Protects all Book actions
     public class BookController : Controller
     {
-
         private readonly IBookService _bookService;
         private readonly IAuthorService _authorService;
         private readonly IUserService _userService;
@@ -34,13 +32,12 @@ namespace Readioo.Controllers
         public IActionResult Index()
         {
             var books = _bookService.GetAllBooks();
-                
             return View(books);
         }
+
         public IActionResult Browse()
         {
             var books = _bookService.GetAllBooks();
-
             return View(books);
         }
 
@@ -54,10 +51,6 @@ namespace Readioo.Controllers
             ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
 
             return View();
-            //if (!string.IsNullOrEmpty(searchAuthor))
-            //{
-            //    authors = authors.Where(a => a.FullName.Contains(searchAuthor, StringComparison.OrdinalIgnoreCase)).ToList();
-            //}
         }
 
         [HttpPost]
@@ -66,7 +59,11 @@ namespace Readioo.Controllers
             if (!ModelState.IsValid)
             {
                 var authors = _authorService.getAllAuthors();
+                var genres = _genreService.GetAllGenres();
+
                 ViewBag.AuthorList = new SelectList(authors, "AuthorId", "FullName");
+                ViewBag.Genres = genres;
+
                 return View(book);
             }
 
@@ -80,18 +77,24 @@ namespace Readioo.Controllers
                 Description = book.Description,
                 MainCharacters = book.MainCharacters,
                 PublishDate = book.PublishDate,
-                BookGenres = book.BookGenres ?? new List<string>()  
+                BookGenres = book.BookGenres ?? new List<string>()
             };
-    
+
             if (book.BookImage != null)
             {
                 string SaveFolder = "images/books/";
                 SaveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
-
                 string SavePath = Path.Combine("wwwroot", SaveFolder);
-                book.BookImage.CopyTo(new FileStream(SavePath, FileMode.Create));
 
-                bookCreatedDto.BookImage = SaveFolder; 
+                string directory = Path.GetDirectoryName(SavePath);
+                if (!Directory.Exists(directory)) Directory.CreateDirectory(directory);
+
+                using (var stream = new FileStream(SavePath, FileMode.Create))
+                {
+                    await book.BookImage.CopyToAsync(stream);
+                }
+
+                bookCreatedDto.BookImage = SaveFolder;
             }
 
             await _bookService.CreateBook(bookCreatedDto);
@@ -103,21 +106,17 @@ namespace Readioo.Controllers
         public IActionResult Details(int id)
         {
             var book = _bookService.bookById(id);
-            if(book is null)
-            {
+            if (book is null)
                 return NotFound();
-            }
             return View(book);
         }
 
         [HttpGet]
-
         public IActionResult Edit(int id)
         {
             var book = _bookService.bookById(id);
             if (book is null)
                 return NotFound();
-
 
             var bookVM = new BookVM
             {
@@ -129,8 +128,8 @@ namespace Readioo.Controllers
                 PublishDate = book.PublishDate,
                 MainCharacters = book.MainCharacters,
                 Description = book.Description,
-                BookImg = book.BookImage
             };
+
             var authors = _authorService.getAllAuthors();
             ViewBag.AuthorId = new SelectList(authors, "AuthorId", "FullName");
 
@@ -138,13 +137,9 @@ namespace Readioo.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit([FromRoute] int? id,BookVM book)
+        public async Task<IActionResult> Edit([FromRoute] int? id, BookVM book)
         {
-            if (id is null)
-                return BadRequest();  //error 404
-
-            if (ModelState is null)
-                return NotFound();
+            if (id is null) return BadRequest();
 
             var bookDto = new BookDto()
             {
@@ -156,33 +151,33 @@ namespace Readioo.Controllers
                 AuthorId = book.AuthorId,
                 PagesCount = book.PagesCount,
                 PublishDate = book.PublishDate,
-                
             };
-            if(book.BookImage != null)
+
+            if (book.BookImage != null)
             {
                 string SaveFolder = "images/books/";
                 SaveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
+                string SavePath = Path.Combine("wwwroot", SaveFolder);
 
-                string SavePath = Path.Combine("wwwroot",SaveFolder);
-                book.BookImage.CopyTo(new FileStream(SavePath, FileMode.Create));
+                using (var stream = new FileStream(SavePath, FileMode.Create))
+                {
+                    await book.BookImage.CopyToAsync(stream);
+                }
 
                 bookDto.BookImage = SaveFolder;
             }
+
             await _bookService.UpdateBook(bookDto);
 
             _toast.AddSuccessToastMessage("Book Updated Successfully");
             return RedirectToAction(nameof(Index));
         }
 
-       
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
-
-            if (id is null)
-                return BadRequest();
-
+            if (id is null) return BadRequest();
 
             await _bookService.DeleteBook(id.Value);
 
@@ -242,4 +237,4 @@ namespace Readioo.Controllers
             return RedirectToAction("Browse", "Book");
         }
     }
-}
+}   

@@ -5,10 +5,7 @@ using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.DataTransferObjects.Review;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Readioo.Business.DataTransferObjects.Genre;
 
 namespace Readioo.Business.Services.Classes
 {
@@ -20,6 +17,10 @@ namespace Readioo.Business.Services.Classes
         {
             _unitOfWork = unitOfWork;
         }
+
+        // ... (bookById, CreateBook, GetAllBooks, DeleteBook methods remain the same) ...
+        // For brevity, I am focusing on the modified UpdateBook method below.
+        // Ensure you keep the other methods as they were in your previous working version.
 
         public BookDto? bookById(int id)
         {
@@ -39,31 +40,15 @@ namespace Readioo.Business.Services.Classes
                 Rate = book.Rate,
                 Description = book.Description,
                 BookImage = book.BookImage,
-                AuthorName = book.Author?.FullName,
-
-                // Map DB Entities -> String List for viewing
-                BookGenres = book.BookGenres
-                    .Select(g => g.Genre.GenreName)
-                    .ToList(),
-                    // ⭐ Add Reviews to DTO
-                Reviews = book.Reviews.Select(r => new ReviewDto
-                {
-                    ReviewId = r.Id,
-                    UserId = r.UserId,
-                    BookId = r.BookId,
-                    Username = r.User != null
-                        ? r.User.FirstName + " " + r.User.LastName
-                        : "Unknown",
-                    Rating = r.Rating,
-                    ReviewText = r.ReviewText,
-                    CreatedAt = r.CreatedAt
-                }).ToList()
+                AuthorName = book.Author?.FullName ?? "Unknown",
+                BookGenres = book.BookGenres.Select(g => g.Genre.GenreName).ToList(),
+                Genres = book.BookGenres.Select(bg => new GenreDto { Id = bg.GenreId, GenreName = bg.Genre.GenreName }).ToList(),
+                Reviews = book.Reviews.Select(r => new ReviewDto { ReviewId = r.Id, UserId = r.UserId, BookId = r.BookId, Username = r.User != null ? r.User.FirstName + " " + r.User.LastName : "Unknown", Rating = r.Rating, ReviewText = r.ReviewText, CreatedAt = r.CreatedAt }).ToList()
             };
         }
 
         public async Task CreateBook(BookCreatedDto bookCreatedDto)
         {
-            // Create the Book Object
             var newBook = new Book
             {
                 Title = bookCreatedDto.Title,
@@ -88,7 +73,6 @@ namespace Readioo.Business.Services.Classes
             if (bookCreatedDto.BookGenres != null && bookCreatedDto.BookGenres.Any())
             {
                 var allGenres = _unitOfWork.GenreRepository.GetAll().ToList();
-
                 foreach (var genreName in bookCreatedDto.BookGenres)
                 {
                     var genre = allGenres.FirstOrDefault(g =>
@@ -96,13 +80,9 @@ namespace Readioo.Business.Services.Classes
 
                     if (genre != null)
                     {
-                        newBook.BookGenres.Add(new BookGenre
-                        {
-                            GenreId = genre.Id
-                        });
+                        newBook.BookGenres.Add(new BookGenre { BookId = newBook.Id, GenreId = genre.Id });
                     }
                 }
-
                 _unitOfWork.BookRepository.Update(newBook);
                 await _unitOfWork.CommitAsync();
             }
@@ -149,11 +129,15 @@ namespace Readioo.Business.Services.Classes
                 });
         }
 
+        // ✅ MODIFIED METHOD
         public async Task UpdateBook(BookDto bookDto)
         {
-            var book = await _unitOfWork.BookRepository.GetByIdAsync(bookDto.BookId);
+            // 1. We need the book WITH details (genres) to modify the collection
+            var book = _unitOfWork.BookRepository.GetBookWithDetails(bookDto.BookId);
+
             if (book == null) throw new Exception("Book Not Found");
 
+            // 2. Update Scalars
             book.Title = bookDto.Title;
             book.Isbn = bookDto.Isbn;
             book.MainCharacters = bookDto.MainCharacters;
@@ -161,7 +145,37 @@ namespace Readioo.Business.Services.Classes
             book.AuthorId = bookDto.AuthorId;
             book.PagesCount = bookDto.PagesCount;
             book.PublishDate = bookDto.PublishDate;
-            if (bookDto.BookImage != null) book.BookImage = bookDto.BookImage;
+            book.Description = bookDto.Description;
+
+            if (bookDto.BookImage != null)
+            {
+                book.BookImage = bookDto.BookImage;
+            }
+
+            // 3. Update Genres
+            // First, clear the existing relationships
+            book.BookGenres.Clear();
+
+            // Then add the new ones selected by the user
+            if (bookDto.BookGenres != null && bookDto.BookGenres.Any())
+            {
+                var allGenres = _unitOfWork.GenreRepository.GetAll().ToList();
+
+                foreach (var genreName in bookDto.BookGenres)
+                {
+                    var genre = allGenres.FirstOrDefault(g =>
+                        g.GenreName.Equals(genreName.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                    if (genre != null)
+                    {
+                        book.BookGenres.Add(new BookGenre
+                        {
+                            BookId = book.Id,
+                            GenreId = genre.Id
+                        });
+                    }
+                }
+            }
 
             _unitOfWork.BookRepository.Update(book);
             await _unitOfWork.CommitAsync();
@@ -171,7 +185,6 @@ namespace Readioo.Business.Services.Classes
         {
             var book = await _unitOfWork.BookRepository.GetByIdAsync(id);
             if (book == null) throw new Exception("Book Not Found");
-
             _unitOfWork.BookRepository.Remove(book);
             await _unitOfWork.CommitAsync();
         }
@@ -228,5 +241,9 @@ namespace Readioo.Business.Services.Classes
         }
 
 
+        public IEnumerable<BookDto> GetRecentlyAddedBooks(int count)
+        {
+            return _unitOfWork.BookRepository.GetAll().OrderByDescending(b => b.Id).Take(count).Select(b => new BookDto { BookId = b.Id, Title = b.Title, BookImage = b.BookImage, Rate = b.Rate, AuthorName = b.Author != null ? b.Author.FullName : "Unknown" }).ToList();
+        }
     }
 }

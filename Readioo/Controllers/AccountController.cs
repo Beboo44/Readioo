@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Readioo.Controllers
 {
+    // ✅ NO [Authorize] attribute here - users need to access this without logging in
     public class AccountController : Controller
     {
         private readonly IUserService _userService;
@@ -22,16 +23,8 @@ namespace Readioo.Controllers
             _userService = userService;
         }
 
-        // ==========================================================
-        // === LOGIN ACTIONS (UPDATED FOR AUTHENTICATION) ===========
-        // ==========================================================
-
         [HttpGet]
-        public IActionResult Login()
-        {
-            // Returns Views/Account/Login.cshtml
-            return View();
-        }
+        public IActionResult Login() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -80,8 +73,7 @@ namespace Readioo.Controllers
         public async Task<IActionResult> LogoutConfirmed()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            TempData["SuccessMessage"] = "You have been successfully logged out.";
-            return RedirectToAction("Login", "Account");
+            return RedirectToAction("Login");
         }
         /*
         [HttpGet]
@@ -98,10 +90,7 @@ namespace Readioo.Controllers
         // ==========================================================
 
         [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
+        public IActionResult Register() => View();
 
         [HttpPost]
         [ValidateAntiForgeryToken]

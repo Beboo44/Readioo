@@ -14,7 +14,7 @@ namespace Readioo.Business.Services.Interfaces
         public List<GenreDto> GetAllGenres();
 
         // Returns the heavy DTO with Books and Authors for the details page
-        public GenreDto GetGenreById(int id);
+        public GenreDetailsDto GetGenreById(int id);
 
         public List<BookDto> GetBooksByGenre(int genreId);
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using NToastNotify;
 using Readioo.Business.DataTransferObjects.Author;
@@ -9,6 +10,8 @@ using Readioo.ViewModel;
 
 namespace Readioo.Controllers
 {
+    [Authorize]  // ✅ Protects all Book actions
+
     public class AuthorController : Controller
     {
 
