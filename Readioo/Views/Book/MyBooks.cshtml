@@ -5,12 +5,15 @@
 @inject IShelfService ShelfService
 
 @{
+
     ViewData["Title"] = "My Books";
 
     var userId = Model.UserId;
     var shelveswithBooks = Model.Shelveswithbook;
-   
-    var favoriteShelfId = shelveswithBooks.FirstOrDefault(s => s.ShelfName == "Favorites")?.ShelfId;
+
+
+
+    var favoriteShelf = shelveswithBooks.FirstOrDefault(s => s.ShelfName == "Favorites");
 }
 
 <!DOCTYPE html>
@@ -72,11 +75,12 @@
                         </thead>
 
                         <tbody id="booksTableBody">
-                            @foreach (var shelf in shelveswithBooks)
-                            {
-                                if (shelf.Books != null)
+                            @* @foreach (var shelf in shelveswithBooks)
+                            { *@
+
+                                @if (favoriteShelf.Books != null)
                                 {
-                                    foreach (var book in shelf.Books)
+                                    foreach (var book in favoriteShelf.Books)
                                     {
                                         <tr data-shelves="@string.Join(",", book.BookShelves.Select(s => s.ToLower().Replace(" ", "-")))">
                                             <td>
@@ -121,7 +125,7 @@
                                         </tr>
                                     }
                                 }
-                            }
+                            @* } *@
                         </tbody>
 
                     </table>
