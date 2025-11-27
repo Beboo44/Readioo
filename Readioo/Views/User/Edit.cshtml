@@ -41,23 +41,29 @@
 
         @* <input type="hidden" asp-for="Id" /> *@
 
-        <label>First Name</label>
-        <input class="form-control" asp-for="FirstName" />
+        <label asp-for="FirstName" class="form-label"></label>
+        <input asp-for="FirstName" class="form-control"  />
+        <span asp-validation-for="FirstName" class="text-danger"></span>
 
-        <label>Last Name</label>
-        <input class="form-control" asp-for="LastName" />
+            <label asp-for="LastName" class="form-label"></label>
+            <input asp-for="LastName" class="form-control"  />
+            <span asp-validation-for="LastName" class="text-danger"></span>
 
-        <label>Bio</label>
-        <textarea class="form-control" asp-for="Bio" rows="3"></textarea>
+            <label asp-for="Bio" class="form-label"></label>
+            <input asp-for="Bio" class="form-control" />
+            <span asp-validation-for="Bio" class="text-danger"></span>
 
-        <label>City</label>
-        <input class="form-control" asp-for="City" />
+            <label asp-for="City" class="form-label"></label>
+            <input asp-for="City" class="form-control"  />
+            <span asp-validation-for="City" class="text-danger"></span>
 
-        <label>Country</label>
-        <input class="form-control" asp-for="Country" />
+            <label asp-for="Country" class="form-label"></label>
+            <input asp-for="Country" class="form-control"  />
+            <span asp-validation-for="Country" class="text-danger"></span>
 
-        <label>Upload Image</label>
-        <input type="file" class="form-control" asp-for="UserImageFile" />
+            <label asp-for="UserImageFile" class="form-label"></label>
+            <input asp-for="UserImageFile" class="form-control"  />
+            <span asp-validation-for="UserImageFile" class="text-danger"></span>
 
         <button class="btn btn-success save-btn" type="submit">Save Changes</button>
     </form>

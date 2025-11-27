@@ -150,3 +150,19 @@
         background: rgba(11, 143, 140, 0.25);
         transform: scale(0.97);
     }
+
+    .page-header {
+    background-color: #f8f9fa;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid #ddd;
+}
+
+.page-meta .page-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+
+.page-meta .page-subtitle {
+    font-size: 1.2rem;
+    color: #666;
+}
