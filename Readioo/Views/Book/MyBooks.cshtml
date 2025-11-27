@@ -1,25 +1,17 @@
-﻿@model IEnumerable<ShelfDto>
-@using System.Security.Claims
+﻿@model Readioo.ViewModel.MyBooksViewModel
 @using System.Security.Claims
 @using Readioo.Business.DTO
 @inject IUserService UserService
 @inject IShelfService ShelfService
 
 @{
-    ViewData["Title"] = "My Books";    
+    ViewData["Title"] = "My Books";
 
-    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-    var user = await UserService.GetUserByIdAsync(int.Parse(userId));
-
-    var shelves = await UserService.GetUserShelvesAsync(int.Parse(userId));
-    var FavoriteShelfId = shelves.FirstOrDefault(s => s.ShelfName == "Favorites").ShelfId;
-
-    
-
+    var userId = Model.UserId;
+    var shelveswithBooks = Model.Shelveswithbook;
+   
+    var favoriteShelfId = shelveswithBooks.FirstOrDefault(s => s.ShelfName == "Favorites")?.ShelfId;
 }
-
-
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -52,9 +44,12 @@
                     <h3>My Bookshelves</h3>
                     <ul class="shelf-list" id="shelfList">
                         <li class="active" data-shelf="all">All Books</li>
-                        @foreach (var shelf in Model)
+
+                        @foreach (var shelf in shelveswithBooks)
                         {
-                            <li data-shelf="@shelf.ShelfName.ToLower().Replace(" ", "-")">@shelf.ShelfName</li>
+                            <li data-shelf="@shelf.ShelfName.ToLower().Replace(" ", "-")">
+                                @shelf.ShelfName
+                            </li>
                         }
                     </ul>
                 </div>
@@ -75,49 +70,60 @@
                                 <th>Bookshelf</th>
                             </tr>
                         </thead>
+
                         <tbody id="booksTableBody">
-                            @foreach (var shelf in Model)
+                            @foreach (var shelf in shelveswithBooks)
                             {
-                                @foreach (var book in shelf.BookShelves.Select(bs => bs.Book))
+                                if (shelf.Books != null)
                                 {
-                                    <tr data-shelves="@string.Join(",", book.BookShelves.Select(bs => bs.Shelf.ShelfName.ToLower().Replace(" ", "-")))">
-                                        <td>
-                                            <div class="book-title-cell">
-                                                <div class="table-book-cover">
-                                                    <img src="~/@book.BookImage" alt="@book.Title" />
+                                    foreach (var book in shelf.Books)
+                                    {
+                                        <tr data-shelves="@string.Join(",", book.BookShelves.Select(s => s.ToLower().Replace(" ", "-")))">
+                                            <td>
+                                                <div class="book-title-cell">
+                                                    <div class="table-book-cover">
+                                                        <img src="~/@book.BookImage" alt="@book.Title" />
+                                                    </div>
+                                                    <div class="book-title-info">
+                                                        <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="book-link">
+                                                            @book.Title
+                                                        </a>
+                                                    </div>
                                                 </div>
-                                                <div class="book-title-info">
-                                                    <a asp-controller="Book" asp-action="Details" asp-route-id="@book.Id" class="book-link">@book.Title</a>
+                                            </td>
+
+                                            <td>@book.AuthorName</td>
+
+                                            <td>
+                                                <div class="rating-cell">
+                                                    @for (int i = 0; i < 5; i++)
+                                                    {
+                                                        if (i < book.Rate)
+                                                        {
+                                                            <i class="fas fa-star" style="color:#f6b438"></i>
+                                                        }
+                                                        else
+                                                        {
+                                                            <i class="far fa-star" style="color:#e0e0e0"></i>
+                                                        }
+                                                    }
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td>@book.Author.FullName</td>
-                                        <td>
-                                            <div class="rating-cell">
-                                                @for (int i = 0; i < 5; i++)
+                                            </td>
+
+                                           
+
+                                            <td>
+                                                @foreach (var s in book.BookShelves)
                                                 {
-                                                    if (i < book.Rate)
-                                                    {
-                                                        <i class="fas fa-star" style="color:#f6b438"></i>
-                                                    }
-                                                    else
-                                                    {
-                                                        <i class="far fa-star" style="color:#e0e0e0"></i>
-                                                    }
+                                                    <span class="shelf-tag">@s</span>
                                                 }
-                                            </div>
-                                        </td>
-                                        <td>@book.PublishDate.ToShortDateString()</td>
-                                        <td>
-                                            @foreach (var bs in book.BookShelves)
-                                            {
-                                                <span class="shelf-tag">@bs.Shelf.ShelfName</span>
-                                            }
-                                        </td>
-                                    </tr>
+                                            </td>
+                                        </tr>
+                                    }
                                 }
                             }
                         </tbody>
+
                     </table>
                 </div>
             </section>

@@ -1,6 +1,7 @@
 ﻿using BCrypt.Net;
 using Demo.DataAccess.Repositories.UoW;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.DataTransferObjects.Shelves;
 using Readioo.Business.DataTransferObjects.User;
 using Readioo.Business.DTO;
 using Readioo.Business.Services.Interfaces;
@@ -99,6 +100,7 @@ namespace Readioo.Business.Services.Classes
             // preventing thread pool exhaustion in the web application.
             return await Task.Run(() => _userRepository.GetByEmail(email));
         }
+
         public async Task<bool> VerifyUserCredentialsAsync(string email, string password)
         {
             var user = await GetUserByEmailAsync(email);
@@ -114,8 +116,6 @@ namespace Readioo.Business.Services.Classes
             return BCrypt.Net.BCrypt.Verify(password, user.UserPassword);
         }
 
-
-
         public async Task<bool> UpdateUserProfileAsync(int userId, UpdateUserDTO dto)
         {
             var user = await _unitOfWork.UserRepository.GetByIdAsync(userId);
@@ -130,7 +130,6 @@ namespace Readioo.Business.Services.Classes
             user.Country = dto.Country;
             user.ProfileUrl = dto.ProfileUrl;
 
-
             if (dto.UserImage != null)
                 user.UserImage = dto.UserImage;
 
@@ -139,6 +138,7 @@ namespace Readioo.Business.Services.Classes
 
             return true;
         }
+
         public async Task<User> GetUserByIdAsync(int id)
         {
             return await _unitOfWork.UserRepository.GetByIdAsync(id);
@@ -149,33 +149,41 @@ namespace Readioo.Business.Services.Classes
             var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
 
             return shelves.Select(s => new ShelfDto
-    {
-            ShelfId = s.Id,
-            ShelfName = s.ShelfName,
-            UserId = s.UserId,
-            BooksCount = s.BookShelves.Count(),
-            BookShelves = s.BookShelves.Select(bs => new BookShelf
             {
-                BookId = bs.BookId,
-                ShelfId = bs.ShelfId,
-            
-            
-            }).ToList()?? new List<BookShelf>()
-        }).ToList();
-
-
+                ShelfId = s.Id,
+                ShelfName = s.ShelfName,
+                UserId = s.UserId,
+                BooksCount = s.BookShelves.Count(),
+                BookShelves = s.BookShelves.Select(bs => new BookShelf
+                {
+                    BookId = bs.BookId,
+                    ShelfId = bs.ShelfId
+                }).ToList() ?? new List<BookShelf>()
+            }).ToList();
         }
 
-        //public async Task<IEnumerable<BookDto>> GetShelfBooksAsync(string shelfName, int userId)
-        //{
-        //    var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
-        //    var shelf = shelves.FirstOrDefault(s => s.ShelfName == shelfName);
+        public async Task<IEnumerable<ShelfWithBooksDto>> GetUserShelvesWithBooksAsync(int userId)
+        {
+            var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
 
-
-             
-
-
-
-        //}
+            return shelves.Select(s => new ShelfWithBooksDto
+            {
+                ShelfId = s.Id,
+                ShelfName = s.ShelfName,
+                Books = s.BookShelves.Select(bs => new BookDto
+                {
+                    BookId = bs.Book.Id,
+                    Title = bs.Book.Title,
+                    AuthorName = bs.Book.Author.FullName,
+                    Isbn = bs.Book.Isbn,
+                    Language = bs.Book.Language,
+                    PagesCount = bs.Book.PagesCount,
+                    PublishDate = bs.Book.PublishDate,
+                    Description = bs.Book.Description,
+                    Rate = bs.Book.Rate,
+                    BookImage = bs.Book.BookImage
+                }).ToList()
+            }).ToList();
+        }
     }
 }

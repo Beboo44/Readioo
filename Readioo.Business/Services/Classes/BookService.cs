@@ -1,4 +1,5 @@
 ﻿using Demo.DataAccess.Repositories.UoW;
+using Microsoft.EntityFrameworkCore;
 using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.DataTransferObjects.Review;
@@ -174,6 +175,58 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork.BookRepository.Remove(book);
             await _unitOfWork.CommitAsync();
         }
+        public async Task<List<BookDto>> GetUserBooksAsync(int userId)
+        {
+            // 1️⃣ Get all shelves that belong to the user
+            var shelves = _unitOfWork.ShelfRepository
+                .GetAll()
+                .Where(s => s.UserId == userId)
+                .ToList();
+
+            if (!shelves.Any())
+                return new List<BookDto>();
+
+            // 2️⃣ Collect all shelf IDs
+            var shelfIds = shelves.Select(s => s.Id).ToList();
+
+            // 3️⃣ Get BookShelf entries for these shelves
+            var bookShelves = await _unitOfWork.BookShelfRepository
+                .Query()                                 // must expose IQueryable
+                .Where(bs => shelfIds.Contains(bs.ShelfId))
+                .Include(bs => bs.Book)
+                    .ThenInclude(b => b.BookGenres)
+                        .ThenInclude(bg => bg.Genre)
+                .ToListAsync();
+
+            // 4️⃣ Extract unique books
+            var books = bookShelves
+                .Select(bs => bs.Book)
+                .Distinct()
+                .ToList();
+
+            // 5️⃣ Map to BookDto
+            return books.Select(a => new BookDto
+            {
+                BookId = a.Id,
+                Title = a.Title,
+                Isbn = a.Isbn,
+                Language = a.Language,
+                AuthorId = a.AuthorId,
+                PagesCount = a.PagesCount,
+                PublishDate = a.PublishDate,
+                MainCharacters = a.MainCharacters,
+                Rate = a.Rate,
+                Description = a.Description,
+                BookImage = a.BookImage,
+                AuthorName = a.Author?.FullName,
+
+                BookGenres = a.BookGenres
+                    .Select(g => g.Genre.GenreName)
+                    .ToList()
+
+            }).ToList();
+        }
+
 
     }
 }

@@ -7,6 +7,7 @@ using Readioo.Models;
 using Readioo.ViewModel;
 using System.ComponentModel.Design;
 using System.Security.Claims;
+using static System.Reflection.Metadata.BlobBuilder;
 
 
 namespace Readioo.Controllers
@@ -14,11 +15,14 @@ namespace Readioo.Controllers
     public class UserController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IBookService _bookService;
+        private readonly IBookService? bookService;
 
         // Inject IUserService 
         public UserController(IUserService userService)
         {
             _userService = userService;
+            _bookService = bookService;
         }
 
         public IActionResult Show()
@@ -26,7 +30,7 @@ namespace Readioo.Controllers
             return View();
         }
        
-
+        
     public async Task<IActionResult> Profile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -148,6 +152,30 @@ namespace Readioo.Controllers
 
             return File(user.UserImage, "image/jpeg");
         }
+
+        [HttpGet]
+    
+        public async Task<IActionResult> MyBooks()
+        {
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
+            var user = await _userService.GetUserByIdAsync(userId);
+
+            var shelves = await _userService.GetUserShelvesWithBooksAsync(userId);
+
+            var books = await _bookService.GetUserBooksAsync(userId);
+
+            var vm = new MyBooksViewModel
+            {
+                UserId = user.Id,
+                UserName = $"{user.FirstName} {user.LastName}",
+                Shelveswithbook = shelves
+ 
+            };
+
+            return View(vm);
+        }
+
 
 
 

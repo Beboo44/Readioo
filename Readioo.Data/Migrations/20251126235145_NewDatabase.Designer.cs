@@ -12,8 +12,8 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251126145254_anotherone")]
-    partial class anotherone
+    [Migration("20251126235145_NewDatabase")]
+    partial class NewDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
