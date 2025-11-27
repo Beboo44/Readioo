@@ -171,4 +171,17 @@ body {
 }
 
 
+/*To make footer stick stop thead bottom in case of a small body content*/
+html, body {
+    height: 100%;
+}
 
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}

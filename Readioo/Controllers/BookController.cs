@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
+using NToastNotify;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
@@ -19,14 +20,15 @@ namespace Readioo.Controllers
         private readonly IUserService _userService;
         private readonly IGenreService _genreService;
         private readonly IShelfService _shelfService;
-        
-        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IShelfService shelfService, IGenreService genreService)
+        private readonly IToastNotification _toast;
+        public BookController(IBookService bookService, IAuthorService authorService, IUserService userService, IShelfService shelfService, IGenreService genreService, IToastNotification toast)
         {
             _bookService = bookService;
             _authorService = authorService;
             _userService = userService;
             _genreService = genreService;
             _shelfService = shelfService;
+            _toast = toast;
         }
 
         public IActionResult Index()
@@ -93,6 +95,7 @@ namespace Readioo.Controllers
             }
 
             await _bookService.CreateBook(bookCreatedDto);
+            _toast.AddSuccessToastMessage("Book Added Successfully");
             return RedirectToAction(nameof(Index));
         }
 
@@ -167,6 +170,7 @@ namespace Readioo.Controllers
             }
             await _bookService.UpdateBook(bookDto);
 
+            _toast.AddSuccessToastMessage("Book Updated Successfully");
             return RedirectToAction(nameof(Index));
         }
 
@@ -182,6 +186,7 @@ namespace Readioo.Controllers
 
             await _bookService.DeleteBook(id.Value);
 
+            _toast.AddSuccessToastMessage("Book Deleted Successfully");
             return RedirectToAction(nameof(Index));
         }
 
@@ -226,7 +231,7 @@ namespace Readioo.Controllers
 
             await _shelfService.AddBook(bookId.Value, shelf.ShelfId,favoriteShelf.ShelfId);
 
-
+            _toast.AddSuccessToastMessage("Book Added Successfully");
             return RedirectToAction("Browse", "Book");
         }
     }

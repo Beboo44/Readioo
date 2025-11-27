@@ -1,6 +1,7 @@
 ﻿using Demo.DataAccess.Repositories.UoW;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using NToastNotify;
 using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Data.Data.Contexts;
@@ -27,8 +28,15 @@ namespace Readioo
             builder.Services.AddDbContext<AppDbContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));
           
-           
-            // 🔹 Enable SESSION (You forgot this)
+            builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
+            {
+                ProgressBar = true,
+                CloseButton = true,
+                PreventDuplicates = true,
+                PositionClass = ToastPositions.TopRight
+            });
+
+            // 🔹 Enable SESSION
             builder.Services.AddSession();
             
             // 🔹 Authentication
@@ -56,6 +64,7 @@ namespace Readioo
             builder.Services.AddScoped<IGenreService, GenreService>();
             builder.Services.AddScoped<IGenreRepository, GenreRepository>();
 
+
             var app = builder.Build();
 
             if (!app.Environment.IsDevelopment())
@@ -67,6 +76,8 @@ namespace Readioo
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseNToastNotify();
 
             // 🔹 Authentication BEFORE Authorization
             app.UseAuthentication();

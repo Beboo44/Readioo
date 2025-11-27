@@ -166,16 +166,16 @@ namespace Readioo.Business.Services.Classes
 
         }
 
-        public async Task<IEnumerable<BookDto>> GetShelfBooksAsync(string shelfName, int userId)
-        {
-            var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
-            var shelf = shelves.FirstOrDefault(s => s.ShelfName == shelfName);
+        //public async Task<IEnumerable<BookDto>> GetShelfBooksAsync(string shelfName, int userId)
+        //{
+        //    var shelves = await _unitOfWork.ShelfRepository.GetUserShelvesAsync(userId);
+        //    var shelf = shelves.FirstOrDefault(s => s.ShelfName == shelfName);
 
 
-            var books = 
+        //    var books = 
 
 
 
-        }
+        //}
     }
 }
