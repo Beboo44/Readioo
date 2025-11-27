@@ -43,7 +43,7 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create(/*string searchAuthor = ""*/)
+        public IActionResult Create(string searchAuthor = "")
         {
             var authors = _authorService.getAllAuthors();
             var genres = _genreService.GetAllGenres();
