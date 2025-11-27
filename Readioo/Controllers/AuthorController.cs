@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
+using NToastNotify;
 using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.Services.Interfaces;
@@ -12,9 +13,11 @@ namespace Readioo.Controllers
     {
 
         private readonly IAuthorService _authorService;
-        public AuthorController( IAuthorService authorService)
+        private readonly IToastNotification _toast;
+        public AuthorController( IAuthorService authorService, IToastNotification toast)
         {
             _authorService = authorService;
+            _toast = toast;
         }
         public IActionResult Index()
         {
@@ -68,6 +71,8 @@ namespace Readioo.Controllers
             }
 
             await _authorService.CreateAuthor(authorDto);
+
+            _toast.AddSuccessToastMessage("Author Added Successfully");
             return RedirectToAction(nameof(Index));
         }
 
@@ -106,6 +111,7 @@ namespace Readioo.Controllers
                 await _authorService.DeleteAuthor(id);
 
                 TempData["SuccessMessage"] = $"Author '{authorDto.FullName}' has been deleted successfully.";
+                _toast.AddSuccessToastMessage("Author Deleted Successfully");
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -235,6 +241,7 @@ namespace Readioo.Controllers
             try
             {
                 await _authorService.UpdateAuthor(id, authorDto);
+                _toast.AddSuccessToastMessage("Author Updated Successfully");
                 return RedirectToAction(nameof(Details), new { id = id });
             }
             catch
