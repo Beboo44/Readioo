@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Readioo.Business.DataTransferObjects.Book.BookDto>
+
+@if (Model != null && Model.Any())
+{
+    @foreach (var book in Model)
+    {
+        <a href="@Url.Action("Details", "Book", new { id = book.BookId })" class="search-result-item">
+            <div class="d-flex align-items-start">
+
+                @* SAFE IMAGE LOGIC *@
+                @{
+                    string imgPath = string.IsNullOrEmpty(book.BookImage)
+                    ? Url.Content("~/images/default-book.png") // fallback
+                    : Url.Content("~/" + book.BookImage.TrimStart('/'));
+                }
+
+                <img src="@imgPath" alt="@book.Title" class="search-result-image" />
+
+                <div class="flex-grow-1 ms-2">
+
+                    <div class="fw-bold mb-1">@book.Title</div>
+
+                    <div class="text-muted small">
+                        by @(book.AuthorName ?? "Unknown")
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(book.Description))
+                    {
+                        var preview = book.Description.Length > 80
+                        ? book.Description.Substring(0, 80) + "..."
+                        : book.Description;
+
+                        <div class="small text-muted mt-1">@preview</div>
+                    }
+
+                </div>
+            </div>
+        </a>
+    }
+}
+else
+{
+    <div class="no-results">
+        <i class="fas fa-search me-2"></i>No books found. Try different keywords.
+    </div>
+}

@@ -36,5 +36,14 @@ namespace Readioo.Data.Repositories.Books
                 .FirstOrDefault(b => b.Id == id);
         }
 
+        public IEnumerable<Book> Search(string term)
+        {
+            return _dbContext.Books
+                .Where(b => b.Title.Contains(term))
+                .Take(10)
+                .ToList();
+        }
+
+
     }
 }

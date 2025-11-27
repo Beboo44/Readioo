@@ -175,5 +175,20 @@ namespace Readioo.Business.Services.Classes
             await _unitOfWork.CommitAsync();
         }
 
+        public IEnumerable<BookDto> SearchBooks(string term)
+        {
+            var books = _unitOfWork.BookRepository.Search(term);
+
+            return books.Select(b => new BookDto
+            {
+                BookId = b.Id,
+                Title = b.Title,
+                AuthorName = b.Author?.FullName ?? "Unknown",  
+                BookImage = b.BookImage
+            });
+        }
+
+
+
     }
 }

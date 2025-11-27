@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using NToastNotify;
@@ -234,5 +235,39 @@ namespace Readioo.Controllers
             _toast.AddSuccessToastMessage("Book Added Successfully");
             return RedirectToAction("Browse", "Book");
         }
+
+        //[HttpGet]
+        //public IActionResult SearchBooks(string searchTerm)
+        //{
+        //    Console.WriteLine($"SearchBooks called with: '{searchTerm}'");
+
+        //    if (string.IsNullOrWhiteSpace(searchTerm))
+        //    {
+        //        Console.WriteLine("Search term is empty");
+        //        return PartialView("_BookSearchResults", new List<BookDto>());
+        //    }
+
+        //    try
+        //    {
+        //        var results = _bookService.SearchBooks(searchTerm);
+        //        Console.WriteLine($"Found {results.Count()} results");
+        //        return PartialView("_BookSearchResults", results);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine($"Search error: {ex.Message}");
+        //        return PartialView("_BookSearchResults", new List<BookDto>());
+        //    }
+        //}
+
+        [HttpGet]
+        [AllowAnonymous]
+        public IActionResult SearchBooks(string searchTerm)
+        {
+            var results = _bookService.SearchBooks(searchTerm);
+            return PartialView("_BookSearchResults", results);
+        }
+
+
     }
 }
