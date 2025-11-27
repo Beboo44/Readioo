@@ -24,7 +24,7 @@ namespace Readioo.Business.Services.Interfaces
         public Task SaveUserRating(int userId, int bookId, int rating);
         public Task UpdateBookAverageRating(int bookId);
 
-        IEnumerable<BookDto> GetAllBooksWithGenres();
+        public IEnumerable<BookDto> GetAllBooksWithGenres();
 
     }
 

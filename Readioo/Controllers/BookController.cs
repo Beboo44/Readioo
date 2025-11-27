@@ -17,17 +17,19 @@ namespace Readioo.Controllers
         private readonly IAuthorService _authorService;
         private readonly IGenreService _genreService;
         private readonly IShelfService _shelfService;
+        private readonly IUserService _userService;
         private readonly IToastNotification _toast;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public BookController(IBookService bookService, IAuthorService authorService,
             IShelfService shelfService, IGenreService genreService,
-            IToastNotification toast, IWebHostEnvironment webHostEnvironment)
+            IToastNotification toast, IWebHostEnvironment webHostEnvironment, IUserService userService)
         {
             _bookService = bookService;
             _authorService = authorService;
             _genreService = genreService;
             _shelfService = shelfService;
+            _userService = userService;
             _toast = toast;
             _webHostEnvironment = webHostEnvironment;
         }
@@ -109,14 +111,24 @@ namespace Readioo.Controllers
         public async Task<IActionResult> DetailsAsync(int id)
         {
             var book = _bookService.bookById(id);
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if(user is null)
+            {
+                return RedirectToAction("Login", "Account");
+            }
+
+            var userId = int.Parse(user);
             if (userId > 0)
             {
                 book.UserRating = await _bookService.GetUserRating(userId, id);
-            }         
+            }
+
+            ViewBag.UserShelves = await _userService.GetUserShelvesAsync(userId);
 
             if (book is null)
                 return NotFound();
+
             return View(book);
         }
 
@@ -232,46 +244,43 @@ namespace Readioo.Controllers
             return View(vm);
         }
 
-        // ✅ UPDATED: Now uses 'MoveBookToShelfAsync' logic + returns JSON for AJAX
         [HttpPost]
         public async Task<IActionResult> AddToShelf(int? bookId, string? shelfName)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
-            if (userId == null)
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
             if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
             {
-                return Json(new { success = false, message = "Please login first." });
+                return RedirectToAction("Login", "Account");
             }
-
-            var user = await _userService.GetUserByIdAsync(int.Parse(userId));
 
 
             if (bookId is null || shelfName is null)
-                return Json(new { success = false, message = "Invalid request." });
+                _toast.AddWarningToastMessage("Invalid request.");
 
-            await _shelfService.AddBook(bookId.Value, shelf.ShelfId, favoriteShelf.ShelfId);
+
             try
             {
-                // This Service Method (created earlier) handles the logic:
-                // "If already on a shelf -> Move it. If not -> Add it."
+
                 var result = await _shelfService.MoveBookToShelfAsync(userId, bookId.Value, shelfName);
 
                 if (result)
                 {
-                    return Json(new { success = true, message = $"Book added to {shelfName} successfully!" });
+                    _toast.AddSuccessToastMessage($"Book added to {shelfName} successfully!");
                 }
                 else
                 {
-                    return Json(new { success = false, message = "Failed to add book (Shelf not found)." });
+                    _toast.AddWarningToastMessage("Failed to add book (Shelf not found).");
                 }
             }
             catch (Exception ex)
             {
-                return Json(new { success = false, message = "Error: " + ex.Message });
+                _toast.AddErrorToastMessage("Error: " + ex.Message);
             }
+
+            return RedirectToAction("Browse","Book");
         }
         [HttpPost]
         public async Task<IActionResult> RateBook(int bookId, int rating)
