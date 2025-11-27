@@ -128,6 +128,7 @@ namespace Readioo.Controllers
                 PublishDate = book.PublishDate,
                 MainCharacters = book.MainCharacters,
                 Description = book.Description,
+                BookImg = book.BookImage
             };
 
             var authors = _authorService.getAllAuthors();
@@ -151,6 +152,7 @@ namespace Readioo.Controllers
                 AuthorId = book.AuthorId,
                 PagesCount = book.PagesCount,
                 PublishDate = book.PublishDate,
+                Description = book.Description
             };
 
             if (book.BookImage != null)

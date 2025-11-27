@@ -2,130 +2,249 @@
 
 @{
     ViewData["Title"] = "Edit Book";
+    var bookId = ViewBag.BookId;
+    var existingImagePath = Model.BookImg;
+
+    // Resolve existing image for preview
+    
+    
 }
 
-<h1>Edit Book</h1>
-<h4>Book</h4>
-<hr />
+<style>
+    .edit-book-container {
+        max-width: 920px;
+        margin: 2rem auto;
+        padding: 1rem;
+        padding-top: 100px;
+    }
 
-<div class="row">
-    <div class="col-md-6">
+    .preview-book {
+        width: 160px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 0.5rem;
+        display: block;
+        margin-bottom: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
 
-        <form asp-action="Edit" enctype="multipart/form-data">
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
 
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    .form-label {
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 0.5rem;
+    }
 
-            <div class="form-group mb-3">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
+    .form-control, .form-select {
+        border-radius: 0.375rem;
+        border: 1px solid #ced4da;
+        padding: 0.5rem 0.75rem;
+    }
 
-            <div class="form-group mb-3">
-                <label asp-for="Isbn" class="control-label"></label>
-                <input asp-for="Isbn" class="form-control" />
-                <span asp-validation-for="Isbn" class="text-danger"></span>
-            </div>
+        .form-control:focus, .form-select:focus {
+            border-color: #86b7fe;
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
 
-            <div class="form-group mb-3">
-                <label asp-for="Language" class="control-label"></label>
-                <input asp-for="Language" class="form-control" />
-                <span asp-validation-for="Language" class="text-danger"></span>
-            </div>
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
 
-            <div class="form-group mb-3">
-                <label asp-for="AuthorId">Author</label>
-                <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId">
-                    <option value=""> -- Select an Author -- </option>
-                </select>
-                <span asp-validation-for="AuthorId" class="text-danger"></span>
-            </div>
+    .btn-group-actions {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
 
-            <div class="form-group mb-3">
-                <label class="control-label fw-bold mb-2">Genres</label>
+    .image-upload-section {
+        background-color: #f8f9fa;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
 
-                <div class="card p-3" style="max-height: 200px; overflow-y: auto;">
-                    @if (ViewBag.Genres != null)
-                    {
-                        foreach (var genre in ViewBag.Genres)
-                        {
-                            // Check if this genre is already assigned to the book
-                            bool isChecked = Model?.BookGenres != null && Model.BookGenres.Contains(genre.GenreName);
+    .custom-file-input {
+        cursor: pointer;
+    }
 
-                            <div class="form-check">
-                                <input class="form-check-input"
-                                       type="checkbox"
-                                       name="BookGenres"
-                                       value="@genre.GenreName"
-                                       id="genre_@genre.Id"
-                                       @(isChecked ? "checked" : "")>
+    @@media (max-width: 767.98px) {
+        .edit-book-container {
+            margin: 1rem auto;
+        }
 
-                                <label class="form-check-label" for="genre_@genre.Id">
-                                    @genre.GenreName
-                                </label>
+        .preview-book {
+            margin: 0 auto 1rem;
+            width: 120px;
+            height: 160px;
+        }
+    }
+</style>
+
+<div class="container edit-book-container">
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-action="Index">Books</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Edit Book</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <h1 class="h3 mb-4 text-primary">
+                <i class="bi bi-pencil-square"></i> Edit Book
+            </h1>
+
+            <form asp-action="Edit" asp-route-id="@bookId" method="post" enctype="multipart/form-data">
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div class="row g-4">
+                    <!-- Left Column: Image Preview & Upload -->
+                    <div class="col-md-4">
+                        <div class="text-center text-md-start">
+                            <label class="form-label">Book Cover</label>
+                            <img id="imagePreview"
+                                 src="~/@Model.BookImg"
+                                 alt="Book cover preview"
+                                 class="preview-book"
+                                 onerror="this.src='https://via.placeholder.com/160x200?text=Book';" />
+
+                            <div class="image-upload-section">
+                                <label asp-for="BookImage" class="form-label">Upload New Cover</label>
+                                <input asp-for="BookImage"
+                                       class="form-control custom-file-input"
+                                       type="file"
+                                       accept="image/*"
+                                       onchange="previewImage(event)" />
+                                <span asp-validation-for="BookImage" class="text-danger"></span>
+                                <small class="form-text text-muted d-block mt-2">
+                                    Leave empty to keep current cover
+                                </small>
                             </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="text-muted">No genres available.</div>
-                    }
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Form Fields -->
+                    <div class="col-md-8">
+                        <h5 class="mb-3">Book Information</h5>
+
+                        <div class="form-group">
+                            <label asp-for="Title" class="form-label"></label>
+                            <input asp-for="Title" class="form-control" placeholder="Enter book title" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Isbn" class="form-label"></label>
+                            <input asp-for="Isbn" class="form-control" placeholder="Enter ISBN" />
+                            <span asp-validation-for="Isbn" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Language" class="form-label"></label>
+                            <input asp-for="Language" class="form-control" placeholder="Enter language" />
+                            <span asp-validation-for="Language" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="AuthorId" class="form-label">Author</label>
+                            <select asp-for="AuthorId" class="form-control" asp-items="ViewBag.AuthorId">
+                                <option value=""> -- Select an Author -- </option>
+                            </select>
+                            <span asp-validation-for="AuthorId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label class="form-label fw-bold mb-2">Genres</label>
+                            <div class="card p-3" style="max-height: 200px; overflow-y: auto;">
+                                @if (ViewBag.Genres != null)
+                                {
+                                    foreach (var genre in ViewBag.Genres)
+                                    {
+                                        bool isChecked = Model?.BookGenres != null && Model.BookGenres.Contains(genre.GenreName);
+
+                                        <div class="form-check">
+                                            <input class="form-check-input"
+                                                   type="checkbox"
+                                                   name="BookGenres"
+                                                   value="@genre.GenreName"
+                                                   id="genre_@genre.Id"
+                                                   @(isChecked ? "checked" : "") />
+
+                                            <label class="form-check-label" for="genre_@genre.Id">
+                                                @genre.GenreName
+                                            </label>
+                                        </div>
+                                    }
+                                }
+                                else
+                                {
+                                    <div class="text-muted">No genres available.</div>
+                                }
+                            </div>
+                            <div class="form-text text-muted">
+                                <small>Select all genres that apply to this book.</small>
+                            </div>
+                            <span asp-validation-for="BookGenres" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PagesCount" class="form-label"></label>
+                            <input asp-for="PagesCount" class="form-control" placeholder="Enter pages count" />
+                            <span asp-validation-for="PagesCount" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PublishDate" class="form-label"></label>
+                            <input asp-for="PublishDate" class="form-control" type="date" />
+                            <span asp-validation-for="PublishDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="MainCharacters" class="form-label"></label>
+                            <input asp-for="MainCharacters" class="form-control" placeholder="Main characters" />
+                            <span asp-validation-for="MainCharacters" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Description" class="form-label"></label>
+                            <textarea asp-for="Description" class="form-control" rows="5" placeholder="Enter description"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+
+                        <hr class="my-4" />
+
+                        <div class="btn-group-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-check-circle"></i> Save Changes
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Books
+                            </a>
+                        </div>
+                    </div>
                 </div>
-                <div class="form-text text-muted">
-                    <small>Select all genres that apply to this book.</small>
-                </div>
-                <span asp-validation-for="BookGenres" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="PagesCount" class="control-label"></label>
-                <input asp-for="PagesCount" class="form-control" />
-                <span asp-validation-for="PagesCount" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="PublishDate" class="control-label"></label>
-                <input asp-for="PublishDate" class="form-control" type="date" />
-                <span asp-validation-for="PublishDate" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="MainCharacters" class="control-label"></label>
-                <input asp-for="MainCharacters" class="form-control" />
-                <span asp-validation-for="MainCharacters" class="text-danger"></span>
-            </div>
-
-            <div class="form-group mb-3">
-                <label asp-for="Description" class="control-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="4"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-
-            @if (!string.IsNullOrEmpty(Model.BookImg))
-            {
-                <div class="form-group mb-3">
-                    <label>Current Book Image</label><br />
-                    <img src="~/@Model.BookImg" alt="Book Image" class="img-thumbnail" width="150" />
-                </div>
-            }
-
-            <div class="form-group mb-3">
-                <label asp-for="BookImage" class="control-label"></label>
-                <input asp-for="BookImage" type="file" class="form-control" />
-                <span asp-validation-for="BookImage" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <input type="submit" value="Save Changes" class="btn btn-primary" />
-            </div>
-
-        </form>
+            </form>
+        </div>
     </div>
 </div>
 
-<div class="mt-3">
-    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
-</div>
+<script>
+    function previewImage(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('imagePreview').src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+</script>
 
 @section Scripts {
     @{

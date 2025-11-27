@@ -23,7 +23,9 @@ namespace Readioo.ViewModel
         // Corresponds to UserPassword
         [Required(ErrorMessage = "Password is required.")]
         [DataType(DataType.Password)]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
+        [StringLength(100, MinimumLength = 8, ErrorMessage = "Password must be at least 8 characters.")]
+        [RegularExpression(@"^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&]).+$",
+    ErrorMessage = "Password is weak: Password must contain at least one letter, number and symbol.")]
         public string Password { get; set; } = null!;
 
         // Used for confirmation—this field is for the UI only, not the database
