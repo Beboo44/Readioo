@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NToastNotify;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using Readioo.ViewModel;
@@ -55,10 +56,10 @@ namespace Readioo.Controllers
             return View(books);
         }
 
-        public IActionResult Browse()
+        public IActionResult Browse(string term="")
         {
             // Get all books with their genres included
-            var books = _bookService.GetAllBooksWithGenres();
+            var books = _bookService.SearchBooks(term);
             var genres = _genreService.GetAllGenres();
             ViewBag.Genres = genres;
             return View(books);
@@ -338,5 +339,26 @@ namespace Readioo.Controllers
 
             return RedirectToAction("Details", new { id = bookId });
         }
+
+
+        [HttpGet]
+        public IActionResult SearchBooks(string term)
+        {
+            var results = _bookService.SearchBooks(term);
+            return Json(results); 
+        }
+
+        [HttpGet]
+        public IActionResult Search(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                return View(new List<BookDto>());
+            }
+
+            var books = _bookService.SearchBooks(term);
+            return View(books); // goes to Views/Book/Search.cshtml
+        }
+
     }
 }

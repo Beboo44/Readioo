@@ -26,6 +26,9 @@ namespace Readioo.Business.Services.Interfaces
 
         public IEnumerable<BookDto> GetAllBooksWithGenres();
 
+        public IEnumerable<BookDto> SearchBooks(string term);
+        public BookDto GetBookById(int id);
+
     }
 
 }

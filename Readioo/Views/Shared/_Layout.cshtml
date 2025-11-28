@@ -34,7 +34,12 @@
                 <div><a class="bar" asp-controller="Admin" asp-action="Index" >Admin Dashboard</a></div>
             }
 
-            <div><input type="text" placeholder="Search Books" size="40" class="search"></div>
+            @* <div><input type="text" placeholder="Search Books" size="40" class="search"></div> *@
+            <div style="position: relative; display: inline-block;">
+                <input type="text" id="searchBox" placeholder="Search Books" size="40" class="search" autocomplete="off" />
+                <ul id="searchResults" class="dropdown-menu"></ul>
+            </div>
+
 
             <div class="profile dropdown">
                 <a href="#" class="profile-toggle dropdown-toggle"
@@ -125,6 +130,94 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <script src="~/js/main.js"></script>
+
+    @* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> *@
+    <script>
+        $(document).ready(function(){
+            $("#searchBox").on("keyup", function(){
+                var query = $(this).val();
+                if(query.length > 0){
+                    $.ajax({
+                        url: '/Book/SearchBooks',
+                        data: { term: query },
+                        success: function(data){
+                            var results = $("#searchResults");
+                            results.empty();
+
+                            if (data.length === 0) {
+                                results.hide(); // hide if no matches
+                                return;
+                            }
+
+                            $.each(data, function(i, item){
+                                // console.log(item);
+                                results.append(
+                                            "<li><a href='/Book/Details/" + item.bookId + "'>"
+                                            + item.title + " - by " + item.authorName + "</a></li>"
+                                );
+                            });
+                            results.show();
+                            currentIndex = -1;
+                        }
+                    });
+                } else {
+                    $("#searchResults").empty().hide();
+                }
+            });
+
+            // Hide dropdown when clicking outside
+            $(document).on("click", function(e){
+                if (!$(e.target).closest("#searchBox, #searchResults").length) {
+                    $("#searchResults").hide();
+                }
+            });
+        });
+
+                let currentIndex = -1;
+        const searchInput = document.getElementById("searchBox");
+
+        searchInput.addEventListener("keydown", function (e) {
+            const items = document.querySelectorAll("#searchResults li a");
+            if (items.length === 0) return;
+
+            // if (e.key === "ArrowDown") {
+            //     e.preventDefault();
+            //     currentIndex = (currentIndex + 1) % items.length;
+            //     highlight(items, currentIndex);
+            // } else if (e.key === "ArrowUp") {
+            //     e.preventDefault();
+            //     currentIndex = (currentIndex - 1 + items.length) % items.length;
+            //     highlight(items, currentIndex);
+            //         } else 
+                    if (e.key === "Enter") {
+            e.preventDefault();
+            if (currentIndex >= 0) {
+                // Open the highlighted book
+                window.location.href = items[currentIndex].href;
+            } else {
+                // No highlight → go to a search results page
+                const q = searchInput.value.trim();
+                if (q.length > 0) {
+                    window.location.href = "/Book/Browse?term=" + encodeURIComponent(q);
+                }
+            }
+        }
+
+        });
+
+        function highlight(items, index) {
+        items.forEach(item => item.classList.remove("active"));
+        if (items[index]) {
+            items[index].classList.add("active");
+            // items[index].focus();
+        }
+}
+
+
+    </script>
+
+
+
 
     @await RenderSectionAsync("Scripts", required: false)
     @await Component.InvokeAsync("NToastNotify");

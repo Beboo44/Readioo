@@ -85,5 +85,22 @@ namespace Readioo.Data.Repositories.Books
             return (decimal)ratings.Average();
         }
 
+
+        public IEnumerable<Book> SearchBooks(string term)
+        {
+            return _dbContext.Books
+                .Include(b => b.Author)
+                .Where(b => b.Title.Contains(term) || b.Author.FullName.Contains(term))
+                .ToList();
+        }
+
+        public Book? GetById(int id)
+        {
+            return _dbContext.Books
+                .Include(b => b.Author)
+                .Include(b => b.BookGenres).ThenInclude(bg => bg.Genre)
+                .Include(b => b.Reviews).ThenInclude(r => r.User)
+                .FirstOrDefault(b => b.Id == id);
+        }
     }
 }

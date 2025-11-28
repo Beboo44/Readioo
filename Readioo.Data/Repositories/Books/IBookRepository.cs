@@ -19,5 +19,7 @@ namespace Readioo.Data.Repositories.Books
         UserBook? GetUserBookRating(int userId, int bookId);
         Task SaveUserRating(int userId, int bookId, int rating);
         public decimal CalculateAverageRating(int bookId);
+        public IEnumerable<Book> SearchBooks(string term);
+        public Book GetById(int id);
     }
 }
