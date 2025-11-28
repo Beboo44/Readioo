@@ -304,6 +304,13 @@ namespace Readioo.Controllers
                 return View(authorVM);
             }
         }
+
+        // Add this action to AuthorController
+        public IActionResult Browse()
+        {
+            var authors = _authorService.getAllAuthors();
+            return View(authors);
+        }
     }
 
 }

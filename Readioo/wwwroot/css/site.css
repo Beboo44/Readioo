@@ -1,29 +1,41 @@
+/* =========================================
+   1. VARIABLES & THEME CONFIGURATION
+   ========================================= */
+:root {
+    /* "Brand Cohesive" Palette */
+    --primary-color: #002B5B; /* Deep Navy */
+    --primary-hover: #001A3D; /* Darker Navy */
+    --accent-color: #FFA500; /* Vibrant Orange */
+    --text-color: #333333; /* Slate Text */
+    --bg-light: #F8F9FA; /* Soft Gray */
+    --white: #FFFFFF;
+    --border-radius: 8px;
+}
+
+/* =========================================
+   2. GLOBAL RESETS & TYPOGRAPHY
+   ========================================= */
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
+    html {
+        font-size: 16px;
+    }
 }
 
 body {
-  margin-bottom: 60px;
-}
-
-                /*/////////////////////Navigation bar////////////////////////*/
-.nav {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: var(--text-color);
+    background-color: var(--bg-light);
+    /* Sticky Footer Setup */
     display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
     /* text-align: center; */
     background-color: white;
     justify-content: space-evenly;
@@ -38,151 +50,149 @@ body {
     z-index:100;
 }
 
-    .nav #logo {
-        height: 35px;
-        position: relative;
-        top: 5px;
-    }
-
-    .nav a {
-        text-decoration: none;
-        color: black;
-        padding: 15px 20px;
-    }
-
-    .nav .bar:hover {
-        background-color: black;
-        color: white;
-    }
-
-    .nav .search {
-        padding: 15px;
-        height: 20px;
-        border-radius: 3px;
-        border: 1px solid black;
-    }
-
-    .nav .empty {
-        padding-right: 100px;
-    }
-
-.profile img {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+/* Main content expands to push footer down */
+.container {
+    flex: 1;
 }
 
-
-
-                /*/////////////////////Login////////////////////////*/
-
-
-
-.login html {
-    height: 500px;
+/* =========================================
+   3. LINKS & BUTTONS
+   ========================================= */
+a {
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color 0.2s ease;
 }
 
-.login body {
+    a:hover {
+        color: var(--accent-color);
+    }
+
+/* Override Bootstrap Primary Button to match Brand */
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+    .btn-primary:hover, .btn-primary:focus {
+        background-color: var(--primary-hover);
+        border-color: var(--primary-hover);
+    }
+
+/* Focus States for Accessibility */
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem rgba(255, 255, 255, 0.5), 0 0 0 0.25rem rgba(0, 43, 91, 0.25); /* Navy focus ring */
+    border-color: var(--primary-color);
+}
+
+/* =========================================
+   4. LOGIN PAGE STYLING (Responsive)
+   ========================================= */
+/* Center content vertically and horizontally */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh; /* Takes up most of the screen height */
+    padding: 20px;
+}
+
+/* The actual login card */
+.login-box {
+    background-color: var(--white);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); /* Soft shadow */
+    width: 100%;
+    max-width: 400px; /* Prevents it from getting too wide */
     text-align: center;
-    width: 300px;
-    /* justify-content: center; */
-    margin-left: 650px;
+}
+
+.login-logo {
+    width: 150px;
+    margin-bottom: 20px;
 }
 
 .inputs {
-    position: relative;
     text-align: left;
-    font-size: 20px;
+    margin-bottom: 20px;
 }
 
 .text_input {
-    width: 250px;
-    padding: 10px 15px;
-    border: 2px solid gray;
-    background-color: rgb(231, 236, 241);
-    border-radius: 20px;
+    width: 100%; /* Full width of container */
+    padding: 12px 15px;
+    border: 1px solid #ced4da;
+    background-color: var(--bg-light);
+    border-radius: var(--border-radius);
     outline: none;
     font-size: 16px;
-    margin-bottom: 5px;
-    /* transition: all 0.3s ease; */
+    margin-bottom: 15px;
+    transition: border-color 0.3s;
 }
+
+    .text_input:focus {
+        border-color: var(--primary-color);
+        background-color: var(--white);
+    }
 
 .label {
-    color: rgb(43, 39, 39);
-    font-size: 15px;
-}
-
-.logo {
-    width: 250px;
-    position: relative;
-    top: 20px;
-    border-radius: 25px;
-    border:2px solid black;
+    color: var(--text-color);
+    font-weight: 500;
+    margin-bottom: 5px;
+    display: block;
 }
 
 .submission {
-    width: 290px;
-    padding: 10px 15px;
-    border: 2px solid black;
-    border-radius: 20px;
-    background-color: black;
-    color: white;
-    font-size: 15px;
-    margin-top: 30px;
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 50px; /* Pill shape */
+    background-color: var(--primary-color);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 10px;
 }
 
     .submission:hover {
-        background-color: gray;
-        color: black;
-        cursor: pointer;
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
     }
 
 .sign_in {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
 }
 
-.button {
-    text-decoration: underline;
-    padding: 5px 10px;
-    border: 2px solid black;
-    background-color: rgb(196, 186, 186);
-    color: black;
-    font-size: 17px;
+.button-link {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: 500;
 }
 
-    .button:hover {
-        background-color: rgb(140, 122, 122);
-        color: white;
+    .button-link:hover {
+        color: var(--accent-color);
+        text-decoration: underline;
     }
 
-.check {
-    display: flex;
-    justify-content: left;
-    font-size: 17px;
+/* =========================================
+   5. PROFILE & UTILITIES
+   ========================================= */
+.profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--white);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
-.spacing {
-    display: flex;
-    justify-content: center;
-    width: 300px;
-    border: 2px solid black;
-    margin-top: 50px;
-}
-
-
-/*To make footer stick stop thead bottom in case of a small body content*/
-html, body {
-    height: 100%;
-}
-
-body {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-}
-
-.container {
-    flex: 1;
+/* Fix for footer sticking to bottom */
+footer {
+    margin-top: auto;
 }

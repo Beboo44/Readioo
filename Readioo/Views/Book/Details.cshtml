@@ -4,6 +4,10 @@
 @model BookDto
 @{
     ViewData["Title"] = Model.Title + " - Readioo";
+    
+    // ✅ Generate Amazon and Google Books URLs
+    var amazonSearchUrl = $"https://www.amazon.com/s?k={Uri.EscapeDataString(Model.Isbn)}";
+    var googleBooksUrl = $"https://www.google.com/search?q=isbn+{Uri.EscapeDataString(Model.Isbn)}";
     var userShelves = ViewBag.UserShelves as List<ShelfDto>;
 }
 
@@ -19,9 +23,153 @@
     <link rel="stylesheet" href="~/css/globalandbook.css">
     <link rel="stylesheet" href="~/css/book.css">
     <link rel="stylesheet" href="~/css/book.css?v=@DateTime.Now.Ticks">
+
+    <style>
+        /* ✅ ISBN Display Styling */
+        .isbn-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #eef2f6 100%);
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .isbn-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .isbn-label {
+            font-weight: 600;
+            color: #495057;
+            white-space: nowrap;
+            font-size: 0.9rem;
+        }
+
+        .isbn-value {
+            font-family: 'Courier New', monospace;
+            color: #002B5B;
+            font-weight: 600;
+            letter-spacing: 1px;
+            background-color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .isbn-copy-btn {
+            background-color: #002B5B;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .isbn-copy-btn:hover {
+            background-color: #001f42;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 43, 91, 0.2);
+        }
+
+        .isbn-copy-btn.copied {
+            background-color: #28a745;
+        }
+
+        /* ✅ Buy Links Section */
+        .isbn-buy-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .buy-link-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border: 2px solid;
+        }
+
+        .buy-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-decoration: none;
+        }
+
+        .buy-amazon {
+            background-color: #FF9900;
+            color: white;
+            border-color: #FF9900;
+        }
+
+        .buy-amazon:hover {
+            background-color: #e08900;
+            border-color: #e08900;
+            color: white;
+        }
+
+        .buy-google {
+            background-color: #4285F4;
+            color: white;
+            border-color: #4285F4;
+        }
+
+        .buy-google:hover {
+            background-color: #1f6dd4;
+            border-color: #1f6dd4;
+            color: white;
+        }
+
+        /* Media Query - Responsive Design */
+        @@media (max-width: 576px) {
+            .isbn-section {
+                padding: 12px;
+            }
+
+            .isbn-display {
+                flex-direction: column;
+            }
+
+            .isbn-value {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .isbn-buy-links {
+                flex-direction: column;
+            }
+
+            .buy-link-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+
 </head>
 
 <body>
+
+    <!-- ✅ Main Book Section -->
     <div class="wrap" id="book-page">
         <div class="book-header">
             <div class="book-cover">
@@ -52,6 +200,40 @@
                             }
                         </span>
                     </div>
+
+                    <!-- ✅ ISBN Display Section with Buy Links (No Goodreads) -->
+                    @if (!string.IsNullOrEmpty(Model.Isbn))
+                    {
+                        <div class="isbn-section">
+                            <div class="isbn-display">
+                                <span class="isbn-label">
+                                    <i class="fa-solid fa-barcode me-2"></i>ISBN:
+                                </span>
+                                <span class="isbn-value">@Model.Isbn</span>
+                                <button type="button" class="isbn-copy-btn" onclick="copyIsbn(this)" title="Copy ISBN to clipboard">
+                                    <i class="fa-solid fa-copy"></i>Copy
+                                </button>
+                            </div>
+
+                            <!-- ✅ Buy Links (Amazon & Google Books only) -->
+                            <div class="isbn-buy-links">
+                                <a href="@amazonSearchUrl" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="buy-link-btn buy-amazon"
+                                   title="Search on Amazon">
+                                    <i class="fa-brands fa-amazon"></i>Amazon
+                                </a>
+                                <a href="@googleBooksUrl" 
+                                   target="_blank" 
+                                   rel="noopener noreferrer"
+                                   class="buy-link-btn buy-google"
+                                   title="Search on Google Books">
+                                    <i class="fa-brands fa-google"></i>Google Books
+                                </a>
+                            </div>
+                        </div>
+                    }
                 </div>
 
                 <div class="actions" style="display: flex; gap: 10px; align-items: center;">
@@ -112,6 +294,7 @@
             </form>
         </div>
 
+        <!-- ✅ Community Reviews -->
         <div class="book-reviews">
             <h2>Community Reviews</h2>
             <div id="reviewsContainer" class="reviews-list">
@@ -159,6 +342,30 @@
 
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             path.setAttribute("d", "M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.951a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.286 3.951c.3.921-.755 1.688-1.538 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.783.57-1.838-.197-1.538-1.118l1.286-3.951a1 1 0 00-.364-1.118L2.063 9.378c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.951z");
+    <!-- ✅ ISBN Copy Function -->
+    <script>
+        function copyIsbn(button) {
+            const isbnValue = button.previousElementSibling.textContent.trim();
+            
+            navigator.clipboard.writeText(isbnValue).then(() => {
+                // Show success feedback
+                const originalText = button.innerHTML;
+                button.innerHTML = '<i class="fa-solid fa-check"></i>Copied!';
+                button.classList.add('copied');
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy ISBN:', err);
+                alert('Failed to copy ISBN');
+            });
+        }
+
+        // ✅ FIXED: Moved JavaScript variable assignment outside Razor context
+        var modelRate = @Model.Rate;
 
             svg.appendChild(path);
             return svg;
