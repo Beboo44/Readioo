@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Readioo.Data.Data.Contexts;
 
@@ -11,9 +12,11 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251128115216_separateAdmin")]
+    partial class separateAdmin
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Authors", (string)null);
+                    b.ToTable("Authors");
                 });
 
             modelBuilder.Entity("Readioo.Models.AuthorGenre", b =>
@@ -80,7 +83,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex(new[] { "GenreId" }, "IX_AuthorGenres_GenreId");
 
-                    b.ToTable("AuthorGenres", (string)null);
+                    b.ToTable("AuthorGenres");
                 });
 
             modelBuilder.Entity("Readioo.Models.Book", b =>
@@ -130,7 +133,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex(new[] { "AuthorId" }, "IX_Books_AuthorId");
 
-                    b.ToTable("Books", (string)null);
+                    b.ToTable("Books");
                 });
 
             modelBuilder.Entity("Readioo.Models.BookGenre", b =>
@@ -145,7 +148,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex("GenreId");
 
-                    b.ToTable("BookGenres", (string)null);
+                    b.ToTable("BookGenres");
                 });
 
             modelBuilder.Entity("Readioo.Models.BookShelf", b =>
@@ -160,7 +163,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex("ShelfId");
 
-                    b.ToTable("BookShelves", (string)null);
+                    b.ToTable("BookShelves");
                 });
 
             modelBuilder.Entity("Readioo.Models.Genre", b =>
@@ -181,7 +184,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Genres", (string)null);
+                    b.ToTable("Genres");
 
                     b.HasData(
                         new
@@ -309,7 +312,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "IX_Reviews_UserId");
 
-                    b.ToTable("Reviews", (string)null);
+                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("Readioo.Models.Shelf", b =>
@@ -382,7 +385,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Readioo.Models.UserBook", b =>
@@ -408,7 +411,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "IX_UserBooks_UserId");
 
-                    b.ToTable("UserBooks", (string)null);
+                    b.ToTable("UserBooks");
                 });
 
             modelBuilder.Entity("Readioo.Models.UserGenre", b =>
@@ -431,7 +434,7 @@ namespace Readioo.Data.Migrations
 
                     b.HasIndex(new[] { "UserId" }, "IX_UserGenres_UserId");
 
-                    b.ToTable("UserGenres", (string)null);
+                    b.ToTable("UserGenres");
                 });
 
             modelBuilder.Entity("Readioo.Models.AuthorGenre", b =>

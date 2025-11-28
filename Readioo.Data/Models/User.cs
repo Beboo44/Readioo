@@ -31,6 +31,8 @@ public partial class User: BaseEntity
     public string? Country { get; set; }
 
     public string? ProfileUrl { get; set; }
+    [NotMapped]
+    public bool IsAdmin { get; set; } = true;
 
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 

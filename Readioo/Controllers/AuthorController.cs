@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.Blazor;
 using NToastNotify;
 using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using Readioo.ViewModel;
@@ -17,13 +19,30 @@ namespace Readioo.Controllers
 
         private readonly IAuthorService _authorService;
         private readonly IToastNotification _toast;
-        public AuthorController( IAuthorService authorService, IToastNotification toast)
+        private readonly IUserService _userService;
+        public AuthorController( IAuthorService authorService, IToastNotification toast, IUserService userService)
         {
             _authorService = authorService;
             _toast = toast;
+            _userService = userService;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var authors = _authorService.ShowAllAuthors();
             return View(authors);
         }
@@ -31,8 +50,23 @@ namespace Readioo.Controllers
 
         // Create Author
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
 
             return View();
         }
@@ -143,8 +177,23 @@ namespace Readioo.Controllers
 
         // Author Edit
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var authorDto = _authorService.getAuthorById(id);
             if (authorDto == null)
             {

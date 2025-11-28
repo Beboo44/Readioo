@@ -57,7 +57,8 @@ namespace Readioo.Business.Services.Classes
                 CreationDate = DateTime.UtcNow,
                 Bio = null,
                 City = null,
-                Country = null
+                Country = null,
+                //IsAdmin = true
             };
 
             // 4. Data Persistence (Calling the Repository's Add method)

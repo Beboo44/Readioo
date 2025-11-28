@@ -1,9 +1,22 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+@inject IUserService UserService
+
+@{
+    var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    if (userId is null)
+    {
+        userId = "0";    
+    }
+
+    var user = await UserService.GetUserByIdAsync(int.Parse(userId));
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Readioo</title>
+    <title>@ViewData["Title"] - Readioo</title>}
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Readioo.styles.css" asp-append-version="true" />
@@ -16,7 +29,10 @@
             <div><a class="bar" asp-controller="Home" asp-action="Index">Home</a></div>
             <div><a class="bar" asp-controller="Book" asp-action="MyBooks">My Books</a></div>
             <div><a class="bar" asp-controller="Book" asp-action="Browse">Browse</a></div>
-            <div><a class="bar" asp-controller="Admin" asp-action="Index" >Admin Dashboard</a></div>
+            @if (user is not null && user.IsAdmin)
+            {
+                <div><a class="bar" asp-controller="Admin" asp-action="Index" >Admin Dashboard</a></div>
+            }
 
             <div><input type="text" placeholder="Search Books" size="40" class="search"></div>
 

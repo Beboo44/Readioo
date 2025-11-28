@@ -34,8 +34,23 @@ namespace Readioo.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var books = _bookService.GetAllBooks();
             return View(books);
         }
@@ -50,8 +65,23 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var authors = _authorService.getAllAuthors();
             var genres = _genreService.GetAllGenres();
 
@@ -133,8 +163,23 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task <IActionResult> Edit(int id)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var book = _bookService.bookById(id);
             if (book == null) return NotFound();
 
