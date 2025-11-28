@@ -1,4 +1,5 @@
-﻿using Readioo.Business.DataTransferObjects.Book; // Make sure to reference the Book DTO
+﻿using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.DataTransferObjects.Genre;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,10 +26,10 @@ namespace Readioo.Business.DataTransferObjects.Author
 
         public string? AuthorImage { get; set; }
 
-        public List<string> Genres { get; set; } = new();
+        // ✅ CHANGED: From List<string> to List<GenreDto>
+        public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
 
-        // --- NEW PROPERTY ---
-        // This holds the list of books so the View can loop through them
-        public List<BookDto> Books { get; set; } = new();
+        // Books list
+        public List<BookDto> Books { get; set; } = new List<BookDto>();
     }
 }

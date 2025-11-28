@@ -75,17 +75,20 @@
                 box-shadow: 0 6px 20px rgba(0, 43, 91, 0.3);
             }
 
-        /* Secondary accent button (Orange) */
-        .btn-brand-accent {
-            background-color: var(--brand-orange);
-            color: #fff;
-            border: none;
+        .btn-brand-outline {
+            background-color: transparent;
+            color: var(--brand-navy);
+            border: 2px solid var(--brand-navy);
+            padding: 8px 24px;
             font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
         }
 
-            .btn-brand-accent:hover {
-                background-color: var(--brand-orange-hover);
+            .btn-brand-outline:hover {
+                background-color: var(--brand-navy);
                 color: #fff;
+                transform: translateY(-2px);
             }
 
         /* --- Typography & Headers --- */
@@ -93,9 +96,10 @@
             color: var(--brand-navy);
             font-weight: 800;
             font-size: 1.75rem;
-            margin-bottom: 2rem;
+            margin-bottom: 0; /* Adjusted for flex container */
             position: relative;
             display: inline-block;
+            transition: color 0.3s ease;
         }
 
             /* Distinct orange underline */
@@ -108,6 +112,10 @@
                 margin-top: 8px;
                 border-radius: 2px;
             }
+
+        a:hover .section-title {
+            color: var(--brand-orange);
+        }
 
         .highlight {
             color: var(--brand-navy);
@@ -221,6 +229,11 @@
                            class="btn btn-brand-primary text-decoration-none">
                             <i class="fa-solid fa-compass me-2"></i> Explore Books
                         </a>
+                        <a asp-controller="Author"
+                           asp-action="Browse"
+                           class="btn btn-brand-primary text-decoration-none ms-3">
+                            <i class="fa-solid fa-pen-nib me-2"></i> Browse Authors
+                        </a>
                     </div>
                     <div class="col-lg-6 mt-4 mt-lg-0 text-center">
                         <img src="assets/images/hero-books.png" class="img-fluid" alt="Books Illustration" style="max-height: 400px;" onerror="this.style.display='none'">
@@ -233,7 +246,7 @@
 
             <!-- Recent Books -->
             <section class="section recent mb-5">
-                <h2 class="section-title">Fresh Arrivals</h2>
+                <h2 class="section-title mb-4">Fresh Arrivals</h2>
                 <div class="book-grid" id="recentBooks">
 
                     @if (recent != null && recentBooks.Any())
@@ -286,7 +299,7 @@
             @if (recommendations != null && recommendations.Any())
             {
                 <section class="section recommendations mb-5">
-                    <h2 class="section-title">
+                    <h2 class="section-title mb-4">
                         Recommended For You
                     </h2>
                     <div class="book-grid">
@@ -325,7 +338,18 @@
 
             <!-- Popular Genres -->
             <section class="section genres mt-5 pb-5">
-                <h2 class="section-title">Browse by Genre</h2>
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <!-- Title Link -->
+                    <a asp-controller="Genre" asp-action="Index" class="text-decoration-none">
+                        <h2 class="section-title mb-0">Browse by Genre <i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.6em; opacity: 0.5;"></i></h2>
+                    </a>
+
+                    <!-- View All Button -->
+                    <a asp-controller="Genre" asp-action="Index" class="btn btn-brand-outline btn-sm">
+                        View All Genres <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
                 <div class="d-flex flex-wrap gap-3">
                     @if (genreList != null && genreList.Any())
                     {

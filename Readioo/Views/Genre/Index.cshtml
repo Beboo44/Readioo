@@ -5,42 +5,150 @@
     ViewData["Title"] = "Genres - Readioo";
 }
 
-<div class="wrap">
-    <div class="container mt-5">
-        <h2 class="mb-4" style="font-weight: 700;">Browse Genres</h2>
-        <div class="row">
-            @foreach (var genre in Model)
-            {
-                <div class="col-md-4 col-sm-6 mb-4">
-                    <div class="card h-100 shadow-sm border-0" style="border-radius: 12px; transition: transform 0.2s;">
-                        <div class="card-body text-center p-4">
-                            <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(genre.GenreName)&size=100&background=random&color=fff&font-size=0.5"
-                                 class="rounded-circle mb-3 shadow-sm"
-                                 alt="@genre.GenreName"
-                                 style="width: 80px; height: 80px;">
+<!-- Google Fonts Import -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;1,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 
-                            <h5 class="card-title fw-bold">@genre.GenreName</h5>
+<div class="container my-5">
 
-                            <p class="card-text text-muted small">
-                                @(genre.Description.Length > 80 ? genre.Description.Substring(0, 80) + "..." : genre.Description)
-                            </p>
+    <!-- Page Header -->
+    <div class="row mb-5">
+        <div class="col-12 border-bottom pb-3">
+            <h1 class="display-5 fw-bold font-serif text-navy">
+                <i class="fa-solid fa-layer-group me-2"></i>Browse Genres
+            </h1>
+            <p class="lead text-muted mb-0 font-sans">Explore our diverse collection of categories and find your next obsession.</p>
+        </div>
+    </div>
 
-                            <a href="@Url.Action("Details", "Genre", new { id = genre.Id })"
-                               class="btn btn-outline-primary btn-sm rounded-pill px-4 mt-2">
-                                Explore
-                            </a>
+    <div class="row g-4">
+        @foreach (var genre in Model)
+        {
+            <div class="col-md-6 col-lg-4 col-xl-3">
+                <div class="card h-100 shadow-sm border-0 genre-card text-center position-relative">
+                    <div class="card-body p-4 d-flex flex-column align-items-center">
+
+                        <!-- Genre Icon/Image -->
+                        <div class="genre-icon-wrapper mb-3 shadow-sm">
+                            <img src="https://ui-avatars.com/api/?name=@Uri.EscapeDataString(genre.GenreName)&size=120&background=f1f5f9&color=002B5B&font-size=0.4&bold=true"
+                                 class="img-fluid"
+                                 alt="@genre.GenreName">
                         </div>
+
+                        <h5 class="card-title fw-bold text-navy font-serif mb-2">@genre.GenreName</h5>
+
+                        <p class="card-text text-muted small font-sans mb-4 flex-grow-1">
+                            @if (!string.IsNullOrEmpty(genre.Description))
+                            {
+                                @(genre.Description.Length > 80 ? genre.Description.Substring(0, 80) + "..." : genre.Description)
+                            }
+                            else
+                            {
+                                <span class="fst-italic opacity-50">No description available.</span>
+                            }
+                        </p>
+
+                        <a href="@Url.Action("Details", "Genre", new { id = genre.Id })"
+                           class="btn btn-navy-soft btn-sm rounded-pill px-4 stretched-link font-sans fw-semibold">
+                            Explore <i class="fa-solid fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+
+                    <!-- Decorative accent line (Constant Color) -->
+                    <div class="card-footer border-0 pt-0 bg-transparent p-0">
+                        <div class="genre-accent-line"></div>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
 </div>
 
 <style>
-    /* Hover effect for the index cards */
-    .card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    /* -----------------------------------------------------------------
+           THEME VARIABLES & TYPOGRAPHY
+           ----------------------------------------------------------------- */
+    :root {
+        --brand-navy: #002B5B;
+        --brand-orange: #FF9F1C;
+        --bg-warm: #fdfbf7;
+        --text-dark: #2c3e50;
+    }
+
+    body {
+        background-color: var(--bg-warm);
+        color: var(--text-dark);
+    }
+
+    .font-serif {
+        font-family: 'Merriweather', serif;
+    }
+
+    .font-sans {
+        font-family: 'Inter', sans-serif;
+    }
+
+    .text-navy {
+        color: var(--brand-navy) !important;
+    }
+
+    .text-orange {
+        color: var(--brand-orange) !important;
+    }
+
+    /* -----------------------------------------------------------------
+           GENRE CARD STYLING
+           ----------------------------------------------------------------- */
+    .genre-card {
+        background: white;
+        border-radius: 16px;
+        transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+        overflow: hidden;
+        /* Constant Colored Top Border */
+        border-top: 6px solid var(--brand-navy) !important;
+    }
+
+        .genre-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(0, 43, 91, 0.15) !important;
+        }
+
+    /* Icon styling - Constant Orange Border */
+    .genre-icon-wrapper {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 3px solid var(--brand-orange); /* Constant Color */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        transition: transform 0.3s ease;
+        background: #fff;
+        padding: 2px; /* Gap between border and image */
+    }
+
+    .genre-card:hover .genre-icon-wrapper {
+        transform: scale(1.05);
+    }
+
+    /* Button Styling - Soft Filled Background instead of Outline */
+    .btn-navy-soft {
+        color: var(--brand-navy);
+        background-color: #eef2f6; /* Very light navy/gray */
+        border: 1px solid transparent;
+        transition: all 0.2s;
+    }
+
+    .genre-card:hover .btn-navy-soft {
+        background-color: var(--brand-navy);
+        color: white;
+    }
+
+    /* Accent Line - Constant Orange Bar */
+    .genre-accent-line {
+        height: 6px;
+        width: 100%;
+        background-color: var(--brand-orange); /* Constant Color */
+        margin: 0;
     }
 </style>

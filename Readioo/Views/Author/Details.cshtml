@@ -1,4 +1,5 @@
 ﻿@using Readioo.Business.DataTransferObjects.Author
+@using Readioo.Business.DataTransferObjects.Genre
 @model AuthorDto
 
 @{
@@ -113,6 +114,26 @@
                         </div>
                     </div>
 
+                    <!-- ✅ NEW: Genres Section -->
+                    @if (Model.Genres != null && Model.Genres.Any())
+                    {
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-navy font-sans mb-3">
+                                <i class="fa-solid fa-tag me-2 text-orange"></i>Writing Genres
+                            </h5>
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach (var genre in Model.Genres)
+                                {
+                                    <a asp-controller="Genre" asp-action="Details" asp-route-id="@genre.Id"
+                                       class="badge bg-light border border-navy text-navy text-decoration-none"
+                                       style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+                                        @genre.GenreName
+                                    </a>
+                                }
+                            </div>
+                        </div>
+                    }
+
                     <!-- Action Buttons -->
                     <div class="d-flex gap-2">
                         <!-- Updated to use AuthorId to match DTO definition -->
@@ -205,6 +226,14 @@
 
     .text-orange {
         color: var(--brand-orange) !important;
+    }
+
+    .bg-light {
+        background-color: #f8f9fa !important;
+    }
+
+    .border-navy {
+        border-color: var(--brand-navy) !important;
     }
 
     .hover-navy:hover {
@@ -306,6 +335,17 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+    }
+
+    /* ✅ NEW: Genre Badges Styling */
+    .badge {
+        transition: all 0.2s ease;
+    }
+
+    .badge:hover {
+        background-color: var(--brand-navy) !important;
+        color: white !important;
+        transform: translateY(-2px);
     }
 </style>
 

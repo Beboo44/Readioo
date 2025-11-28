@@ -14,7 +14,10 @@ namespace Readioo.Business.Services.Interfaces
         public IEnumerable<AuthorDto> getAllAuthors();
         public Task CreateAuthor(AuthorCreatedDto author);
         public IEnumerable<Author> ShowAllAuthors();
-        public AuthorDto getAuthorById(int id);
+        
+        // ✅ Changed return type to nullable
+        public AuthorDto? getAuthorById(int id);
+        
         public Task UpdateAuthor(int id, AuthorCreatedDto authorDto);
         public Task DeleteAuthor(int id);
     }
