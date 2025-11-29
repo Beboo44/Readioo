@@ -60,7 +60,10 @@ namespace Readioo.Controllers
 
         public IActionResult Browse(string term = "", int page=1)
         {
-            var books = _bookService.SearchBooks(term);
+            var books = _bookService.GetAllBooks();
+            if (!string.IsNullOrWhiteSpace(term))
+                books = _bookService.SearchBooks(term);
+
             var genres = _genreService.GetAllGenres();
 
             int pageSize = 12;

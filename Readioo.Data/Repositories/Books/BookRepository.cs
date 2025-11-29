@@ -41,7 +41,7 @@ namespace Readioo.Data.Repositories.Books
             return _dbContext.Books
                 .Include(b => b.Author)
                 .Include(b => b.BookGenres)
-                    .ThenInclude(bg => bg.Genre) // Include Genre so we can get GenreName
+                    .ThenInclude(bg => bg.Genre)
                 .ToList();
         }
         public UserBook? GetUserBookRating(int userId, int bookId)
@@ -90,7 +90,7 @@ namespace Readioo.Data.Repositories.Books
         {
             return _dbContext.Books
                 .Include(b => b.Author )
-                .Include(b=>b.BookGenres)
+                //.Include(b=>b.BookGenres)
                 .Where(b => b.Title.Contains(term) || b.Author.FullName.Contains(term))
                 .ToList();
         }
