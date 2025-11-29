@@ -94,14 +94,22 @@
                     <!-- Right Side: Search & Profile -->
                     <div class="d-flex align-items-center gap-4 mt-3 mt-lg-0">
 
-                        <!-- Search Bar (Styled with Icon) -->
-                        <!-- ✅ UPDATED: Added 'input-group-lg' for larger inputs and increased width to 380px -->
-                        <div class="input-group input-group-lg" style="max-width: 380px;">
-                            <span class="input-group-text bg-light border-end-0 text-muted">
-                                <i class="fa-solid fa-magnifying-glass"></i>
-                            </span>
-                            <input type="text" class="form-control bg-light border-start-0" placeholder="Search Books..." aria-label="Search">
+                        @* <div class="input-group input-group-lg" style="max-width: 380px;"> *@
+                        @*     <span class="input-group-text bg-light border-end-0 text-muted"> *@
+                        @*         <i class="fa-solid fa-magnifying-glass"></i> *@
+                        @*     </span> *@
+                        @*     <input type="text" class="form-control bg-light border-start-0" placeholder="Search Books..." aria-label="Search"> *@
+                        @* </div> *@
+
+                
+                        <div style="position: relative; display: inline-block;">
+                            @* <span class="input-group-text bg-light border-end-0 text-muted">  *@
+                            @*     <i class="fa-solid fa-magnifying-glass"></i> *@
+                            @* </span> *@
+                            <input type="text" id="searchBox" placeholder="Search Books" size= "30" class="search form-control bg-light border-start-0" aria-label="Search" autocomplete="off" />
+                            <ul id="searchResults" class="dropdown-menu"></ul>
                         </div>
+
 
                         <!-- Profile Dropdown -->
                         <div class="dropdown">

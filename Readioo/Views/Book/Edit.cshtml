@@ -107,11 +107,13 @@
                     <div class="col-md-4">
                         <div class="text-center text-md-start">
                             <label class="form-label">Book Cover</label>
+                            @if(Model.BookImg != null){
                             <img id="imagePreview"
                                  src="~/@Model.BookImg"
                                  alt="Book cover preview"
                                  class="preview-book"
                                  onerror="this.src='https://via.placeholder.com/160x200?text=Book';" />
+                            }
 
                             <div class="image-upload-section">
                                 <label asp-for="BookImage" class="form-label">Upload New Cover</label>

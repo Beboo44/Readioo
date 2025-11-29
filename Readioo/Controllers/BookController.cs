@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NToastNotify;
+using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
 using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
@@ -242,6 +243,16 @@ namespace Readioo.Controllers
                 BookGenres = book.BookGenres ?? new List<string>()
             };
 
+            if(book.BookImage != null)
+            {
+                string saveFolder = "images/books";
+                saveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
+                string serverPath = Path.Combine("wwwroot", saveFolder);
+                book.BookImage.CopyTo(new FileStream(serverPath, FileMode.Create));
+
+                bookDto.BookImage =saveFolder;
+            }
+            
             await _bookService.UpdateBook(bookDto);
             _toast.AddSuccessToastMessage("Book Updated Successfully");
             return RedirectToAction(nameof(Index));

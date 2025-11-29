@@ -89,7 +89,8 @@ namespace Readioo.Data.Repositories.Books
         public IEnumerable<Book> SearchBooks(string term)
         {
             return _dbContext.Books
-                .Include(b => b.Author)
+                .Include(b => b.Author )
+                .Include(b=>b.BookGenres)
                 .Where(b => b.Title.Contains(term) || b.Author.FullName.Contains(term))
                 .ToList();
         }
