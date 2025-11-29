@@ -12,8 +12,8 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251127013506_genreadded")]
-    partial class genreadded
+    [Migration("20251128175843_All")]
+    partial class All
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -400,6 +400,9 @@ namespace Readioo.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("UserRating")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
