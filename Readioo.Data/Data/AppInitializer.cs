@@ -36,7 +36,6 @@ namespace Readioo.Data.Data
                     // Ensure the database is created
                     context.Database.EnsureCreated();
 
-                    // Check if Genres already exist. If yes, skip adding them.
                     if (!context.Genres.Any())
                     {
                         var genres = new List<Genre>
@@ -73,7 +72,63 @@ namespace Readioo.Data.Data
 
                         };
 
+
                         context.Genres.AddRange(genres);
+                        context.SaveChanges();
+                    }
+
+                    if (!context.Users.Any(u => u.IsAdmin))
+                    {
+                        var admins = new List<User>
+                        {
+                            new User
+                            {
+                                FirstName = "Abanoub",
+                                LastName = "Osama",
+                                UserEmail = "abanoub@gmail.com",
+                                UserPassword = BCrypt.Net.BCrypt.HashPassword("Abanoub@123"),
+                                CreationDate = DateTime.Now,
+                                IsAdmin = true
+                            },
+                            new User
+                            {
+                                FirstName = "Marina",
+                                LastName = "Bebawy",
+                                UserEmail = "marina@gmail.com",
+                                UserPassword = BCrypt.Net.BCrypt.HashPassword("Marina@123"),
+                                CreationDate = DateTime.Now,
+                                IsAdmin = true
+                            },
+                            new User
+                            {
+                                FirstName = "Karim",
+                                LastName = "Maaty",
+                                UserEmail = "karim@gmail.com",
+                                UserPassword = BCrypt.Net.BCrypt.HashPassword("Karim@123") ,
+                                CreationDate = DateTime.Now,
+                                IsAdmin = true
+                            },
+                            new User
+                            {
+                                FirstName = "Shrouk",
+                                LastName = "Aboalela",
+                                UserEmail = "shrouk@gmail.com",
+                                UserPassword = BCrypt.Net.BCrypt.HashPassword("Shrouk@123"),
+                                CreationDate = DateTime.Now,
+                                IsAdmin = true
+                            },
+                            new User
+                            {
+                                FirstName = "Rawan",
+                                LastName = "Mohamed",
+                                UserEmail = "rawan@gmail.com",
+                                UserPassword = BCrypt.Net.BCrypt.HashPassword("Rawan@123"),
+                                CreationDate = DateTime.Now,
+                                IsAdmin = true
+                            }
+                        };
+
+                        context.Users.AddRange(admins);
                         context.SaveChanges();
                     }
                 }

@@ -12,8 +12,8 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251129134551_isAdminAdded")]
-    partial class isAdminAdded
+    [Migration("20251129225912_addedAdmin")]
+    partial class addedAdmin
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -362,6 +362,11 @@ namespace Readioo.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<bool>("IsAdmin")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
 
                     b.Property<string>("LastName")
                         .HasMaxLength(255)
