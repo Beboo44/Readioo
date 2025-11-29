@@ -84,18 +84,7 @@ namespace Readioo.Business.Services.Classes
         public IEnumerable<AuthorDto> getAllAuthors()
         {
             var Authors = _unitOfWork.AuthorRepository.GetAll().
-                Select(a => new AuthorDto
-                {
-                    AuthorId = a.Id,
-                    FullName = a.FullName,
-                    Bio = a.Bio,
-                    BirthCountry = a.BirthCountry,
-                    BirthCity = a.BirthCity,
-                    BirthDate = a.BirthDate,
-                    DeathDate = a.DeathDate,
-                    AuthorImage = a.AuthorImage,
-                    Genres = new List<GenreDto>()  // ✅ Initialize empty list
-                });
+                Select(a=>getAuthorById(a.Id));
 
             return Authors;
         }

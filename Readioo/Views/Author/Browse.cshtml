@@ -1,8 +1,12 @@
 @using Readioo.Business.DataTransferObjects.Author
+@using Readioo.Business.DataTransferObjects.Genre
 @model IEnumerable<AuthorDto>
 
 @{
     ViewData["Title"] = "Browse Authors";
+
+    // Retrieve genres from ViewBag passed by the controller
+    var genres = ViewBag.Genres as IEnumerable<GenreDto>;
 
     string GetAvatar(string name, string imagePath)
     {
@@ -47,27 +51,31 @@
                 </div>
                 <div class="card-body">
                     <div class="list-group list-group-flush font-sans" id="genreFilter">
+                        <!-- 'All' Option -->
                         <button type="button" class="list-group-item list-group-item-action active-filter d-flex justify-content-between align-items-center" data-genre="all">
                             <span><i class="fa-solid fa-layer-group me-2 opacity-50"></i>All Genres</span>
                             <i class="fa-solid fa-chevron-right small"></i>
                         </button>
 
-                        <!-- Static Genre List -->
-                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="fiction">
-                            Fiction
-                        </button>
-                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="fantasy">
-                            Fantasy
-                        </button>
-                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="classics">
-                            Classics
-                        </button>
-                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="science-fiction">
-                            Science Fiction
-                        </button>
-                        <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="romance">
-                            Romance
-                        </button>
+                        <!-- Dynamic Genre List -->
+                        @if (genres != null && genres.Any())
+                        {
+                            foreach (var genre in genres)
+                            {
+                                <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="@genre.GenreName.ToLower()">
+                                    @genre.GenreName
+                                </button>
+                            }
+                        }
+                        else
+                        {
+                            <!-- Fallback Static List if ViewBag is empty -->
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="fiction">Fiction</button>
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="fantasy">Fantasy</button>
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="classics">Classics</button>
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="science-fiction">Science Fiction</button>
+                            <button type="button" class="list-group-item list-group-item-action d-flex justify-content-between align-items-center" data-genre="romance">Romance</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -84,7 +92,7 @@
                 </div>
 
                 <div class="d-flex align-items-center gap-3">
-                    <!-- View Toggles (Larger Size) -->
+                    <!-- View Toggles -->
                     <div class="btn-group" role="group" aria-label="View toggle">
                         <button type="button" class="btn btn-lg btn-outline-light text-secondary active" id="btnGrid" style="width: 60px;" title="Grid View">
                             <i class="fa-solid fa-grid-2"></i>
@@ -338,7 +346,7 @@
         position: relative;
         width: 100%;
         height: 100%;
-        object-fit: contain; /* Shows full image */
+        object-fit: contain;
         z-index: 1;
         transition: transform 0.5s ease;
         box-shadow: 0 5px 15px rgba(0,0,0,0.2);
@@ -483,6 +491,7 @@
 
                 $('#authorGrid .author-item').filter(function() {
                      var genres = $(this).data('genres');
+                     // Check if data-genres string contains the selected genre
                      return genres && genres.indexOf(selectedGenre) > -1;
                 }).fadeIn(300);
 

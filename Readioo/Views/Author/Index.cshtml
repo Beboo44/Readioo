@@ -14,6 +14,89 @@
         return Url.Content("~/" + imagePath);
     }
 }
+<style>
+    /* Local Styles (Consistent with Book/Index) */
+    :root {
+        --brand-navy: #002B5B;
+        --brand-orange: #FF9F1C;
+        --bg-light: #f4f7f6;
+    }
+
+    body {
+        background-color: var(--bg-light);
+    }
+
+    /* Header Styles */
+    .bg-navy {
+        background-color: var(--brand-navy) !important;
+        color: white;
+    }
+
+    .text-navy {
+        color: var(--brand-navy) !important;
+    }
+
+    /* Button Brand Primary */
+    .btn-brand-primary {
+        background-color: var(--brand-navy);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        font-weight: 600;
+        border-radius: 50px;
+        transition: all 0.3s;
+    }
+
+        .btn-brand-primary:hover {
+            background-color: #001f42;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 43, 91, 0.3);
+        }
+
+    /* Avatar Styling */
+    .avatar-wrapper {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 2px solid #e9ecef;
+        background-color: #fff;
+    }
+
+    .author-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Table & Row Styles */
+    .table-hover tbody tr:hover {
+        background-color: #fcfcfc;
+    }
+
+    .hover-navy:hover {
+        color: var(--brand-navy) !important;
+        text-decoration: underline !important;
+    }
+
+    /* Action Buttons */
+    .btn-outline-navy {
+        color: var(--brand-navy);
+        border-color: #dee2e6;
+    }
+
+        .btn-outline-navy:hover {
+            background-color: var(--brand-navy);
+            color: white;
+            border-color: var(--brand-navy);
+        }
+
+    /* Fix for button groups to look seamless */
+    .btn-group .btn {
+        margin: 0;
+    }
+</style>
 
 <div class="container my-5">
 
@@ -140,86 +223,3 @@
     </div>
 </div>
 
-<style>
-    /* Local Styles (Consistent with Book/Index) */
-    :root {
-        --brand-navy: #002B5B;
-        --brand-orange: #FF9F1C;
-        --bg-light: #f4f7f6;
-    }
-
-    body {
-        background-color: var(--bg-light);
-    }
-
-    /* Header Styles */
-    .bg-navy {
-        background-color: var(--brand-navy) !important;
-        color: white;
-    }
-
-    .text-navy {
-        color: var(--brand-navy) !important;
-    }
-
-    /* Button Brand Primary */
-    .btn-brand-primary {
-        background-color: var(--brand-navy);
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        font-weight: 600;
-        border-radius: 50px;
-        transition: all 0.3s;
-    }
-
-        .btn-brand-primary:hover {
-            background-color: #001f42;
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 43, 91, 0.3);
-        }
-
-    /* Avatar Styling */
-    .avatar-wrapper {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        overflow: hidden;
-        border: 2px solid #e9ecef;
-        background-color: #fff;
-    }
-
-    .author-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-    }
-
-    /* Table & Row Styles */
-    .table-hover tbody tr:hover {
-        background-color: #fcfcfc;
-    }
-
-    .hover-navy:hover {
-        color: var(--brand-navy) !important;
-        text-decoration: underline !important;
-    }
-
-    /* Action Buttons */
-    .btn-outline-navy {
-        color: var(--brand-navy);
-        border-color: #dee2e6;
-    }
-
-        .btn-outline-navy:hover {
-            background-color: var(--brand-navy);
-            color: white;
-            border-color: var(--brand-navy);
-        }
-
-    /* Fix for button groups to look seamless */
-    .btn-group .btn {
-        margin: 0;
-    }
-</style>

@@ -20,11 +20,14 @@ namespace Readioo.Controllers
         private readonly IAuthorService _authorService;
         private readonly IToastNotification _toast;
         private readonly IUserService _userService;
-        public AuthorController( IAuthorService authorService, IToastNotification toast, IUserService userService)
+        private readonly IGenreService _genreService;
+
+        public AuthorController( IAuthorService authorService, IToastNotification toast, IUserService userService, IGenreService genreService)
         {
             _authorService = authorService;
             _toast = toast;
             _userService = userService;
+            _genreService = genreService;
         }
         public async Task<IActionResult> Index()
         {
@@ -309,8 +312,12 @@ namespace Readioo.Controllers
         public IActionResult Browse()
         {
             var authors = _authorService.getAllAuthors();
+  
+            ViewBag.Genres = _genreService.GetAllGenres(); 
+
             return View(authors);
         }
+
     }
 
 }

@@ -22,6 +22,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Readioo.styles.css" asp-append-version="true" />
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
     <style>
         /* ✅ RECOMMENDED STYLE: Modern Pill Navigation */
@@ -77,9 +82,13 @@
                         <li class="nav-item mx-3">
                             <a class="nav-link text-dark" asp-controller="Book" asp-action="Browse">Browse</a>
                         </li>
-                        <li class="nav-item mx-3">
-                            <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
-                        </li>
+                        @if (user is not null && user.IsAdmin)
+                        {
+                            <li class="nav-item mx-3">
+                                <a class="nav-link text-dark" asp-controller="Admin" asp-action="Index">Admin Dashboard</a>
+                            </li>
+                        }
+                        
                     </ul>
 
                     <!-- Right Side: Search & Profile -->

@@ -13,8 +13,8 @@ namespace Readioo.ViewModel
 
         [Required]
         [Display(Name = "Book ISBN")]
-        [RegularExpression(@"^(0|[1-9][0-9]*)$",
-            ErrorMessage = "ISBN should contain only numbers and no leading zeros.")]
+        [RegularExpression(@"^[1-9]\d{12}$",
+    ErrorMessage = "ISBN must be exactly 13 digits and cannot start with zero.")]
         public string Isbn { get; set; } = null!;
 
         [Required]
