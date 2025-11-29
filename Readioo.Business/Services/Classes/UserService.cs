@@ -76,7 +76,6 @@ namespace Readioo.Business.Services.Classes
                 new Shelf { ShelfName = "Currently Reading", UserId = newUser.Id },
                 new Shelf { ShelfName = "Books Read",      UserId = newUser.Id },
                 new Shelf { ShelfName = "Want to Read",          UserId = newUser.Id },
-                new Shelf { ShelfName = "Favorites",        UserId = newUser.Id }
             };
 
             foreach (var shelf in defaultShelves)

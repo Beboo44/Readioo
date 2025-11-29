@@ -8,6 +8,8 @@ namespace Readioo.ViewModel
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email format.")]
         [Display(Name = "Email Address")]
+        [RegularExpression(@"^[^@\s]+@(gmail\.com|yahoo\.com|outlook\.com)$",
+        ErrorMessage = "Email domain must be valid")]
         public string Email { get; set; } = null!;
 
         // Corresponds to FirstName

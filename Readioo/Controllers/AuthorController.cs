@@ -309,13 +309,31 @@ namespace Readioo.Controllers
         }
 
         // Add this action to AuthorController
-        public IActionResult Browse()
+        public IActionResult Browse(int page = 1)
         {
             var authors = _authorService.getAllAuthors();
   
-            ViewBag.Genres = _genreService.GetAllGenres(); 
+            
 
-            return View(authors);
+            var genres = _genreService.GetAllGenres();
+
+            int pageSize = 12;
+            int totalAuthors= authors.Count();
+            int totalPages = (int)Math.Ceiling((double) totalAuthors/ pageSize);
+
+            page = Math.Max(1, Math.Min(page, totalPages > 0 ? totalPages : 1));
+
+            var pagedAuthors = authors.Skip((page - 1) * pageSize)
+                                  .Take(pageSize)
+                                  .ToList();
+
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
+            ViewBag.Genres = genres;
+
+
+            return View(pagedAuthors);
         }
 
     }
