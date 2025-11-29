@@ -58,7 +58,7 @@ namespace Readioo.Business.Services.Classes
                 Bio = null,
                 City = null,
                 Country = null,
-                //IsAdmin = true
+                IsAdmin = false
             };
 
             // 4. Data Persistence (Calling the Repository's Add method)

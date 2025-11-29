@@ -329,7 +329,7 @@ namespace Readioo.Business.Services.Classes
                 BookGenres = a.BookGenres?
                     .Select(g => g.Genre.GenreName)
                     .ToList() ?? new List<string>()
-            }).Take(10); // limit results
+            });
         }
 
         public BookDto GetBookById(int id)

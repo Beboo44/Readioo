@@ -8,6 +8,7 @@ using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using Readioo.ViewModel;
+using System.Drawing.Printing;
 using System.Security.Claims;
 
 namespace Readioo.Controllers
@@ -57,13 +58,27 @@ namespace Readioo.Controllers
             return View(books);
         }
 
-        public IActionResult Browse(string term="")
+        public IActionResult Browse(string term = "", int page=1)
         {
-            // Get all books with their genres included
             var books = _bookService.SearchBooks(term);
             var genres = _genreService.GetAllGenres();
+
+            int pageSize = 12;
+            int totalBooks = books.Count();
+            int totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+
+            page = Math.Max(1, Math.Min(page, totalPages > 0 ? totalPages : 1));
+
+            var pagedBooks = books.Skip((page - 1) * pageSize)
+                                  .Take(pageSize)
+                                  .ToList();
+
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
             ViewBag.Genres = genres;
-            return View(books);
+
+            return View(pagedBooks);
         }
 
         [HttpGet]
@@ -145,7 +160,7 @@ namespace Readioo.Controllers
             var book = _bookService.bookById(id);
             var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(user is null)
+            if (user is null)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -165,7 +180,7 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public async Task <IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
             var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -207,7 +222,7 @@ namespace Readioo.Controllers
             var genres = _genreService.GetAllGenres();
             ViewBag.Genres = genres;
 
-            
+
 
             return View(bookVM);
         }
@@ -243,16 +258,16 @@ namespace Readioo.Controllers
                 BookGenres = book.BookGenres ?? new List<string>()
             };
 
-            if(book.BookImage != null)
+            if (book.BookImage != null)
             {
                 string saveFolder = "images/books";
                 saveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
                 string serverPath = Path.Combine("wwwroot", saveFolder);
                 book.BookImage.CopyTo(new FileStream(serverPath, FileMode.Create));
 
-                bookDto.BookImage =saveFolder;
+                bookDto.BookImage = saveFolder;
             }
-            
+
             await _bookService.UpdateBook(bookDto);
             _toast.AddSuccessToastMessage("Book Updated Successfully");
             return RedirectToAction(nameof(Index));
@@ -337,7 +352,7 @@ namespace Readioo.Controllers
                 _toast.AddErrorToastMessage("Error: " + ex.Message);
             }
 
-            return RedirectToAction("Browse","Book");
+            return RedirectToAction("Browse", "Book");
         }
         [HttpPost]
         public async Task<IActionResult> RateBook(int bookId, int rating)
@@ -356,7 +371,7 @@ namespace Readioo.Controllers
         public IActionResult SearchBooks(string term)
         {
             var results = _bookService.SearchBooks(term);
-            return Json(results); 
+            return Json(results);
         }
 
         [HttpGet]

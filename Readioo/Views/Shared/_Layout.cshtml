@@ -51,7 +51,6 @@
 <body class="d-flex flex-column min-vh-100">
 
     <header>
-        <!-- ✅ FIXED: Increased padding 'py-2' and gutters 'px-5' for a more spacious look -->
         <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom shadow-sm sticky-top py-2">
             <div class="container-fluid px-5">
 
@@ -71,8 +70,8 @@
                 <div class="collapse navbar-collapse" id="navbarContent">
 
                     <!-- Navigation Links -->
+                    
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 align-items-center">
-                        <!-- ✅ UPDATED: Increased margin 'mx-3' (balanced with wider padding) -->
                         <li class="nav-item mx-3">
                             <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
@@ -82,6 +81,7 @@
                         <li class="nav-item mx-3">
                             <a class="nav-link text-dark" asp-controller="Book" asp-action="Browse">Browse</a>
                         </li>
+                        
                         @if (user is not null && user.IsAdmin)
                         {
                             <li class="nav-item mx-3">
@@ -93,19 +93,9 @@
 
                     <!-- Right Side: Search & Profile -->
                     <div class="d-flex align-items-center gap-4 mt-3 mt-lg-0">
-
-                        @* <div class="input-group input-group-lg" style="max-width: 380px;"> *@
-                        @*     <span class="input-group-text bg-light border-end-0 text-muted"> *@
-                        @*         <i class="fa-solid fa-magnifying-glass"></i> *@
-                        @*     </span> *@
-                        @*     <input type="text" class="form-control bg-light border-start-0" placeholder="Search Books..." aria-label="Search"> *@
-                        @* </div> *@
-
-                
+                                                       
                         <div style="position: relative; display: inline-block;">
-                            @* <span class="input-group-text bg-light border-end-0 text-muted">  *@
-                            @*     <i class="fa-solid fa-magnifying-glass"></i> *@
-                            @* </span> *@
+                            
                             <input type="text" id="searchBox" placeholder="Search Books" size= "30" class="search form-control bg-light border-start-0" aria-label="Search" autocomplete="off" />
                             <ul id="searchResults" class="dropdown-menu"></ul>
                         </div>
@@ -115,7 +105,6 @@
                         <div class="dropdown">
                             <a href="#" class="d-flex align-items-center link-dark text-decoration-none dropdown-toggle" id="userDropdown"
                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <!-- ✅ UPDATED: Increased profile icon size to 55px -->
                                 <img src="/User/ProfileImage/@User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value"
                                      alt="Profile" width="55" height="55" class="rounded-circle border shadow-sm"
                                      style="object-fit: cover;"
@@ -200,13 +189,14 @@
                                 return;
                             }
 
-                            $.each(data, function(i, item){
+                           
+                            $.each(data.slice(0, 10), function (i, item) {
                                 // console.log(item);
                                 results.append(
-                                            "<li><a href='/Book/Details/" + item.bookId + "'>"
-                                            + item.title + " - by " + item.authorName + "</a></li>"
-                                );
-                            });
+                                    "<li><a href='/Book/Details/" + item.bookId + "'>"
+                                    + item.title + " - by " + item.authorName + "</a></li>"
+                                    );
+                                });
                             results.show();
                             currentIndex = -1;
                         }
@@ -231,15 +221,7 @@
             const items = document.querySelectorAll("#searchResults li a");
             if (items.length === 0) return;
 
-            // if (e.key === "ArrowDown") {
-            //     e.preventDefault();
-            //     currentIndex = (currentIndex + 1) % items.length;
-            //     highlight(items, currentIndex);
-            // } else if (e.key === "ArrowUp") {
-            //     e.preventDefault();
-            //     currentIndex = (currentIndex - 1 + items.length) % items.length;
-            //     highlight(items, currentIndex);
-            //         } else 
+           
                     if (e.key === "Enter") {
             e.preventDefault();
             if (currentIndex >= 0) {
@@ -271,5 +253,6 @@
 
 
     @await RenderSectionAsync("Scripts", required: false)
+    @await Component.InvokeAsync("NToastNotify");
 </body>
 </html>
