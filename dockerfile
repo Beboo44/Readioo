@@ -24,6 +24,8 @@ WORKDIR /app
 # Copy published app from build stage
 COPY --from=build /app/publish .
 VOLUME /app/wwwroot/images
+VOLUME /app/wwwroot/images/authors
+VOLUME /app/wwwroot/images/books
 
 # Expose port
 EXPOSE 8080

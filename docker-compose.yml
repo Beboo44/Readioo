@@ -35,6 +35,8 @@ services:
       - ConnectionStrings__DefaultConnection=Server=readioo-sql,1433;Database=booklib;User Id=sa;Password=P@ssw0rd123;TrustServerCertificate=True;MultipleActiveResultSets=true
     volumes:
       - ./Readioo/wwwroot/images:/app/wwwroot/images
+      - ./Readioo/wwwroot/images/authors:/app/wwwroot/images/authors
+      - ./Readioo/wwwroot/images/books:/app/wwwroot/images/books
     restart: unless-stopped
 
 volumes:
