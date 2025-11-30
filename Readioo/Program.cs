@@ -46,7 +46,6 @@ namespace Readioo
                     options.LogoutPath = "/Account/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromHours(24);
                     options.SlidingExpiration = true;
-                    // Redirect to login if access is denied
                     options.AccessDeniedPath = "/Account/Login";
                 });
 
@@ -66,8 +65,32 @@ namespace Readioo
             builder.Services.AddScoped<IGenreRepository, GenreRepository>();
             builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 
-
             var app = builder.Build();
+
+            // 🔹 AUTO-RUN MIGRATIONS AND SEED DATA
+            using (var scope = app.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<AppDbContext>();
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    
+                    logger.LogInformation("Starting database migration...");
+                    context.Database.Migrate(); // 🔹 This runs pending migrations automatically
+                    logger.LogInformation("Database migration completed successfully.");
+                    
+                    logger.LogInformation("Starting data seeding...");
+                    Readioo.Data.Data.AppInitializer.Seed(app);
+                    logger.LogInformation("Data seeding completed successfully.");
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while migrating or seeding the database.");
+                    throw; // Re-throw to prevent app from starting with broken database
+                }
+            }
 
             if (!app.Environment.IsDevelopment())
             {
@@ -91,11 +114,6 @@ namespace Readioo
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Account}/{action=Login}/{id?}");
-
-            using (var scope = app.Services.CreateScope())
-            {
-                Readioo.Data.Data.AppInitializer.Seed(app);
-            }
 
             app.Run();
         }
