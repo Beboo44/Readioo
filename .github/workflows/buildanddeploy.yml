@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOCKER_IMAGE: beboo44/Readioo
+  DOCKER_IMAGE: beboo44/readioo
   CONTAINER_NAME: Readioo-web
 
 jobs:
