@@ -1,9 +1,9 @@
 version: '3.9'
 
 services:
-  Readioo-sql:
+  readioo-sql:
     image: mcr.microsoft.com/mssql/server:2022-latest
-    container_name: Readioo-sql
+    container_name: readioo-sql
     user: "0:0"  # ✅ Run as root to avoid permission issues
     restart: unless-stopped
     environment:
@@ -21,18 +21,18 @@ services:
       retries: 10
       start_period: 30s
 
-  Readioo-web:
-    image: beboo44/Readioo:latest
-    container_name: Readioo-web
+  readioo-web:
+    image: beboo44/readioo:latest
+    container_name: readioo-web
     depends_on:
-      Readioo-sql:
+      readioo-sql:
         condition: service_healthy  # ✅ Wait for SQL to be healthy
     ports:
       - "8080:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=http://+:8080
-      - ConnectionStrings__DefaultConnection=Server=Readioo-sql,1433;Database=booklib;User Id=sa;Password=P@ssw0rd123;TrustServerCertificate=True;MultipleActiveResultSets=true
+      - ConnectionStrings__DefaultConnection=Server=readioo-sql,1433;Database=booklib;User Id=sa;Password=P@ssw0rd123;TrustServerCertificate=True;MultipleActiveResultSets=true
     volumes:
       - ./Readioo/wwwroot/images:/app/wwwroot/images
     restart: unless-stopped
