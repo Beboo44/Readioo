@@ -1,0 +1,43 @@
+version: '3.9'
+
+services:
+  readioo-sql:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: readioo-sql
+    user: "0:0"  # ✅ Run as root to avoid permission issues
+    restart: unless-stopped
+    environment:
+      SA_PASSWORD: "P@ssw0rd123"
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql  # ✅ Use named volume instead of bind mount
+    healthcheck:
+      test: /opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "P@ssw0rd123" -C -Q "SELECT 1" || exit 1
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+  readioo-web:
+    image: beboo44/readioo:latest
+    container_name: readioo-web
+    depends_on:
+      readioo-sql:
+        condition: service_healthy  # ✅ Wait for SQL to be healthy
+    ports:
+      - "8081:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__DefaultConnection=Server=readioo-sql,1433;Database=booklib;User Id=sa;Password=P@ssw0rd123;TrustServerCertificate=True;MultipleActiveResultSets=true
+    volumes:
+      - ./Readioo/wwwroot/images:/app/wwwroot/images
+      - ./Readioo/wwwroot/images/authors:/app/wwwroot/images/authors
+      - ./Readioo/wwwroot/images/books:/app/wwwroot/images/books
+    restart: unless-stopped
+
+volumes:
+  sqlserver_data:  # ✅ Named volume declaration
