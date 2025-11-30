@@ -36,10 +36,10 @@ namespace Readioo
                 PositionClass = ToastPositions.TopRight
             });
 
-            // 🔹 Enable SESSION
+            // Enable SESSION
             builder.Services.AddSession();
             
-            // 🔹 Authentication
+            // Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -85,19 +85,18 @@ namespace Readioo
 
             app.UseNToastNotify();
 
-            // 🔹 Authentication BEFORE Authorization
+            // Authentication BEFORE Authorization
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // 🔹 Enable SESSION Middleware
+            // Enable SESSION Middleware
             app.UseSession();
 
-            // 🔹 Correct default route
+            // Correct default route
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Account}/{action=login}/{id?}");
 
-            // --- CALL THE SEEDER USING A SCOPE BEFORE RUN ---
             using (var scope = app.Services.CreateScope())
             {
                 Readioo.Data.Data.AppInitializer.Seed(app);
