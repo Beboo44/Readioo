@@ -6,7 +6,7 @@ WORKDIR /src
 COPY *.sln ./
 COPY Readioo/*.csproj ./Readioo/
 COPY Readioo.Data/*.csproj ./Readioo.Data/
-COPY Readioo.Buisness/*.csproj ./Readioo.Buisness/
+COPY Readioo.Business/*.csproj ./Readioo.Business/
 
 # Restore dependencies
 RUN dotnet restore
