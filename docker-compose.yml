@@ -22,7 +22,7 @@ services:
       start_period: 30s
 
   Readioo-web:
-    image: kirolossamy19/Readioo:latest
+    image: beboo44/Readioo:latest
     container_name: Readioo-web
     depends_on:
       Readioo-sql:
