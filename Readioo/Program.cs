@@ -1,4 +1,4 @@
-﻿using Demo.DataAccess.Repositories.UoW;
+﻿﻿using Demo.DataAccess.Repositories.UoW;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NToastNotify;
@@ -21,9 +21,10 @@ namespace Readioo
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
-
+            // DbContext
             builder.Services.AddDbContext<AppDbContext>(opt =>
                 opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
           
@@ -37,8 +38,8 @@ namespace Readioo
 
             // 🔹 Enable SESSION
             builder.Services.AddSession();
-
-            // 🔹 Authentication Configuration
+            
+            // 🔹 Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -46,10 +47,9 @@ namespace Readioo
                     options.LogoutPath = "/Account/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromHours(24);
                     options.SlidingExpiration = true;
-                    options.AccessDeniedPath = "/Account/Login";
                 });
 
-            // DI Registrations
+            // DI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -63,34 +63,9 @@ namespace Readioo
             builder.Services.AddScoped<IShelfService, ShelfService>();
             builder.Services.AddScoped<IGenreService, GenreService>();
             builder.Services.AddScoped<IGenreRepository, GenreRepository>();
-            builder.Services.AddScoped<IRecommendationService, RecommendationService>();
+
 
             var app = builder.Build();
-
-            // 🔹 AUTO-RUN MIGRATIONS AND SEED DATA
-            using (var scope = app.Services.CreateScope())
-            {
-                var services = scope.ServiceProvider;
-                try
-                {
-                    var context = services.GetRequiredService<AppDbContext>();
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    
-                    logger.LogInformation("Starting database migration...");
-                    context.Database.Migrate(); // 🔹 This runs pending migrations automatically
-                    logger.LogInformation("Database migration completed successfully.");
-                    
-                    logger.LogInformation("Starting data seeding...");
-                    Readioo.Data.Data.AppInitializer.Seed(app);
-                    logger.LogInformation("Data seeding completed successfully.");
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while migrating or seeding the database.");
-                    throw; // Re-throw to prevent app from starting with broken database
-                }
-            }
 
             if (!app.Environment.IsDevelopment())
             {
@@ -108,12 +83,19 @@ namespace Readioo
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // 🔹 Enable SESSION Middleware
             app.UseSession();
 
-            // 🔹 DEFAULT ROUTE: Redirect unauthenticated users to Login
+            // 🔹 Correct default route
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Account}/{action=Login}/{id?}");
+                pattern: "{controller=Account}/{action=login}/{id?}");
+
+            // --- CALL THE SEEDER USING A SCOPE BEFORE RUN ---
+            using (var scope = app.Services.CreateScope())
+            {
+                Readioo.Data.Data.AppInitializer.Seed(app);
+            }
 
             app.Run();
         }
