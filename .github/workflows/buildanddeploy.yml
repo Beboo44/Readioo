@@ -80,19 +80,19 @@ jobs:
             echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
             echo "🐳 Pulling latest Docker image..."
-            docker compose pull Readioo-web
+            docker compose pull readioo
 
             echo "🔁 Restarting web container only (keeping SQL Server running)..."
-            docker compose up -d --no-deps --force-recreate Readioo-web
+            docker compose up -d --no-deps --force-recreate readioo
 
             echo "⏳ Waiting for web container to start..."
             sleep 10
 
             echo "📋 Container status:"
-            docker ps --filter name=Readioo
+            docker ps --filter name=readioo
 
             echo "📋 Web app logs (last 50 lines):"
-            docker logs Readioo-web --tail=50
+            docker logs readioo --tail=50
 
             echo "🧹 Cleaning up old images..."
             docker image prune -af
