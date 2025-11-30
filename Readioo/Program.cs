@@ -25,7 +25,7 @@ namespace Readioo
             builder.Services.AddHttpContextAccessor();
 
             builder.Services.AddDbContext<AppDbContext>(opt =>
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
           
             builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
             {
