@@ -12,8 +12,8 @@ using Readioo.Data.Data.Contexts;
 namespace Readioo.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251129225912_addedAdmin")]
-    partial class addedAdmin
+    [Migration("20251130131246_createTables")]
+    partial class createTables
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

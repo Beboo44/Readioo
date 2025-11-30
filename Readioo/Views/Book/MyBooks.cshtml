@@ -1,8 +1,7 @@
 ﻿@model Readioo.ViewModel.MyBooksViewModel
 @using System.Security.Claims
-@using Readioo.Business.DTO
-@inject IUserService UserService
-@inject IShelfService ShelfService
+@using Readioo.Business.DataTransferObjects.Book
+@* Make sure to include proper namespaces for your DTOs if different *@
 
 @{
     ViewData["Title"] = "My Books";
@@ -11,17 +10,12 @@
     var shelveswithBooks = Model.Shelveswithbook;
 
     // --- LOGIC: Create a master list of ALL unique books from all shelves ---
-    // This logic automatically handles "Want to Read", "Currently Reading", "Books Read", etc.
-    // regardless of which specific shelf they are on.
     var allUserBooks = shelveswithBooks
         .SelectMany(s => s.Books)
         .GroupBy(b => b.BookId)
         .Select(group =>
         {
             var firstBook = group.First();
-
-            // Collect ALL unique shelf names for this book from the group
-            // We look at the shelf objects themselves to get the accurate names
             var allShelvesForBook = shelveswithBooks
                 .Where(shelf => shelf.Books.Any(b => b.BookId == firstBook.BookId))
                 .Select(shelf => shelf.ShelfName)
@@ -46,79 +40,243 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/globalandbook.css">
     <link rel="stylesheet" href="~/css/site.css">
-    <link rel="stylesheet" href="~/css/my_books.css?v=@DateTime.Now.Ticks">
-    <!-- Toastr CSS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
-
-    <!-- Toastr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-
 
     <style>
+        /* --- BRAND PALETTE --- */
+        :root {
+            --brand-navy: #002B5B;
+            --brand-orange: #FFA500;
+            --bg-light: #F8F9FA;
+            --text-dark: #333;
+        }
+
+        body {
+            background-color: var(--bg-light);
+        }
+
         .main-layout {
             display: flex;
             flex-direction: row;
             gap: 40px;
             align-items: flex-start;
-            margin-top: 20px;
+            margin-top: 40px;
+            margin-bottom: 60px;
         }
 
+        /* --- SIDEBAR STYLING --- */
         .sidebar {
             width: 280px;
             flex-shrink: 0;
         }
 
+        .sidebar-header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .page-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--brand-navy); /* Brand Navy */
+            line-height: 1.2;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .stats-row {
+            font-size: 0.95rem;
+            color: var(--brand-navy);
+            background: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            display: inline-block;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* Shelf Navigation */
+        .shelf-card {
+            background: #fff;
+            padding: 0; /* Reset padding for list */
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+            border: 1px solid #eee;
+        }
+
+        .shelf-header {
+            background-color: var(--brand-navy);
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .shelf-list {
+            list-style: none;
+            padding: 10px;
+            margin: 0;
+        }
+
+            .shelf-list li {
+                padding: 12px 20px;
+                cursor: pointer;
+                border-radius: 8px;
+                margin-bottom: 5px;
+                color: #555;
+                font-weight: 500;
+                transition: all 0.2s ease;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+                .shelf-list li:hover {
+                    background-color: #f0f4f8;
+                    color: var(--brand-navy);
+                    transform: translateX(3px);
+                }
+
+                /* Active Shelf Style */
+                .shelf-list li.active {
+                    background-color: #fff3cd; /* Very light orange/yellow tint */
+                    color: var(--brand-navy);
+                    font-weight: 700;
+                    border-left: 4px solid var(--brand-orange);
+                }
+
+        /* --- MAIN CONTENT STYLING --- */
         .main-content {
             flex-grow: 1;
             width: 100%;
         }
 
-        .sidebar-header {
+        .section-title {
+            color: var(--brand-navy);
+            font-weight: 700;
+            font-size: 1.5rem;
             margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
         }
 
-        .page-title {
-            font-size: 2rem;
-            font-weight: bold;
-            color: #333;
-            line-height: 1.2;
+        /* Table Styling Enhanced */
+        .books-table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08); /* Improved shadow */
+            overflow: hidden;
+            border: 1px solid #eef2f7;
         }
 
-        .page-subtitle {
-            font-size: 1rem;
-            color: #6c757d;
-            margin-bottom: 10px;
+        .books-table {
+            margin-bottom: 0;
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
         }
 
-        .stats-row {
-            font-size: 0.9rem;
-            color: #555;
+            .books-table thead {
+                background-color: var(--brand-navy);
+                color: white;
+            }
+
+            .books-table th {
+                font-weight: 600;
+                padding: 18px 20px; /* More padding */
+                border: none;
+                font-size: 0.9rem;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+
+            .books-table td {
+                padding: 20px; /* Spacious cells */
+                vertical-align: middle;
+                border-bottom: 1px solid #f0f0f0;
+                transition: background 0.2s;
+            }
+
+            .books-table tbody tr:hover td {
+                background-color: #f9fbfd; /* Subtle hover effect */
+            }
+
+            .books-table tbody tr:last-child td {
+                border-bottom: none;
+            }
+
+        /* Book Link */
+        .book-link {
+            color: var(--brand-navy);
+            transition: color 0.2s;
+            font-size: 1.1rem;
         }
+
+            .book-link:hover {
+                color: var(--brand-orange);
+                text-decoration: none !important;
+            }
+
+        /* Author Link */
+        .author-link {
+            color: #6c757d; /* Secondary Color */
+            transition: color 0.2s;
+        }
+
+            .author-link:hover {
+                color: var(--brand-orange);
+                text-decoration: underline !important;
+            }
+
+        /* Badges */
+        .shelf-badge {
+            background-color: #eef2f7;
+            color: var(--brand-navy);
+            border: 1px solid #dce4ed;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 50px; /* Pill shape */
+            font-weight: 600;
+            white-space: nowrap;
+            display: inline-block;
+            margin-bottom: 4px;
+        }
+
     </style>
 </head>
 <body>
     <div class="wrap" id="app">
 
         <div class="main-layout container">
+
             <!-- Sidebar -->
             <aside class="sidebar">
                 <div class="sidebar-header">
                     <div class="page-title">My Books</div>
-                    <div class="page-subtitle">Track your reading journey</div>
+                    <div class="page-subtitle">Manage your personal library</div>
                     <div class="stats-row">
-                        <div class="stat"><strong>@totalBooks</strong> Books Added</div>
+                        <i class="fa-solid fa-book-open me-2"></i> <strong>@totalBooks</strong> Books Collected
                     </div>
                 </div>
 
-                <div class="card">
-                    <h3>My Bookshelves</h3>
+                <div class="shelf-card">
+                    <h3 class="shelf-header">Bookshelves</h3>
                     <ul class="shelf-list" id="shelfList">
-                        <li class="active" data-shelf="all">All Books</li>
+                        <li class="active" data-shelf="all">
+                            <span>All Books</span>
+                            <i class="fa-solid fa-chevron-right" style="font-size: 0.8rem; opacity: 0.5;"></i>
+                        </li>
 
                         @foreach (var shelf in shelveswithBooks)
                         {
                             <li data-shelf="@shelf.ShelfName.ToLower().Replace(" ", "-")">
-                                @shelf.ShelfName
+                                <span>@shelf.ShelfName</span>
                             </li>
                         }
                     </ul>
@@ -130,14 +288,16 @@
                 <h2 class="section-title" id="sectionTitle">All Books</h2>
 
                 <div class="books-table-container">
-                    <table class="books-table table table-hover">
+                    <table class="books-table">
                         <thead>
                             <tr>
-                                <th>Book</th>
-                                <th>Author</th>
-                                <th>My Rating</th>
-                                <th>Date Added</th>
-                                <th>Bookshelf</th>
+                                <!-- ✅ FIXED: Increased Width for Cover and Author -->
+                                <th style="width: 12%;">Cover</th>
+                                <th style="width: 30%;">Title</th>
+                                <th style="width: 20%;">Author</th> <!-- Increased to 20% -->
+                                <th style="width: 20%;">Rating</th>
+                                <th style="width: 8%; white-space: nowrap;">Date Added</th>
+                                <th style="width: 10%; min-width: 160px;">Shelves</th>
                             </tr>
                         </thead>
 
@@ -148,50 +308,66 @@
                                 {
                                     var book = item.Book;
                                     var shelves = item.Shelves;
-
-                                    // Construct the filter string (e.g., "favorites,want-to-read,currently-reading")
                                     var shelfFilterString = string.Join(",", shelves.Select(s => s.ToLower().Replace(" ", "-")));
 
                                     <tr data-shelves="@shelfFilterString">
+
+                                        <!-- ✅ 1. Cover (Increased Size to 80x120) -->
                                         <td>
-                                            <div class="book-title-cell d-flex align-items-center">
-                                                <div class="table-book-cover me-3">
-                                                    <img src="~/@book.BookImage" alt="@book.Title" style="width: 50px; height: 75px; object-fit: cover; border-radius: 4px;" />
-                                                </div>
-                                                <div class="book-title-info">
-                                                    <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="book-link fw-bold text-decoration-none text-dark">
-                                                        @book.Title
-                                                    </a>
-                                                </div>
-                                            </div>
+                                            @if (!string.IsNullOrEmpty(book.BookImage))
+                                            {
+                                                <img src="~/@book.BookImage" alt="@book.Title"
+                                                     style="width: 80px; height: 120px; object-fit: cover; border-radius: 6px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);" />
+                                            }
+                                            else
+                                            {
+                                                <div style="width: 80px; height: 120px; background: #eee; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: #999;">No IMG</div>
+                                            }
                                         </td>
 
-                                        <td>@book.AuthorName</td>
+                                        <!-- 2. Title -->
+                                        <td class="fw-bold" style="font-size: 1.05rem;">
+                                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId"
+                                               class="book-link text-decoration-none">
+                                                @book.Title
+                                            </a>
+                                        </td>
 
+                                        <!-- ✅ 3. Author (Clickable Link) -->
+                                        <td>
+                                            <a asp-controller="Author" asp-action="Details" asp-route-id="@book.AuthorId"
+                                               class="author-link text-decoration-none fw-semibold">
+                                                @book.AuthorName
+                                            </a>
+                                        </td>
+
+                                        <!-- Rating -->
                                         <td>
                                             <div class="rating-cell">
                                                 @for (int i = 0; i < 5; i++)
                                                 {
                                                     if (i < book.Rate)
                                                     {
-                                                        <i class="fas fa-star" style="color:#f6b438"></i>
+                                                        <i class="fas fa-star" style="color: var(--brand-orange); font-size: 0.9rem;"></i>
                                                     }
                                                     else
                                                     {
-                                                        <i class="far fa-star" style="color:#e0e0e0"></i>
+                                                        <i class="far fa-star" style="color: #e0e0e0; font-size: 0.9rem;"></i>
                                                     }
                                                 }
                                             </div>
                                         </td>
 
-                                        <td>
+                                        <!-- Date -->
+                                        <td class="text-muted small" style="white-space: nowrap;">
                                             @book.PublishDate.ToString("MMM dd, yyyy")
                                         </td>
 
+                                        <!-- Shelves -->
                                         <td>
                                             @foreach (var s in shelves)
                                             {
-                                                <span class="badge bg-light text-dark border me-1">@s</span>
+                                                <span class="shelf-badge">@s</span>
                                             }
                                         </td>
                                     </tr>
@@ -200,7 +376,16 @@
                             else
                             {
                                 <tr>
-                                    <td colspan="5" class="text-center text-muted p-4">No books found in your library.</td>
+                                    <td colspan="6" class="text-center text-muted p-5">
+                                        <div class="py-4">
+                                            <i class="fa-solid fa-book-open fa-3x mb-3" style="color: #e0e0e0;"></i>
+                                            <p class="mb-3 fs-5">Your library is currently empty.</p>
+                                            <a asp-controller="Book" asp-action="Browse" class="btn btn-sm"
+                                               style="background-color: var(--brand-navy); color: white; padding: 10px 20px; border-radius: 30px;">
+                                                Browse Books to Add
+                                            </a>
+                                        </div>
+                                    </td>
                                 </tr>
                             }
                         </tbody>
