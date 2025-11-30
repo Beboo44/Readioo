@@ -46,7 +46,7 @@
 
     <!-- Navigation -->
     <div class="mb-4">
-        <a asp-action="Index" class="text-decoration-none text-muted hover-navy font-sans">
+        <a asp-action="Browse" class="text-decoration-none text-muted hover-navy font-sans">
             <i class="fa-solid fa-arrow-left me-1"></i> Back to Authors
         </a>
     </div>
@@ -133,14 +133,6 @@
                             </div>
                         </div>
                     }
-
-                    <!-- Action Buttons -->
-                    <div class="d-flex gap-2">
-                        <!-- Updated to use AuthorId to match DTO definition -->
-                        <a asp-action="Edit" asp-route-id="@Model.AuthorId" class="btn btn-outline-navy rounded-pill font-sans px-4">
-                            <i class="fa-solid fa-pen-nib me-2"></i>Edit Profile
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
