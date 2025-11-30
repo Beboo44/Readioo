@@ -26,7 +26,7 @@ COPY --from=build /app/publish .
 VOLUME /app/wwwroot/images
 
 # Expose port
-EXPOSE 8080
+EXPOSE 8081
 
 # Set the entry point
 ENTRYPOINT ["dotnet", "Readioo.dll"]
