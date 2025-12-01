@@ -3,6 +3,7 @@
 using Readioo.Data.Models;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Readioo.Models;
 
@@ -28,6 +29,9 @@ public partial class Book: BaseEntity
     public string Description { get; set; } = null!;
 
     public string? BookImage { get; set; }
+
+    [NotMapped]
+    public bool IsAdmin { get; set; } = false;
 
     public virtual Author Author { get; set; } = null!;
 

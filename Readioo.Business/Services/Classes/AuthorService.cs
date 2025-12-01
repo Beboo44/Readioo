@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.DataTransferObjects.Genre;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using System;
@@ -20,18 +21,16 @@ namespace Readioo.Business.Services.Classes
             _unitOfWork = unitOfWork;
         }
 
-        public AuthorDto getAuthorById(int id)
+        public AuthorDto? getAuthorById(int id)  // ✅ Changed return type to nullable
         {
-
-            // 1. Get the Author entity
+            // 1. Get the Author entity with all related data
             var author = _unitOfWork.AuthorRepository.GetById(id);
             if (author == null)
             {
-                return null;
+                return null;  // ✅ Now valid for nullable return type
             }
 
-            // 2. Fetch the books for this author and map to BookDto
-            // We use the BookRepository to query books by AuthorId
+            // 2. Fetch the books for this author
             var authorBooks = _unitOfWork.BookRepository.GetAll()
                 .Where(b => b.AuthorId == id)
                 .Select(b => new BookDto
@@ -47,11 +46,24 @@ namespace Readioo.Business.Services.Classes
                     Rate = b.Rate,
                     Description = b.Description,
                     BookImage = b.BookImage
-                    // Add other properties if needed by your view
                 })
                 .ToList();
 
-            // 3. Create the AuthorDto and assign the books
+            // ✅ 3. Fetch genres for this author (from their books)
+            var authorGenres = _unitOfWork.BookRepository.GetAllBooksWithDetails()
+                .Where(b => b.AuthorId == id)
+                .SelectMany(b => b.BookGenres)
+                .Select(bg => bg.Genre)
+                .Distinct()
+                .Select(g => new GenreDto
+                {
+                    Id = g.Id,
+                    GenreName = g.GenreName,
+                    Description = g.Description
+                })
+                .ToList();
+
+            // 4. Create the AuthorDto with books and genres
             AuthorDto authorDto = new AuthorDto()
             {
                 AuthorId = author.Id,
@@ -62,29 +74,17 @@ namespace Readioo.Business.Services.Classes
                 BirthDate = author.BirthDate,
                 DeathDate = author.DeathDate,
                 AuthorImage = author.AuthorImage,
-                Books = authorBooks // Pass the list here
+                Books = authorBooks,
+                Genres = authorGenres  // ✅ Now correct type
             };
 
             return authorDto;
         }
 
-        
-
         public IEnumerable<AuthorDto> getAllAuthors()
         {
             var Authors = _unitOfWork.AuthorRepository.GetAll().
-                Select(a => new AuthorDto
-                {
-                    AuthorId = a.Id,
-                    FullName = a.FullName,
-                    Bio = a.Bio,
-                    BirthCountry = a.BirthCountry,
-                    BirthCity = a.BirthCity,
-                    BirthDate = a.BirthDate,
-                    DeathDate = a.DeathDate,
-                    AuthorImage = a.AuthorImage
-                });
-
+                Select(a=>getAuthorById(a.Id));
 
             return Authors;
         }

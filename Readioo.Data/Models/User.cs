@@ -32,6 +32,8 @@ public partial class User: BaseEntity
 
     public string? ProfileUrl { get; set; }
 
+    public bool IsAdmin { get; set; } = false;
+
     public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
 
     public virtual ICollection<Shelf> Shelves { get; set; } = new List<Shelf>();

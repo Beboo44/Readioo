@@ -4,11 +4,8 @@
 @{
     ViewData["Title"] = "Home Page";
 
-    // Cast ViewBag data to safe types
-    // Removed: var trending = ViewBag.TrendingBooks as List<BookDto>;
     var recent = ViewBag.RecentBooks as List<BookDto>;
     var recommendations = ViewBag.Recommendations as List<BookDto>;
-
     var genreList = ViewBag.Genres as IEnumerable<GenreDto>;
     var recentBooks = ViewBag.RecentBooks as IEnumerable<BookDto>;
 
@@ -33,60 +30,181 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     <link rel="stylesheet" href="~/css/globalandbook.css">
     <link rel="stylesheet" href="~/css/home.css">
+    <link rel="stylesheet" href="~/css/site.css">
 
     <style>
-        .btn-custom-green {
-            background-color: #146c43;
-            border-color: #146c43;
-            color: white;
-            font-weight: 500;
+        /* =========================================
+                   READIOO BRAND PALETTE (Logo Matching)
+                   Primary Navy:   #002B5B (Logo "Read" / Icon)
+                   Accent Orange:  #FF9F1C (Logo "ioo" / Waves)
+                   Background:     #F8F9FA (Clean Off-White)
+                   Text:           #333333 (Readable Dark Grey)
+                   ========================================= */
+
+        :root {
+            --brand-navy: #002B5B;
+            --brand-orange: #FF9F1C;
+            --brand-orange-hover: #e08e1a;
+            --text-dark: #2c3e50;
+            --bg-light: #f4f7f6;
+            --card-shadow: 0 4px 6px rgba(0, 43, 91, 0.08);
+            --card-hover-shadow: 0 12px 24px rgba(0, 43, 91, 0.15);
         }
 
-            .btn-custom-green:hover {
-                background-color: #0f5132;
-                border-color: #0a3622;
-                color: white;
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* --- Buttons --- */
+        .btn-brand-primary {
+            background-color: var(--brand-navy);
+            color: #fff;
+            border: none;
+            padding: 12px 32px;
+            font-weight: 600;
+            border-radius: 50px; /* Pill shape */
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 43, 91, 0.2);
+        }
+
+            .btn-brand-primary:hover {
+                background-color: #001f42; /* Darker Navy */
+                color: #fff;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 20px rgba(0, 43, 91, 0.3);
             }
 
+        .btn-brand-outline {
+            background-color: transparent;
+            color: var(--brand-navy);
+            border: 2px solid var(--brand-navy);
+            padding: 8px 24px;
+            font-weight: 600;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+            .btn-brand-outline:hover {
+                background-color: var(--brand-navy);
+                color: #fff;
+                transform: translateY(-2px);
+            }
+
+        /* --- Typography & Headers --- */
+        .section-title {
+            color: var(--brand-navy);
+            font-weight: 800;
+            font-size: 1.75rem;
+            margin-bottom: 0; /* Adjusted for flex container */
+            position: relative;
+            display: inline-block;
+            transition: color 0.3s ease;
+        }
+
+            /* Distinct orange underline */
+            .section-title::after {
+                content: '';
+                display: block;
+                width: 40%;
+                height: 4px;
+                background-color: var(--brand-orange);
+                margin-top: 8px;
+                border-radius: 2px;
+            }
+
+        a:hover .section-title {
+            color: var(--brand-orange);
+        }
+
+        .highlight {
+            color: var(--brand-navy);
+        }
+
+        .highlight-orange {
+            color: var(--brand-orange);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            background: linear-gradient(135deg, #ffffff 0%, #eef2f5 100%); /* Clean fade */
+            border-bottom: 1px solid #e1e5e9;
+        }
+
+            .hero h1 {
+                color: var(--text-dark);
+            }
+
+        /* --- Cards --- */
         .book-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            overflow: hidden;
             background: #fff;
-            transition: transform 0.2s;
-            text-align: center;
+            border: none;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: var(--card-shadow);
             height: 100%;
         }
 
             .book-card:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+                transform: translateY(-8px);
+                box-shadow: var(--card-hover-shadow);
             }
 
             .book-card img {
                 width: 100%;
-                height: 250px;
+                height: 260px;
                 object-fit: cover;
+                border-bottom: 3px solid var(--brand-orange); /* Orange accent line */
             }
 
         .book-card-body {
-            padding: 10px;
+            padding: 1.25rem;
         }
 
         .book-card-title {
-            font-size: 1rem;
-            font-weight: bold;
-            margin-bottom: 5px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--brand-navy);
+            margin-bottom: 0.5rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            color: #333;
         }
 
         .book-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 30px;
+        }
+
+        /* --- Genre Tags --- */
+        .genre-card {
+            background-color: #fff;
+            color: var(--brand-navy);
+            border: 1px solid #e1e5e9;
+            border-radius: 50px;
+            padding: 10px 24px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+            .genre-card:hover {
+                background-color: var(--brand-navy);
+                color: #fff !important;
+                border-color: var(--brand-navy);
+                transform: translateY(-2px);
+            }
+
+        /* --- Utilities --- */
+        .text-muted {
+            color: #64748b !important;
+        }
+
+        .star-rating {
+            color: var(--brand-orange);
         }
     </style>
 </head>
@@ -95,122 +213,164 @@
 
     <div class="wrap" id="home-page">
 
-        <section class="hero">
-            <div class="hero-content">
-                <h1>Welcome to <span class="highlight">Readioo</span></h1>
-                <p>Discover your next great read, Search for more, and Track your reading journey.</p>
+        <!-- Hero Section -->
+        <section class="hero py-5">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 text-lg-start text-center">
+                        <h1 class="display-4 fw-bold mb-3">
+                            Welcome to <span>Read</span><span class="highlight-orange">ioo</span>
+                        </h1>
+                        <p class="lead text-muted mb-4">
+                            Dive into a universe of stories. Explore our vast collection, uncover hidden gems, and curate a reading journey that is uniquely yours.
+                        </p>
 
-                <a asp-controller="Book"
-                   asp-action="Browse"
-                   class="btn btn-custom-green explore-btn">
-                    Explore Books
-                </a>
-            </div>
-            <div class="hero-image">
-                <img src="assets/images/hero-books.png" alt="Books Illustration" onerror="this.style.display='none'">
+                        <a asp-controller="Book"
+                           asp-action="Browse"
+                           class="btn btn-brand-primary text-decoration-none">
+                            <i class="fa-solid fa-compass me-2"></i> Explore Books
+                        </a>
+                        <a asp-controller="Author"
+                           asp-action="Browse"
+                           class="btn btn-brand-primary text-decoration-none ms-3">
+                            <i class="fa-solid fa-pen-nib me-2"></i> Browse Authors
+                        </a>
+                    </div>
+                    <div class="col-lg-6 mt-4 mt-lg-0 text-center">
+                        <img src="assets/images/hero-books.png" class="img-fluid" alt="Books Illustration" style="max-height: 400px;" onerror="this.style.display='none'">
+                    </div>
+                </div>
             </div>
         </section>
 
-        <section class="section recent">
-            <h2 class="section-title">🆕 Recently Added</h2>
-            <div class="book-grid" id="recentBooks">
+        <div class="container my-5">
 
-                @if (recent != null && recentBooks.Any())
-                {
-                    @foreach (var book in recentBooks)
+            <!-- Recent Books -->
+            <section class="section recent mb-5">
+                <h2 class="section-title mb-4">Recently Added</h2>
+                <div class="book-grid" id="recentBooks">
+
+                    @if (recent != null && recentBooks.Any())
                     {
-                        var bookImgUrl = ResolveImagePath(book.BookImage);
+                        @foreach (var book in recentBooks)
+                        {
+                            var bookImgUrl = ResolveImagePath(book.BookImage);
 
-                        <div class="book-card">
-                            <a href="@Url.Action("Details", "Book", new { id = book.BookId })" style="text-decoration:none; color:inherit;">
+                            <div class="book-card">
+                                <a href="@Url.Action("Details", "Book", new { id = book.BookId })" style="text-decoration:none; color:inherit;">
+                                    <img src="@(string.IsNullOrEmpty(bookImgUrl) ? "https://placehold.co/200x260?text=No+Cover" : bookImgUrl)"
+                                         alt="@book.Title"
+                                         onerror="this.src='https://placehold.co/200x260?text=No+Cover'" />
 
-                                <img src="@(string.IsNullOrEmpty(bookImgUrl) ? "https://placehold.co/180x250?text=No+Cover" : bookImgUrl)"
-                                     alt="@book.Title"
-                                     onerror="this.src='https://placehold.co/180x250?text=No+Cover'" />
+                                    <div class="book-card-body">
+                                        <div class="book-card-title" title="@book.Title">@book.Title</div>
+                                        <small class="text-muted d-block mb-2">@book.AuthorName</small>
 
-                                <div class="book-card-body">
-                                    <div class="book-card-title" title="@book.Title">@book.Title</div>
-                                    <small class="text-muted">
-                                        @if (book.Rate > 0)
-                                        {
-                                            <i class="fa-solid fa-star text-warning"></i>
-                                            @book.Rate.ToString("0.0")
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-success">New</span>
-                                        }
-                                    </small>
-                                </div>
-                            </a>
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            @if (book.Rate > 0)
+                                            {
+                                                <span class="small fw-bold star-rating">
+                                                    <i class="fa-solid fa-star"></i> @book.Rate.ToString("0.0")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark border">New</span>
+                                            }
+
+                                            <!-- Mini Action Icon -->
+                                            <span class="text-muted small"><i class="fa-solid fa-arrow-right"></i></span>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12 text-center py-5">
+                            <p class="text-muted fs-5">No recently added books found.</p>
                         </div>
                     }
-                }
-                else
-                {
-                    <p class="text-muted">No recently added books found.</p>
-                }
 
-            </div>
-        </section>
+                </div>
+            </section>
 
-        <!-- Recommendations Section -->
-        @if (recommendations != null && recommendations.Any())
-        {
-            <section class="section recommendations">
-                <h2 class="section-title"><i class="fa-solid fa-wand-magic-sparkles text-warning"></i> Recommended For You</h2>
-                <div class="book-grid">
-                    @foreach (var book in recommendations)
+            <!-- Recommendations Section -->
+            @if (recommendations != null && recommendations.Any())
+            {
+                <section class="section recommendations mb-5">
+                    <h2 class="section-title mb-4">
+                        Recommended For You
+                    </h2>
+                    <div class="book-grid">
+                        @foreach (var book in recommendations)
+                        {
+                            var bookImgUrl = ResolveImagePath(book.BookImage);
+                            <div class="book-card">
+                                <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none text-dark">
+                                    <img src="@(string.IsNullOrEmpty(bookImgUrl) ? "https://placehold.co/200x260?text=No+Cover" : bookImgUrl)"
+                                         alt="@book.Title"
+                                         onerror="this.src='https://placehold.co/200x260?text=No+Cover'" />
+
+                                    <div class="book-card-body">
+                                        <div class="book-card-title" title="@book.Title">@book.Title</div>
+                                        <small class="text-muted d-block mb-2">@book.AuthorName</small>
+
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            @if (book.Rate > 0)
+                                            {
+                                                <span class="small fw-bold star-rating">
+                                                    <i class="fa-solid fa-star"></i> @book.Rate.ToString("0.0")
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-light text-dark border">New</span>
+                                            }
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                    </div>
+                </section>
+            }
+
+            <!-- Popular Genres -->
+            <section class="section genres mt-5 pb-5">
+                <div class="d-flex justify-content-between align-items-end mb-4">
+                    <!-- Title Link -->
+                    <a asp-controller="Genre" asp-action="Index" class="text-decoration-none">
+                        <h2 class="section-title mb-0">Browse by Genre <i class="fa-solid fa-chevron-right ms-2" style="font-size: 0.6em; opacity: 0.5;"></i></h2>
+                    </a>
+
+                    <!-- View All Button -->
+                    <a asp-controller="Genre" asp-action="Index" class="btn btn-brand-outline btn-sm">
+                        View All Genres <i class="fa-solid fa-arrow-right ms-1"></i>
+                    </a>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3">
+                    @if (genreList != null && genreList.Any())
                     {
-                        var bookImgUrl = ResolveImagePath(book.BookImage);
-                        <div class="book-card">
-                            <a asp-controller="Book" asp-action="Details" asp-route-id="@book.BookId" class="text-decoration-none text-dark">
-                                <img src="@(string.IsNullOrEmpty(bookImgUrl) ? "https://placehold.co/180x250?text=No+Cover" : bookImgUrl)"
-                                     alt="@book.Title"
-                                     onerror="this.src='https://placehold.co/180x250?text=No+Cover'" />
-                                <div class="book-card-body">
-                                    <div class="book-card-title" title="@book.Title">@book.Title</div>
-                                    <small class="text-muted d-block">@book.AuthorName</small>
-                                    <small class="text-warning">
-                                        @if (book.Rate > 0)
-                                        {
-                                            <i class="fa-solid fa-star text-warning"></i>
-                                            @book.Rate.ToString("0.0")
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-success">New</span>
-                                        }
-                                    </small>
-                                </div>
+                        @foreach (var genre in genreList)
+                        {
+                            <a asp-controller="Genre"
+                               asp-action="Details"
+                               asp-route-id="@genre.Id"
+                               class="genre-card text-decoration-none">
+                                @genre.GenreName
                             </a>
-                        </div>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-muted">No genres found.</p>
                     }
                 </div>
             </section>
-        }
-
-        <section class="section genres">
-            <h2 class="section-title">🎨 Popular Genres</h2>
-            <div class="genre-list">
-                @if (genreList != null && genreList.Any())
-                {
-                    @foreach (var genre in genreList)
-                    {
-                        <a asp-controller="Genre"
-                           asp-action="Details"
-                           asp-route-id="@genre.Id"
-                           class="genre-card text-decoration-none text-dark">
-                            @genre.GenreName
-                        </a>
-                    }
-                }
-                else
-                {
-                    <p class="text-muted">No genres found.</p>
-                }
-            </div>
-        </section>
+        </div>
 
     </div>
 

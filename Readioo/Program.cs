@@ -1,4 +1,4 @@
-﻿using Demo.DataAccess.Repositories.UoW;
+﻿﻿using Demo.DataAccess.Repositories.UoW;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using NToastNotify;
@@ -21,11 +21,12 @@ namespace Readioo
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            // MVC
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
-
+            // DbContext
             builder.Services.AddDbContext<AppDbContext>(opt =>
-                opt.UseSqlServer(builder.Configuration.GetConnectionString("Connstring")));
+                opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
           
             builder.Services.AddMvc().AddNToastNotifyToastr(new ToastrOptions()
             {
@@ -35,10 +36,10 @@ namespace Readioo
                 PositionClass = ToastPositions.TopRight
             });
 
-            // 🔹 Enable SESSION
+            // Enable SESSION
             builder.Services.AddSession();
-
-            // 🔹 Authentication Configuration
+            
+            // Authentication
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
@@ -46,11 +47,9 @@ namespace Readioo
                     options.LogoutPath = "/Account/Logout";
                     options.ExpireTimeSpan = TimeSpan.FromHours(24);
                     options.SlidingExpiration = true;
-                    // Redirect to login if access is denied
-                    options.AccessDeniedPath = "/Account/Login";
                 });
 
-            // DI Registrations
+            // DI
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             builder.Services.AddScoped<IBookRepository, BookRepository>();
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
@@ -66,8 +65,13 @@ namespace Readioo
             builder.Services.AddScoped<IGenreRepository, GenreRepository>();
             builder.Services.AddScoped<IRecommendationService, RecommendationService>();
 
-
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                db.Database.Migrate();  // Automatically applies migrations
+            }
 
             if (!app.Environment.IsDevelopment())
             {
@@ -81,16 +85,17 @@ namespace Readioo
 
             app.UseNToastNotify();
 
-            // 🔹 Authentication BEFORE Authorization
+            // Authentication BEFORE Authorization
             app.UseAuthentication();
             app.UseAuthorization();
 
+            // Enable SESSION Middleware
             app.UseSession();
 
-            // 🔹 DEFAULT ROUTE: Redirect unauthenticated users to Login
+            // Correct default route
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Account}/{action=Login}/{id?}");
+                pattern: "{controller=Account}/{action=login}/{id?}");
 
             using (var scope = app.Services.CreateScope())
             {

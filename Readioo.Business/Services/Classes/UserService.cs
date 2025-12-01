@@ -36,18 +36,14 @@ namespace Readioo.Business.Services.Classes
 
         public async Task<bool> RegisterUserAsync(UserRegistrationDto registrationDto)
         {
-            // 1. Business Validation: Check if email already exists
             if (_userRepository.ExistsByEmail(registrationDto.Email))
             {
                 return false;
             }
 
-            // 2. Security: Hashing the Password (REPLACED PLACEHOLDER)
-            // CRITICAL STEP: Use BCrypt.Net to securely hash the password.
-            // HashPassword handles salting automatically.
+            
             string hashedPassword = BCrypt.Net.BCrypt.HashPassword(registrationDto.Password);
 
-            // 3. Mapping DTO to Entity Model and Initializing system/default fields
             var newUser = new User
             {
                 FirstName = registrationDto.FirstName,
@@ -57,25 +53,20 @@ namespace Readioo.Business.Services.Classes
                 CreationDate = DateTime.UtcNow,
                 Bio = null,
                 City = null,
-                Country = null
+                Country = null,
             };
 
-            // 4. Data Persistence (Calling the Repository's Add method)
             _userRepository.Add(newUser);
 
-            // 5. Commit Transaction
-            // This method makes the database call to save the new user record.
+           
             await _unitOfWork.CommitAsync(); // Use the async version of commit
-            // ================================
-            // ⭐ CREATE DEFAULT SHELVES ⭐
-            // ================================
+          
 
             var defaultShelves = new List<Shelf>
             {
                 new Shelf { ShelfName = "Currently Reading", UserId = newUser.Id },
                 new Shelf { ShelfName = "Books Read",      UserId = newUser.Id },
                 new Shelf { ShelfName = "Want to Read",          UserId = newUser.Id },
-                new Shelf { ShelfName = "Favorites",        UserId = newUser.Id }
             };
 
             foreach (var shelf in defaultShelves)
@@ -85,7 +76,6 @@ namespace Readioo.Business.Services.Classes
 
             await _unitOfWork.CommitAsync(); // Save shelves
 
-            // ================================
             return true;
         }
 
@@ -96,8 +86,7 @@ namespace Readioo.Business.Services.Classes
                 return null;
             }
 
-            // Use Task.Run to execute the synchronous repository method asynchronously,
-            // preventing thread pool exhaustion in the web application.
+            
             return await Task.Run(() => _userRepository.GetByEmail(email));
         }
 
@@ -110,9 +99,6 @@ namespace Readioo.Business.Services.Classes
                 return false; // User not found
             }
 
-            // CRITICAL: Use the BCrypt Verify method
-            // Compares the plaintext password against the stored hash
-            // The library handles the salting/hashing for verification.
             return BCrypt.Net.BCrypt.Verify(password, user.UserPassword);
         }
 

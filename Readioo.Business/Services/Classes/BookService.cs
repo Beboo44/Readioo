@@ -2,10 +2,11 @@
 using Microsoft.EntityFrameworkCore;
 using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.DataTransferObjects.Genre;
 using Readioo.Business.DataTransferObjects.Review;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
-using Readioo.Business.DataTransferObjects.Genre;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace Readioo.Business.Services.Classes
 {
@@ -256,7 +257,6 @@ namespace Readioo.Business.Services.Classes
                 }).ToList();
         }
 
-        // ✅ CORRECTED METHOD - Uses existing repository method
         public IEnumerable<BookDto> GetAllBooksWithGenres()
         {
             // Use the existing GetAllBooksWithDetails method from repository
@@ -306,5 +306,56 @@ namespace Readioo.Business.Services.Classes
                 _unitOfWork.BookRepository.Update(book);
             }
         }
+
+
+        public IEnumerable<BookDto> SearchBooks(string term)
+        {
+            var books = _unitOfWork.BookRepository.SearchBooks(term);
+
+            return books.Select(a => new BookDto
+            {
+                BookId = a.Id,
+                Title = a.Title,
+                Isbn = a.Isbn,
+                Language = a.Language,
+                AuthorId = a.AuthorId,
+                PagesCount = a.PagesCount,
+                PublishDate = a.PublishDate,
+                MainCharacters = a.MainCharacters,
+                Rate = a.Rate,
+                Description = a.Description,
+                BookImage = a.BookImage,
+                AuthorName = a.Author?.FullName ?? "Unknown",
+                BookGenres = a.BookGenres?
+                    .Select(g => g.Genre.GenreName)
+                    .ToList() ?? new List<string>()
+            });
+        }
+
+        public BookDto GetBookById(int id)
+        {
+            var book = _unitOfWork.BookRepository.GetById(id);
+            if (book == null) return null;
+
+            return new BookDto
+            {
+                BookId = book.Id,
+                Title = book.Title,
+                Isbn = book.Isbn,
+                Language = book.Language,
+                AuthorId = book.AuthorId,
+                PagesCount = book.PagesCount,
+                PublishDate = book.PublishDate,
+                MainCharacters = book.MainCharacters,
+                Rate = book.Rate,
+                Description = book.Description,
+                BookImage = book.BookImage,
+                AuthorName = book.Author?.FullName ?? "Unknown",
+                BookGenres = book.BookGenres?
+                    .Select(g => g.Genre.GenreName)
+                    .ToList() ?? new List<string>()
+            };
+        }
+
     }
 }

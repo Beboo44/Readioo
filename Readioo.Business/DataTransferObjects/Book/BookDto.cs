@@ -1,6 +1,6 @@
 ﻿using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Review;
-using Readioo.Business.DataTransferObjects.Genre; // ✅ 1. Add this using
+using Readioo.Business.DataTransferObjects.Genre; 
 using Readioo.Models;
 
 namespace Readioo.Business.DataTransferObjects.Book
@@ -25,7 +25,6 @@ namespace Readioo.Business.DataTransferObjects.Book
         // This is the list of strings (keep it if you use it elsewhere)
         public virtual ICollection<String> BookGenres { get; set; } = new List<String>();
 
-        // ✅ 2. ADD THIS PROPERTY so the Index View works
         public List<GenreDto> Genres { get; set; } = new List<GenreDto>();
 
         public virtual ICollection<String> BookShelves { get; set; } = new List<String>();

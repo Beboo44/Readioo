@@ -1,7 +1,7 @@
 ﻿using Demo.DataAccess.Repositories.UoW;
 using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
-using Readioo.Business.DataTransferObjects.Genre; // Ensure this is using the Public DTOs
+using Readioo.Business.DataTransferObjects.Genre;
 using Readioo.Business.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Readioo.Models;
@@ -59,8 +59,6 @@ namespace Readioo.Business.Services.Classes
                 .Include(g => g.BookGenres)
                     .ThenInclude(bg => bg.Book)
                         .ThenInclude(b => b.Author)
-                .Include(g => g.AuthorGenres)
-                    .ThenInclude(ag => ag.Author)
                 .FirstOrDefault(g => g.Id == id);
 
             if (genre == null) return null;
@@ -82,20 +80,22 @@ namespace Readioo.Business.Services.Classes
                 })
                 .ToList();
 
-            // Map authors
-            var authors = genre.AuthorGenres
-                .Select(ag => new AuthorDto
+            // Get unique authors from books in this genre
+            var authors = genre.BookGenres //This gets all BookGenre entries for this genre
+                .Select(bg => bg.Book.Author) //This selects the Author of each Book
+                .Distinct() // Only unique authors
+                .Select(a => new AuthorDto
                 {
-                    AuthorId = ag.Author.Id,
-                    FullName = ag.Author.FullName,
-                    Bio = ag.Author.Bio,
-                    BirthDate = ag.Author.BirthDate,
-                    DeathDate = ag.Author.DeathDate,
-                    BirthCity = ag.Author.BirthCity,
-                    BirthCountry = ag.Author.BirthCountry,
-                    AuthorImage = ag.Author.AuthorImage
+                    AuthorId = a.Id,
+                    FullName = a.FullName,
+                    Bio = a.Bio,
+                    BirthDate = a.BirthDate,
+                    DeathDate = a.DeathDate,
+                    BirthCity = a.BirthCity,
+                    BirthCountry = a.BirthCountry,
+                    AuthorImage = a.AuthorImage
                 })
-                .ToList();
+                .ToList(); 
 
             return new GenreDetailsDto
             {

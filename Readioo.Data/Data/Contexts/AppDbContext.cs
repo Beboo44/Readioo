@@ -112,6 +112,8 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.LastName).HasMaxLength(255);
             entity.Property(e => e.ProfileUrl).HasColumnName("ProfileURL");
             entity.Property(e => e.UserPassword).HasMaxLength(255);
+            entity.Property(e => e.IsAdmin).HasDefaultValue(false);
+
         });
 
         modelBuilder.Entity<UserBook>(entity =>

@@ -2,10 +2,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using NToastNotify;
+using Readioo.Business.DataTransferObjects.Author;
 using Readioo.Business.DataTransferObjects.Book;
+using Readioo.Business.Services.Classes;
 using Readioo.Business.Services.Interfaces;
 using Readioo.Models;
 using Readioo.ViewModel;
+using System.Drawing.Printing;
 using System.Security.Claims;
 
 namespace Readioo.Controllers
@@ -34,24 +37,71 @@ namespace Readioo.Controllers
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var books = _bookService.GetAllBooks();
             return View(books);
         }
 
-        public IActionResult Browse()
+        public IActionResult Browse(string term = "", int page=1)
         {
-            // Get all books with their genres included
-            var books = _bookService.GetAllBooksWithGenres();
+            var books = _bookService.GetAllBooks();
+            if (!string.IsNullOrWhiteSpace(term))
+                books = _bookService.SearchBooks(term);
+
             var genres = _genreService.GetAllGenres();
+
+            int pageSize = 12;
+            int totalBooks = books.Count();
+            int totalPages = (int)Math.Ceiling((double)totalBooks / pageSize);
+
+            page = Math.Max(1, Math.Min(page, totalPages > 0 ? totalPages : 1));
+
+            var pagedBooks = books.Skip((page - 1) * pageSize)
+                                  .Take(pageSize)
+                                  .ToList();
+
+
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = totalPages;
             ViewBag.Genres = genres;
-            return View(books);
+
+            return View(pagedBooks);
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var authors = _authorService.getAllAuthors();
             var genres = _genreService.GetAllGenres();
 
@@ -113,7 +163,7 @@ namespace Readioo.Controllers
             var book = _bookService.bookById(id);
             var user = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if(user is null)
+            if (user is null)
             {
                 return RedirectToAction("Login", "Account");
             }
@@ -133,8 +183,23 @@ namespace Readioo.Controllers
         }
 
         [HttpGet]
-        public IActionResult Edit(int id)
+        public async Task<IActionResult> Edit(int id)
         {
+            var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Login", "Account");
+            }
+            var user = await _userService.GetUserByIdAsync(int.Parse(userIdString));
+
+            if (user == null || !user.IsAdmin)
+            {
+                _toast.AddWarningToastMessage("Page Not Found");
+                return RedirectToAction("Index", "Home");
+
+            }
             var book = _bookService.bookById(id);
             if (book == null) return NotFound();
 
@@ -160,7 +225,7 @@ namespace Readioo.Controllers
             var genres = _genreService.GetAllGenres();
             ViewBag.Genres = genres;
 
-            
+
 
             return View(bookVM);
         }
@@ -195,6 +260,16 @@ namespace Readioo.Controllers
                 Description = book.Description,
                 BookGenres = book.BookGenres ?? new List<string>()
             };
+
+            if (book.BookImage != null)
+            {
+                string saveFolder = "images/books";
+                saveFolder += Guid.NewGuid().ToString() + "_" + book.BookImage.FileName;
+                string serverPath = Path.Combine("wwwroot", saveFolder);
+                book.BookImage.CopyTo(new FileStream(serverPath, FileMode.Create));
+
+                bookDto.BookImage = saveFolder;
+            }
 
             await _bookService.UpdateBook(bookDto);
             _toast.AddSuccessToastMessage("Book Updated Successfully");
@@ -280,7 +355,7 @@ namespace Readioo.Controllers
                 _toast.AddErrorToastMessage("Error: " + ex.Message);
             }
 
-            return RedirectToAction("Browse","Book");
+            return RedirectToAction("Browse", "Book");
         }
         [HttpPost]
         public async Task<IActionResult> RateBook(int bookId, int rating)
@@ -293,5 +368,26 @@ namespace Readioo.Controllers
 
             return RedirectToAction("Details", new { id = bookId });
         }
+
+
+        [HttpGet]
+        public IActionResult SearchBooks(string term)
+        {
+            var results = _bookService.SearchBooks(term);
+            return Json(results);
+        }
+
+        [HttpGet]
+        public IActionResult Search(string term)
+        {
+            if (string.IsNullOrWhiteSpace(term))
+            {
+                return View(new List<BookDto>());
+            }
+
+            var books = _bookService.SearchBooks(term);
+            return View(books); // goes to Views/Book/Search.cshtml
+        }
+
     }
 }

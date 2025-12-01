@@ -20,7 +20,7 @@ namespace Readioo.Business.Services.Interfaces
         //for password hashing
         Task<bool> VerifyUserCredentialsAsync(string email, string password);
         Task<bool> UpdateUserProfileAsync(int userId, UpdateUserDTO dto);
-        Task<User> GetUserByIdAsync(int id);
+        public Task<User> GetUserByIdAsync(int id);
         Task<IEnumerable<ShelfWithBooksDto>> GetUserShelvesWithBooksAsync(int userId);
 
 
