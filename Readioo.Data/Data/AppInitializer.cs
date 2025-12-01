@@ -18,11 +18,8 @@ namespace Readioo.Data.Data
         {
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateScope())
             {
-                // Resolve the Database Context
                 var context = serviceScope.ServiceProvider.GetService<AppDbContext>();
 
-                // CHANGED: Use ILogger<AppDbContext> instead of ILogger<Program>
-                // This avoids the error if 'Program' is not public or accessible.
                 var logger = serviceScope.ServiceProvider.GetService<ILogger<AppDbContext>>();
 
                 if (context == null)
@@ -33,10 +30,8 @@ namespace Readioo.Data.Data
 
                 try
                 {
-                    // Ensure the database is created
                     context.Database.EnsureCreated();
 
-                    // Check if Genres already exist. If yes, skip adding them.
                     if (!context.Genres.Any())
                     {
                         var genres = new List<Genre>
